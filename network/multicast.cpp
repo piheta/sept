@@ -10,6 +10,7 @@
 #include <unistd.h>
 
 #include "multicast.hpp"
+#include "../data/peer.h"
 
 int m_sock_fd;
 struct sockaddr_in multicast_addr;

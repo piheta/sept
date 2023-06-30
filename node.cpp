@@ -9,7 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "data/multicast.hpp"
+#include "network/multicast.hpp"
 
 void start_chat(int sock_fd, int m_sock_fd, struct sockaddr_in *peer) {
     int ret;
