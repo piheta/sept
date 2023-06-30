@@ -84,7 +84,7 @@ void start_chat(int sock_fd, int m_sock_fd, struct sockaddr_in *peer) {
 
             /* multicast socket */
             if (fds[2].revents & (POLLIN | POLLPRI)) {
-                start_multicast_handler();
+                //start_multicast_handler();
             }
         }
     }
