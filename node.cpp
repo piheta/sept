@@ -84,7 +84,7 @@ void start_chat(int sock_fd, int m_sock_fd, struct sockaddr_in *peer) {
 
             /* multicast socket */
             if (fds[2].revents & (POLLIN | POLLPRI)) {
-                //start_multicast_handler();
+                start_multicast_handler();
             }
         }
     }
@@ -108,8 +108,6 @@ int main(int argc, char *argv[]) {
     remote_host = argv[2];
     remote_port = strtoul(argv[3], NULL, 0);
 
-
-    /* Parse command line argument for remote host address */
     peer_addr.sin_family = AF_INET;
     peer_addr.sin_addr.s_addr = inet_addr(remote_host.c_str());
     peer_addr.sin_port = htons(remote_port);
@@ -130,6 +128,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    create_multicast_socket();
     start_chat(sock_fd, get_multicast_socket(), &peer_addr);
 
     close(sock_fd);

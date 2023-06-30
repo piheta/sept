@@ -16,6 +16,7 @@ int m_sock_fd;
 struct sockaddr_in multicast_addr;
 struct ip_mreq m_group;
 struct sockaddr_in groupSock;
+char m_databuf[1024];
 
 void send_multicast_broadcast(int socket) {
     struct sockaddr_in groupSock;
@@ -66,12 +67,9 @@ void create_multicast_socket(){
         perror("Adding multicast m_group error");
         close(m_sock_fd);
     }
-
-    /* #################### MULTICAST ###################*/
 }
 
 void start_multicast_handler(){
-    char m_databuf[1024];
 
     //listen
     if (read(m_sock_fd, m_databuf, sizeof(m_databuf)) < 0) {
@@ -82,7 +80,7 @@ void start_multicast_handler(){
 
     //add to peer set
     //reply
-    send_multicast_broadcast(m_sock_fd);
+    //send_multicast_broadcast(m_sock_fd);
 }
 
 int get_multicast_socket(){
