@@ -1,0 +1,11 @@
+# Ignore compiled binaries
+*.o
+p2p
+p2p.dSYM/
+
+# Ignore temporary files
+*.tmp
+temp/
+
+# Ignore log files
+*.log
