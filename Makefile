@@ -4,7 +4,7 @@ CXXFLAGS = $(CFLAGS)
 
 SRCS = data/peer.c network/multicast.cc network/p2p.c node.cc
 OBJS = $(SRCS:.c=.o)
-TARGET = p2p
+TARGET = sept
 
 .PHONY: all clean
 
