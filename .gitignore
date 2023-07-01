@@ -9,3 +9,5 @@ temp/
 
 # Ignore log files
 *.log
+.DS_Store
+*/.DS_Store
