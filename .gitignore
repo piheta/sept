@@ -1,7 +1,7 @@
 # Ignore compiled binaries
 *.o
-p2p
-p2p.dSYM/
+sept
+sept.dSYM/
 
 # Ignore temporary files
 *.tmp

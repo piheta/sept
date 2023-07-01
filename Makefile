@@ -2,7 +2,7 @@ CC = g++
 CFLAGS = -Wall -Wextra -g
 CXXFLAGS = $(CFLAGS)
 
-SRCS = data/peer.c network/multicast.cc network/p2p.c node.cc
+SRCS = src/data/peer.c src/network/multicast.cc src/network/p2p.c src/node.cc
 OBJS = $(SRCS:.c=.o)
 TARGET = sept
 
@@ -18,5 +18,9 @@ $(TARGET): $(OBJS)
 
 clean:
 	rm -f */*.o
+	rm -f */*/*.o
 	rm -f node.o
-	rm -rf p2p.dSYM
+	rm -rf sept.dSYM
+	rm -f .DS_Store
+	rm -f */.DS_Store
+	rm -f */*/.DS_Store
