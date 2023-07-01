@@ -1,7 +1,7 @@
 CC = g++
 CFLAGS = -Wall -Wextra -g
 
-SRCS = data/peer.c network/multicast.cpp node.cpp
+SRCS = data/peer.c network/multicast.cpp network/p2p.cpp node.cpp
 OBJS = $(SRCS:.c=.o)
 TARGET = p2p
 

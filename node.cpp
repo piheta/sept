@@ -10,12 +10,10 @@
 #include <unistd.h>
 
 #include "network/multicast.hpp"
+#include "network/p2p.hpp"
 
-void start_chat(int sock_fd, int m_sock_fd, struct sockaddr_in *peer) {
+void start_node_multiplexing(int sock_fd, int m_sock_fd) {
     int ret;
-    ssize_t bytes;
-    char input_buffer[1024];
-    char output_buffer[1024];
 
     struct pollfd fds[3];
 
@@ -51,86 +49,36 @@ void start_chat(int sock_fd, int m_sock_fd, struct sockaddr_in *peer) {
 
             /* stdin */
             if (fds[0].revents & (POLLIN | POLLPRI)) {
-                bytes = read(0, output_buffer, sizeof(output_buffer));
-                if (bytes < 0) {
-                    printf("Error - stdin error: %s\n", strerror(errno));
-                    break;
-                }
-                if (strcmp(output_buffer, "exit\n") == 0) {
-                    break;
-                }
-                bytes = sendto(sock_fd, output_buffer, bytes, 0, (struct sockaddr *)peer, sizeof(struct sockaddr_in));
-                if (bytes < 0) {
-                    printf("Error - sendto error: %s\n", strerror(errno));
-                    break;
-                }
-                memset(output_buffer, 0, sizeof(output_buffer));
+                p2p_send(sock_fd);
             }
 
             /* p2p socket */
             if (fds[1].revents & (POLLIN | POLLPRI)) {
-                struct sockaddr_in peer_addr;
-                socklen_t addrlen = sizeof(peer_addr);
-                bytes = recvfrom(sock_fd, input_buffer, sizeof(input_buffer), 0, (struct sockaddr *)&peer_addr, &addrlen);
-                if (bytes < 0) {
-                    printf("Error - recvfrom error: %s\n", strerror(errno));
-                    break;
-                }
-                if (bytes > 0) {
-                    std::cout << inet_ntoa(peer_addr.sin_addr) << ":" << ntohs(peer_addr.sin_port) << ": " << input_buffer;
-                }
-                memset(input_buffer, 0, sizeof(input_buffer));
+                p2p_listen(sock_fd);
             }
 
             /* multicast socket */
             if (fds[2].revents & (POLLIN | POLLPRI)) {
-                start_multicast_handler();
+                multicast_handler(m_sock_fd);
             }
         }
     }
 }
 
 
-int main(int argc, char *argv[]) {
-    unsigned long local_port;
+int main() {
+    int sock_fd  = socket(AF_INET, SOCK_DGRAM, 0);
+    int m_sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
+
+    std::cout << "enter remote host ip" << std::endl;
     std::string remote_host;
-    unsigned long remote_port;
-    int sock_fd;
-    struct sockaddr_in client_addr;
-    struct sockaddr_in peer_addr;
+    std::cin >> remote_host;
 
-    /* Parse command line arguments for port numbers */
-    if (argc < 4) {
-        printf("Usage: %s <local port> <remote host> <remote port>\n", argv[0]);
-        return 1;
-    }
-    local_port = strtoul(argv[1], NULL, 0);
-    remote_host = argv[2];
-    remote_port = strtoul(argv[3], NULL, 0);
-
-    peer_addr.sin_family = AF_INET;
-    peer_addr.sin_addr.s_addr = inet_addr(remote_host.c_str());
-    peer_addr.sin_port = htons(remote_port);
-
-    /* Create UDP socket */
-    sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
-    if (sock_fd < 0) {
-        printf("Error - failed to open socket: %s\n", strerror(errno));
-        return 1;
-    }
-
-    /* Bind socket */
-    client_addr.sin_family = AF_INET;
-    client_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    client_addr.sin_port = htons(local_port);
-    if (bind(sock_fd, (struct sockaddr *)(&client_addr), sizeof(client_addr)) < 0) {
-        printf("Error - failed to bind socket: %s\n", strerror(errno));
-        return 1;
-    }
-
-    create_multicast_socket();
-    start_chat(sock_fd, get_multicast_socket(), &peer_addr);
+    create_multicast_socket(m_sock_fd, 50010, "239.50.0.11");
+    create_p2p_socket(sock_fd, 70015, 70015, remote_host);
+    start_node_multiplexing(sock_fd, m_sock_fd);
 
     close(sock_fd);
+    close(m_sock_fd);
     return 0;
 }

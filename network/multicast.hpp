@@ -7,10 +7,9 @@
 #ifndef MULTICAST_H
 #define MULTICAST_H
 
-void send_multicast_broadcast(int socket);
-void create_multicast_socket();
-void start_multicast_handler();
-int get_multicast_socket();
+void send_multicast_broadcast(int m_sock_fd);
+void create_multicast_socket(int m_sock_fd, int port, const char* ip);
+void multicast_handler(int m_sock_fd);
 
 std::unordered_map<struct Peer, std::string> get_peers(); //peer and name
 void add_peer(struct Peer *peer, std::string name);
