@@ -1,4 +1,3 @@
-#include <iostream>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <errno.h>
@@ -9,16 +8,16 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "p2p.hpp"
+#include "p2p.h"
 #include "../data/peer.h"
 
 ssize_t bytes;
 struct sockaddr_in client_addr;
 struct sockaddr_in peer_addr;
 
-void create_p2p_socket(int sock_fd, int local_port, int remote_port, std::string remote_host) {
+void create_p2p_socket(int sock_fd, int local_port, int remote_port, const char* remote_host) {
     peer_addr.sin_family = AF_INET;
-    peer_addr.sin_addr.s_addr = inet_addr(remote_host.c_str());
+    peer_addr.sin_addr.s_addr = inet_addr(remote_host);
     peer_addr.sin_port = htons(remote_port);
 
     /* Create UDP socket */
@@ -36,7 +35,7 @@ void create_p2p_socket(int sock_fd, int local_port, int remote_port, std::string
     }
 }
 
-void p2p_listen(int sock_fd){
+void p2p_listen(int sock_fd) {
     char input_buffer[1024];
     struct sockaddr_in peer_addr;
     socklen_t addrlen = sizeof(peer_addr);
@@ -45,7 +44,7 @@ void p2p_listen(int sock_fd){
         printf("Error - recvfrom error: %s\n", strerror(errno));
     }
     if (bytes > 0) {
-        std::cout << inet_ntoa(peer_addr.sin_addr) << ":" << ntohs(peer_addr.sin_port) << ": " << input_buffer;
+        printf("%s:%d: %s", inet_ntoa(peer_addr.sin_addr), ntohs(peer_addr.sin_port), input_buffer);
     }
     memset(input_buffer, 0, sizeof(input_buffer));
 }

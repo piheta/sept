@@ -1,7 +1,8 @@
 CC = g++
 CFLAGS = -Wall -Wextra -g
+CXXFLAGS = $(CFLAGS)
 
-SRCS = data/peer.c network/multicast.cpp network/p2p.cpp node.cpp
+SRCS = data/peer.c network/multicast.cc network/p2p.c node.cc
 OBJS = $(SRCS:.c=.o)
 TARGET = p2p
 
@@ -10,11 +11,12 @@ TARGET = p2p
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CXXFLAGS) $^ -o $@
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -x c++ -c $< -o $@
 
 clean:
-	rm -f data/peer.o
+	rm -f */*.o
+	rm -f node.o
 	rm -rf p2p.dSYM

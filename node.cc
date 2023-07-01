@@ -9,8 +9,8 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "network/multicast.hpp"
-#include "network/p2p.hpp"
+#include "network/multicast.hh"
+#include "network/p2p.h"
 
 void start_node_multiplexing(int sock_fd, int m_sock_fd) {
     int ret;
@@ -67,12 +67,13 @@ void start_node_multiplexing(int sock_fd, int m_sock_fd) {
 
 
 int main() {
+
     int sock_fd  = socket(AF_INET, SOCK_DGRAM, 0);
     int m_sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
 
-    std::cout << "enter remote host ip" << std::endl;
-    std::string remote_host;
-    std::cin >> remote_host;
+    printf("enter remote host ip:\n");
+    char remote_host[50];
+    scanf("%s", remote_host);
 
     create_multicast_socket(m_sock_fd, 50010, "239.50.0.11");
     create_p2p_socket(sock_fd, 70015, 70015, remote_host);

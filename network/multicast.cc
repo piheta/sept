@@ -9,7 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "multicast.hpp"
+#include "multicast.hh"
 #include "../data/peer.h"
 
 struct sockaddr_in multicast_addr;
