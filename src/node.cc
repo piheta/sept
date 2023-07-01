@@ -14,7 +14,6 @@
 
 void start_node_multiplexing(int sock_fd, int m_sock_fd) {
     int ret;
-
     struct pollfd fds[3];
 
     fds[0].fd = 0; //stdin
@@ -23,6 +22,8 @@ void start_node_multiplexing(int sock_fd, int m_sock_fd) {
     fds[0].events = POLLIN | POLLPRI;
     fds[1].events = POLLIN | POLLPRI;
     fds[2].events = POLLIN | POLLPRI;
+
+    send_multicast_broadcast(m_sock_fd, seek);
 
     while (1) {
         ret = poll(fds, 3, -1);
@@ -79,6 +80,7 @@ int main() {
     create_p2p_socket(sock_fd, 70015, 70015, remote_host);
     start_node_multiplexing(sock_fd, m_sock_fd);
 
+    send_multicast_broadcast(m_sock_fd, rm);
     close(sock_fd);
     close(m_sock_fd);
     return 0;

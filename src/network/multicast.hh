@@ -7,7 +7,9 @@
 #ifndef MULTICAST_H
 #define MULTICAST_H
 
-void send_multicast_broadcast(int m_sock_fd);
+enum Broadcast { seek, reply, rm };
+
+void send_multicast_broadcast(int m_sock_fd, Broadcast broadcast_type);
 void create_multicast_socket(int m_sock_fd, int port, const char* ip);
 void multicast_handler(int m_sock_fd);
 

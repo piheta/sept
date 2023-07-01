@@ -18,12 +18,9 @@ struct ip_mreq m_group;
 char m_databuf[1024];
 
 //std::unordered_map<struct Peer, std::string> known_hosts;
-enum Broadcast { seek, reply, rm };
 
-void send_multicast_broadcast(int m_sock_fd) {
+void send_multicast_broadcast(int m_sock_fd, Broadcast broadcast_type) {
     struct in_addr localInterface;
-    char databuf[1024] = "sept,seek,uuid";
-    int datalen = sizeof(databuf);
 
     groupSock.sin_family = AF_INET;
     groupSock.sin_addr.s_addr = inet_addr("239.50.0.10");
@@ -32,6 +29,20 @@ void send_multicast_broadcast(int m_sock_fd) {
     if (setsockopt(m_sock_fd, IPPROTO_IP, IP_MULTICAST_IF, (char *)&localInterface, sizeof(localInterface)) < 0) {
         perror("Setting local interface error");
         return;
+    }
+
+    char databuf[1024];
+    int datalen = sizeof(databuf);
+    switch (broadcast_type) {
+        case seek:
+            strcpy(databuf,"sept,seek,uuid");
+            break;
+        case reply:
+            strcpy(databuf,"sept,reply,uuid");
+            break;
+        case rm:
+            strcpy(databuf,"sept,rm,uuid");
+            break;
     }
 
     if (sendto(m_sock_fd, databuf, datalen, 0, (struct sockaddr*)&groupSock, sizeof(groupSock)) < 0) {
@@ -75,17 +86,24 @@ void create_multicast_socket(int m_sock_fd, int port, const char* ip){
     }
 }
 
-void multicast_handler(int m_sock_fd){
-
-    //listen
-    if (read(m_sock_fd, m_databuf, sizeof(m_databuf)) < 0) {
-        perror("Reading multigram datagram message error");
+void multicast_handler(int m_sock_fd) {
+    struct sockaddr_in senderAddr;
+    socklen_t addrLen = sizeof(senderAddr);
+    if (recvfrom(m_sock_fd, m_databuf, sizeof(m_databuf), 0, (struct sockaddr*)&senderAddr, &addrLen) < 0) {
+        perror("Receiving multigram datagram message error");
         return;
     }
-    printf("multicast: \"%s\"\n", m_databuf);
 
+    printf("%s:%d: %s \n", inet_ntoa(senderAddr.sin_addr), ntohs(senderAddr.sin_port), m_databuf);
 
-    //add to peer set
-    //reply
-    //send_multicast_broadcast(m_sock_fd);
+    /*
+        if databuf = seek
+            add to known hosts
+            send(reply)
+        elif databuf = reply
+            add to known hosts
+        elif databuf = rm
+            rm from known hosts
+
+    */
 }
