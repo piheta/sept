@@ -75,7 +75,7 @@ int main() {
     char remote_host[50];
     scanf("%s", remote_host);
 
-    create_multicast_socket(m_sock_fd, 50010, "239.50.0.11");
+    create_multicast_socket(m_sock_fd, 50010, "239.50.0.10");
     create_p2p_socket(sock_fd, 70015, 70015, remote_host);
     start_node_multiplexing(sock_fd, m_sock_fd);
 

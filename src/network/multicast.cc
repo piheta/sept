@@ -17,20 +17,26 @@ struct sockaddr_in groupSock;
 struct ip_mreq m_group;
 char m_databuf[1024];
 
+//std::unordered_map<struct Peer, std::string> known_hosts;
+enum Broadcast { seek, reply, rm };
+
 void send_multicast_broadcast(int m_sock_fd) {
     struct in_addr localInterface;
-    char databuf[1024] = "seek";
+    char databuf[1024] = "sept,seek,uuid";
     int datalen = sizeof(databuf);
+
     groupSock.sin_family = AF_INET;
     groupSock.sin_addr.s_addr = inet_addr("239.50.0.10");
     groupSock.sin_port = htons(50010);
     localInterface.s_addr = htonl(INADDR_ANY);
     if (setsockopt(m_sock_fd, IPPROTO_IP, IP_MULTICAST_IF, (char *)&localInterface, sizeof(localInterface)) < 0) {
         perror("Setting local interface error");
+        return;
     }
 
     if (sendto(m_sock_fd, databuf, datalen, 0, (struct sockaddr*)&groupSock, sizeof(groupSock)) < 0) {
         perror("Sending datagram message error");
+        return;
     }
 }
 
@@ -38,12 +44,14 @@ void send_multicast_broadcast(int m_sock_fd) {
 void create_multicast_socket(int m_sock_fd, int port, const char* ip){
     if (m_sock_fd < 0) {
         perror("Opening datagram socket error");
+        return;
     }
 
     int reuse = 1;
     if (setsockopt(m_sock_fd, SOL_SOCKET, SO_REUSEADDR, (char *)&reuse, sizeof(reuse)) < 0) {
         perror("Setting SO_REUSEADDR error");
         close(m_sock_fd);
+        return;
     }
 
 
@@ -54,6 +62,7 @@ void create_multicast_socket(int m_sock_fd, int port, const char* ip){
     if (bind(m_sock_fd, (struct sockaddr *)&multicast_addr, sizeof(multicast_addr))) {
         perror("Binding datagram socket error");
         close(m_sock_fd);
+        return;
     }
 
     /* Join the multicast group on the local ip */
@@ -62,6 +71,7 @@ void create_multicast_socket(int m_sock_fd, int port, const char* ip){
     if (setsockopt(m_sock_fd, IPPROTO_IP, IP_ADD_MEMBERSHIP, (char *)&m_group, sizeof(m_group)) < 0) {
         perror("Adding multicast m_group error");
         close(m_sock_fd);
+        return;
     }
 }
 
@@ -70,9 +80,10 @@ void multicast_handler(int m_sock_fd){
     //listen
     if (read(m_sock_fd, m_databuf, sizeof(m_databuf)) < 0) {
         perror("Reading multigram datagram message error");
-    } else {
-        printf("multicast: \"%s\"\n", m_databuf);
+        return;
     }
+    printf("multicast: \"%s\"\n", m_databuf);
+
 
     //add to peer set
     //reply
