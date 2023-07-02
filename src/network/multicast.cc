@@ -17,7 +17,7 @@ struct sockaddr_in groupSock;
 struct ip_mreq m_group;
 char m_databuf[1024];
 
-//std::unordered_map<struct Peer, std::string> known_hosts;
+std::unordered_map<std::string,struct Peer> known_hosts;
 
 void send_multicast_broadcast(int m_sock_fd, Broadcast broadcast_type) {
     struct in_addr localInterface;
@@ -65,8 +65,6 @@ void create_multicast_socket(int m_sock_fd, int port, const char* ip){
         return;
     }
 
-
-    memset((char *)&multicast_addr, 0, sizeof(multicast_addr));
     multicast_addr.sin_family = AF_INET;
     multicast_addr.sin_addr.s_addr = INADDR_ANY;
     multicast_addr.sin_port = htons(port);
@@ -101,17 +99,22 @@ void multicast_handler(int m_sock_fd) {
 
     switch (m_databuf[5]) {
         case seek:
-            //add to known hosts
             send_multicast_broadcast(m_sock_fd, reply);
             break;
         case reply:
             //add to known hosts
+            struct Peer peer;
+            peer = peer_constructor(inet_ntoa(senderAddr.sin_addr), ntohs(senderAddr.sin_port));
+            known_hosts[inet_ntoa(senderAddr.sin_addr)] = peer;
+
+            std::cout << known_hosts.size() << std::endl;
+
             break;
         case rm:
             //rm from known hosts
             break;
     }
 
-    printf("%s:%d: %s\n", inet_ntoa(senderAddr.sin_addr), ntohs(senderAddr.sin_port), m_databuf);
+    //printf("%s:%d: %s\n", inet_ntoa(senderAddr.sin_addr), ntohs(senderAddr.sin_port), m_databuf);
 
 }
