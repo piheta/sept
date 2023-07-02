@@ -35,13 +35,13 @@ void send_multicast_broadcast(int m_sock_fd, Broadcast broadcast_type) {
     int datalen = sizeof(databuf);
     switch (broadcast_type) {
         case seek:
-            strcpy(databuf,"sept,seek,uuid");
+            strcpy(databuf,"sept,0,uuid");
             break;
         case reply:
-            strcpy(databuf,"sept,reply,uuid");
+            strcpy(databuf,"sept,1,uuid");
             break;
         case rm:
-            strcpy(databuf,"sept,rm,uuid");
+            strcpy(databuf,"sept,2,uuid");
             break;
     }
 
@@ -94,16 +94,24 @@ void multicast_handler(int m_sock_fd) {
         return;
     }
 
-    printf("%s:%d: %s \n", inet_ntoa(senderAddr.sin_addr), ntohs(senderAddr.sin_port), m_databuf);
+    // stop if multicast traffic is not from sept
+    if (strncmp(m_databuf, "sept", 4) != 0) {
+        return;
+    }
 
-    /*
-        if databuf = seek
-            add to known hosts
-            send(reply)
-        elif databuf = reply
-            add to known hosts
-        elif databuf = rm
-            rm from known hosts
+    switch (m_databuf[5]) {
+        case seek:
+            //add to known hosts
+            send_multicast_broadcast(m_sock_fd, reply);
+            break;
+        case reply:
+            //add to known hosts
+            break;
+        case rm:
+            //rm from known hosts
+            break;
+    }
 
-    */
+    printf("%s:%d: %s\n", inet_ntoa(senderAddr.sin_addr), ntohs(senderAddr.sin_port), m_databuf);
+
 }
