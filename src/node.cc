@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <chrono>
 
 #include "network/multicast.hh"
 #include "network/p2p.h"
@@ -24,6 +25,7 @@ void start_node_multiplexing(int sock_fd, int m_sock_fd) {
     fds[2].events = POLLIN | POLLPRI;
 
     send_multicast_broadcast(m_sock_fd, seek);
+    std::chrono::steady_clock::time_point startup_time = std::chrono::steady_clock::now();
 
     while (1) {
         ret = poll(fds, 3, -1);
@@ -60,7 +62,7 @@ void start_node_multiplexing(int sock_fd, int m_sock_fd) {
 
             /* multicast socket */
             if (fds[2].revents & (POLLIN | POLLPRI)) {
-                multicast_handler(m_sock_fd);
+                multicast_handler(m_sock_fd, startup_time);
             }
         }
     }
@@ -76,13 +78,10 @@ int main() {
     printf("╔═╗╔═╗╔═╗╔╦╗ │ v0.2.8\n");
     printf("╚═╗╠═ ╠═╝ ║  │ :50010\n");
     printf("╠═╝╚═╝╩   ╩  │ :50012\n");
-
-    printf("enter remote host ip:\n");
-    char remote_host[50];
-    scanf("%s", remote_host);
+    printf("~~~~~~~~~~~~~~~~~~~~~~\n");
 
     create_multicast_socket(m_sock_fd, 50010, "239.50.0.10");
-    create_p2p_socket(sock_fd, 50012, 50012, remote_host);
+    create_p2p_socket(sock_fd, 50012, 50012, "0.0.0.0");
     start_node_multiplexing(sock_fd, m_sock_fd);
 
     send_multicast_broadcast(m_sock_fd, rm);

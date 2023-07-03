@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <chrono>
 
 #include "multicast.hh"
 #include "../data/peer.h"
@@ -16,7 +17,8 @@ struct sockaddr_in multicast_addr;
 struct sockaddr_in groupSock;
 struct ip_mreq m_group;
 char m_databuf[1024];
-
+std::chrono::steady_clock::time_point currentTime;
+std::chrono::duration<double> elapsedSeconds;
 std::unordered_map<std::string,struct Peer> known_hosts;
 
 void send_multicast_broadcast(int m_sock_fd, Broadcast broadcast_type) {
@@ -84,7 +86,7 @@ void create_multicast_socket(int m_sock_fd, int port, const char* ip){
     }
 }
 
-void multicast_handler(int m_sock_fd) {
+void multicast_handler(int m_sock_fd, std::chrono::steady_clock::time_point startup_time) {
     struct sockaddr_in senderAddr;
     socklen_t addrLen = sizeof(senderAddr);
     if (recvfrom(m_sock_fd, m_databuf, sizeof(m_databuf), 0, (struct sockaddr*)&senderAddr, &addrLen) < 0) {
@@ -107,7 +109,11 @@ void multicast_handler(int m_sock_fd) {
             peer = peer_constructor(inet_ntoa(senderAddr.sin_addr), ntohs(senderAddr.sin_port));
             known_hosts[inet_ntoa(senderAddr.sin_addr)] = peer;
 
-            std::cout << known_hosts.size() << std::endl;
+            currentTime = std::chrono::steady_clock::now();
+            elapsedSeconds = currentTime - startup_time;
+            if (elapsedSeconds.count() < 1.0) {
+                std::cout << inet_ntoa(senderAddr.sin_addr) << std::endl;
+            }
 
             break;
         case rm:
