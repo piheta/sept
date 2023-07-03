@@ -80,7 +80,7 @@ void command(char output_buffer[1024]) {
     }
 
     else {
-        printf("\x1b[38;5;9m" "error " "\x1b[0m" " - command not found, try " "\e[1m" "!help" "\e[m" " \n");
+        printf("\x1b[38;5;9m" "error" "\x1b[0m" " - command not found, try " "\e[1m" "!help" "\e[m" " \n");
     }
 }
 
