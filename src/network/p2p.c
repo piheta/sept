@@ -8,9 +8,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#define ANSI_COLOR_GREEN   "\x1b[32m"
-#define ANSI_COLOR_RESET   "\x1b[0m"
-
 #include "p2p.h"
 #include "../data/peer.h"
 
@@ -73,7 +70,7 @@ void p2p_send(int sock_fd) {
         char remote_host[hostLength + 1];  // +1 for null-terminator
         strncpy(remote_host, hostStart, hostLength);
         peer_addr.sin_addr.s_addr = inet_addr(remote_host);
-        printf(ANSI_COLOR_GREEN "success: %s" ANSI_COLOR_RESET "\n", remote_host);
+        printf("\x1b[32m" "success!" "\x1b[0m" "\n");
         remote_host[hostLength] = '\0';
         return;
     }
