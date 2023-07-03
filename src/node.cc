@@ -70,18 +70,21 @@ void start_node_multiplexing(int sock_fd, int m_sock_fd) {
 
 
 int main() {
+    std::string version = "v0.2.9";
+    int sock_port = 50012;
+    int m_sock_port = 50010;
+    const char* m_sock_addr = "239.50.0.10";
+
+    std::cout << "\e[1;1H\e[2J";
+    std::cout << "\x1b[38;5;209m╔═╗╔═╗╔═╗╔╦╗ \x1b[0m│ " << version << std::endl;
+    std::cout << "\x1b[38;5;214m╚═╗╠═ ╠═╝ ║  \x1b[0m│ :" << m_sock_port << std::endl;
+    std::cout << "\x1b[38;5;215m╠═╝╚═╝╩   ╩  \x1b[0m│ :" << sock_port << std::endl;
+    std::cout << "\x1b[38;5;220m~~~~~~~~~~~~~~~~~~~~~\x1b[0m" << std::endl;
 
     int sock_fd  = socket(AF_INET, SOCK_DGRAM, 0);
     int m_sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
-
-    printf("\e[1;1H\e[2J");
-    printf("╔═╗╔═╗╔═╗╔╦╗ │ v0.2.8\n");
-    printf("╚═╗╠═ ╠═╝ ║  │ :50010\n");
-    printf("╠═╝╚═╝╩   ╩  │ :50012\n");
-    printf("~~~~~~~~~~~~~~~~~~~~~~\n");
-
-    create_multicast_socket(m_sock_fd, 50010, "239.50.0.10");
-    create_p2p_socket(sock_fd, 50012, 50012, "0.0.0.0");
+    create_p2p_socket(sock_fd, sock_port, sock_port, "0.0.0.0");
+    create_multicast_socket(m_sock_fd, m_sock_port, m_sock_addr);
     start_node_multiplexing(sock_fd, m_sock_fd);
 
     send_multicast_broadcast(m_sock_fd, rm);
