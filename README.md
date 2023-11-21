@@ -17,7 +17,7 @@ sept uses the unix socket.h library for network communication, and is thus curre
 ## installation
 
  ```sh
-  git clone https://github.com/tama3ti/sept.git
+  git clone https://github.com/piheta/sept.git
   cd sept
   make
   make clean
