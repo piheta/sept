@@ -17,20 +17,20 @@
 
 <main class="h-full">
   <div class="top-drag"></div>
-  <div class="flex w-full h-[calc(100vh-2rem)]">
+  <div class="flex w-full h-[calc(100vh-1.5rem)]">
     <div class="min-w-[175px] max-w-[50%] mt-1" style="width: {resizeWidth}px;"><Sidebar /></div>
     <div 
       role="separator"
       aria-orientation="vertical"
-      class="w-[2px] cursor-col-resize"
+      class="w-2 cursor-col-resize"
       use:onDrag={{orientation:'vertical'}}
       on:drag={({ detail: delta }) => handleDrag(delta)}
       on:dragEnd={() => {width = resizeWidth}}
     ></div>
     <div class="flex flex-col flex-grow mr-2 mb-2">
-      <div class="bg-gray-700 flex-none h-16 rounded-md m-1"> </div>
-      <div class="bg-gray-700 flex-grow rounded-md m-1"> </div>
-      <div class="flex-none h-24 rounded-md m-1"><Footer /></div>
+      <div class="bg-gray-700 flex-none h-16 rounded-md mt-1"> </div>
+      <div class="bg-gray-700 flex-grow rounded-md mt-2"> </div>
+      <div class="flex-none h-24 rounded-md mt-2"><Footer /></div>
     </div>
   </div>
 </main>
@@ -39,7 +39,7 @@
   .top-drag {
     --wails-draggable: drag;
     width: 100%;
-    height: 2rem;
+    height: 1.5rem;
     margin: 0;
   }
 </style>

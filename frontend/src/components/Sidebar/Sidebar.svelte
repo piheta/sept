@@ -23,7 +23,14 @@
         <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M20 7h-9m3 10H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></g></svg>
         {#if sidebar_mode === 2}<div class="absolute z-50 w-4 h-1 bottom-2 rounded-sm bg-[#11FFEE]"></div>{/if}
       </button>
-    </div>    
+    </div>
+
+    <div class="flex relative mt-2 mb-2 ml-2 h-8">
+      <svg class="absolute left-2 top-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21l-4.3-4.3"/></g></svg>
+      <input class="w-full bg-gray-900 placeholder-gray-500 rounded-md pl-8 focus:outline-none" placeholder="Search" />
+    </div>
+    
+    
 
     {#if sidebar_mode===0}
       <SidebarUsers />
