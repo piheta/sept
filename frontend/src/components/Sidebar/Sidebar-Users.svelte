@@ -1,7 +1,6 @@
 <script>
     import { GetUsers, GetRooms } from "../../../wailsjs/go/main/App.js";
     import List from "./List.svelte";
-    import ListElement from "./ListElement.svelte";
 
     let users = [];
     let rooms = [];
@@ -10,14 +9,18 @@
     let selection = { type: 0, value: "" };
 
     async function getUsers() {
-        users = await GetUsers();
+        const result = await GetUsers();
+        console.log("Received users:", result);
+        users = result;
         if (users.length > 0) {
             setSelection({ type: 0, value: users[0] });
         }
     }
 
     async function getRooms() {
-        rooms = await GetRooms();
+        const result = await GetRooms();
+        console.log("Received rooms:", result);
+        rooms = result;
     }
 
     function setSelection(obj) {
@@ -28,40 +31,32 @@
         setSelection({ type: event.detail.type, value: event.detail.item });
     }
 
+    function handleDndConsider(e) {
+        users = e.detail.items;
+    }
+
+    function handleDndFinalize(e) {
+        users = e.detail.items;
+    }
+
     getUsers();
     getRooms();
 </script>
 
-<List title="Friends" collapsible={true} bind:showItems={showUsers}>
-    {#each users as user, index}
-        <ListElement
-            item={user}
-            selected={user === selection.value && selection.type === 0}
-            isLast={index === users.length - 1}
-            on:select={(event) =>
-                handleSelect({ detail: { type: 0, item: event.detail } })}
-        />
-    {/each}
-    <svelte:fragment slot="selected">
-        {#if selection.type === 0}
-            <ListElement item={selection.value} selected={true} />
-        {/if}
-    </svelte:fragment>
-</List>
+<List 
+    title="Friends" 
+    items={users}
+    selectedItem={selection.value}
+    collapsible={true}
+    on:select={event => handleSelect({ detail: { type: 0, item: event.detail } })}
+    bind:showItems={showUsers}
+/>
 
-<List title="Rooms" collapsible={true} bind:showItems={showRooms}>
-    {#each rooms as room, index}
-        <ListElement
-            item={room}
-            selected={room === selection.value && selection.type === 1}
-            isLast={index === rooms.length - 1}
-            on:select={(event) =>
-                handleSelect({ detail: { type: 1, item: event.detail } })}
-        />
-    {/each}
-    <svelte:fragment slot="selected">
-        {#if selection.type === 1}
-            <ListElement item={selection.value} selected={true} />
-        {/if}
-    </svelte:fragment>
-</List>
+<List 
+    title="Rooms" 
+    items={rooms}
+    selectedItem={selection.value}
+    collapsible={true}
+    on:select={event => handleSelect({ detail: { type: 1, item: event.detail } })}
+    bind:showItems={showRooms}
+/>

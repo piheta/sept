@@ -20,14 +20,55 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-func (a *App) GetUsers() []string {
-	return []string{"10.0.0.10:5173", "10.0.0.12:8080", "192.168.1.23:80", "10.223.0.2:443"}
+type server_model struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
 }
 
-func (a *App) GetRooms() []string {
-	return []string{"Study", "Game"}
+type user_model struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+	Ip   string `json:"ip"`
 }
 
-func (a *App) GetServers() []string {
-	return []string{"Sept", "Microsoft", "News", "Google", "Contoso", "Midjourney", "Apple"}
+type room_model struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+var rooms = []room_model{
+	{1, "Study"},
+	{2, "Game"},
+}
+
+var servers = []server_model{
+	{1, "Sept"},
+	{2, "Microsoft"},
+	{3, "News"},
+	{4, "Google"},
+	{5, "Contoso"},
+	{6, "Midjourney"},
+	{7, "Apple"},
+}
+
+var users = []user_model{
+	{1, "User1", ""},
+	{2, "User2", ""},
+	{3, "User3", ""},
+	{4, "User4", ""},
+	{5, "User5", ""},
+	{6, "User6", ""},
+	{7, "User7", ""},
+}
+
+func (a *App) GetServers() []server_model {
+	return servers
+}
+
+func (a *App) GetUsers() []user_model {
+	return users
+}
+
+func (a *App) GetRooms() []room_model {
+	return rooms
 }
