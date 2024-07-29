@@ -16,7 +16,7 @@
 </script>
 
 <main class="h-full">
-    <div class="top-drag"></div>
+    <div class="wails-drag w-full h-6 m-0"></div>
     <div class="flex w-full h-[calc(100vh-1.5rem)]">
         <div
             class="min-w-[175px] max-w-[50%] mt-1"
@@ -41,12 +41,3 @@
         </div>
     </div>
 </main>
-
-<style>
-    .top-drag {
-        --wails-draggable: drag;
-        width: 100%;
-        height: 1.5rem;
-        margin: 0;
-    }
-</style>

@@ -31,32 +31,26 @@
         setSelection({ type: event.detail.type, value: event.detail.item });
     }
 
-    function handleDndConsider(e) {
-        users = e.detail.items;
-    }
-
-    function handleDndFinalize(e) {
-        users = e.detail.items;
-    }
-
     getUsers();
     getRooms();
 </script>
 
-<List 
-    title="Friends" 
+<List
+    title="Friends"
     items={users}
     selectedItem={selection.value}
     collapsible={true}
-    on:select={event => handleSelect({ detail: { type: 0, item: event.detail } })}
+    on:select={(event) =>
+        handleSelect({ detail: { type: 0, item: event.detail } })}
     bind:showItems={showUsers}
 />
 
-<List 
-    title="Rooms" 
+<List
+    title="Rooms"
     items={rooms}
     selectedItem={selection.value}
     collapsible={true}
-    on:select={event => handleSelect({ detail: { type: 1, item: event.detail } })}
+    on:select={(event) =>
+        handleSelect({ detail: { type: 1, item: event.detail } })}
     bind:showItems={showRooms}
 />
