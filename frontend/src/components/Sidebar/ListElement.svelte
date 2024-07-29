@@ -15,7 +15,7 @@
 </script>
 
 <li
-    class="text-[0.9rem] p-[0.3rem] m-0 rounded-md outline-none hover:bg-[rgba(0,0,0,0.125)] focus:bg-[rgba(0,0,0,0.125)]"
+    class="text-[0.9rem] p-[0.3rem] m-0 rounded-md focus:list-none focus:outline-none outline-none hover:bg-[rgba(0,0,0,0.125)] focus:bg-[rgba(0,0,0,0.125)] select-none"
     class:!bg-gray-900={selected}
     class:!mb-3={isLast}
     tabindex="0"

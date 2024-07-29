@@ -19,6 +19,6 @@
     "vite": "^5.1.6"
   },
   "dependencies": {
-    "svelte-dnd-action": "^0.9.49"
+    "svelte-dnd-list": "^0.1.8"
   }
 }

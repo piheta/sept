@@ -1,16 +1,12 @@
 <script>
     import { createEventDispatcher } from "svelte";
     import ListElement from "./ListElement.svelte";
-    import { flip } from "svelte/animate";
-    import { dndzone } from "svelte-dnd-action";
 
     export let title = "";
     export let collapsible = false;
     export let showItems = true;
     export let items = [];
     export let selectedItem = null;
-    export let flipDurationMs = 300;
-    let dropTargetStyle = { outline: "black solid 0px" };
 
     const dispatch = createEventDispatcher();
 
@@ -24,14 +20,14 @@
         dispatch("select", item);
     }
 
-    function handleDndConsider(e) {
-        // dispatch('consider', e.detail);
-        items = e.detail.items;
-    }
+    import DragDropList, { VerticalDropZone, reorder } from "svelte-dnd-list";
 
-    function handleDndFinalize(e) {
-        // dispatch('finalize', e.detail);
-        items = e.detail.items;
+    function onDrop({ detail: { from, to } }) {
+        if (!to || from === to) {
+            return;
+        }
+
+        items = reorder(items, from.index, to.index);
     }
 </script>
 
@@ -74,24 +70,29 @@
     {/if}
 {/if}
 
-<ul
-    class="cursor-pointer"
-    use:dndzone={{ items, flipDurationMs, dropTargetStyle }}
-    on:consider={handleDndConsider}
-    on:finalize={handleDndFinalize}
->
+<ul class="cursor-pointer select-none">
     {#if showItems}
-        {#each items as item (item.id)}
-            <div animate:flip={{ duration: flipDurationMs }}>
-                <ListElement
-                    {item}
-                    selected={item === selectedItem}
-                    isLast={item.id === items[items.length - 1].id}
-                    on:select={() => handleSelect(item)}
-                />
-            </div>
-        {/each}
-    {:else if !showItems && $$slots.selected}
-        <slot name="selected"></slot>
+        <!-- todo, make this godforsaken itemsize calculate automatically -->
+        <DragDropList
+            id={title}
+            type={VerticalDropZone}
+            itemSize={34}
+            itemCount={items.length}
+            on:drop={onDrop}
+            let:index
+        >
+            <ListElement
+                item={items[index]}
+                selected={items[index] === selectedItem}
+                isLast={items[index].id === items[items.length - 1].id}
+                on:select={() => handleSelect(items[index])}
+            />
+        </DragDropList>
+    {:else if !showItems && selectedItem}
+        <ListElement
+        item={selectedItem}
+        selected={true}
+        isLast={true}
+    />
     {/if}
 </ul>
