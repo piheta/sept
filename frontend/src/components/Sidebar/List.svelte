@@ -4,6 +4,7 @@
 
     export let title = "";
     export let collapsible = false;
+    export let draggable;
     export let showItems = true;
     export let items = [];
     export let selectedItem = null;
@@ -28,7 +29,6 @@
         }
 
         items = reorder(items, from.index, to.index);
-        document.activeElement.blur();
     }
 </script>
 
@@ -79,6 +79,7 @@
             type={VerticalDropZone}
             itemSize={34}
             itemCount={items.length}
+            allowDrag={draggable}
             on:drop={onDrop}
             let:index
         >

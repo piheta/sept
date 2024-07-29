@@ -1,6 +1,5 @@
 <script>
     import List from "./List.svelte";
-    import ListElement from "./ListElement.svelte";
 
     let selection = "";
 
@@ -8,20 +7,22 @@
         selection = obj;
     }
 
-    let settings = ["General", "User", "Audio", "Proxy", "Bots", "Theme"];
-    setSelection(settings[0]);
+    let settings = [
+        { id: 1, name: "General" },
+        { id: 2, name: "User" },
+        { id: 3, name: "Audio" },
+        { id: 4, name: "Proxy" },
+        { id: 5, name: "Bots" },
+        { id: 6, name: "Theme" }
+    ];
+
+    setSelection(settings[0].id);
 </script>
 
-<List title="Settings">
-    {#each settings as setting, index}
-        <ListElement
-            item={setting}
-            img={false}
-            selected={setting === selection}
-            isLast={index === settings.length - 1}
-            on:select={() => {
-                setSelection(setting);
-            }}
-        />
-    {/each}
-</List>
+<List
+    title="Settings"
+    items={settings}
+    selectedItem={selection}
+    draggable={0}
+    img={false}
+/>

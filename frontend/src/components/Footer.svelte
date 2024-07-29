@@ -3,9 +3,9 @@
 </script>
 
 <div class="h-full w-full">
-    <input
+    <textarea
         bind:value={input_txt}
-        class="bg-gray-900 w-full h-full rounded-md"
+        class="bg-gray-900 w-full h-full rounded-md resize-none"
     />
 </div>
 
