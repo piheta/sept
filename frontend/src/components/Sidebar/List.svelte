@@ -28,6 +28,7 @@
         }
 
         items = reorder(items, from.index, to.index);
+        document.activeElement.blur();
     }
 </script>
 
@@ -88,7 +89,7 @@
                 on:select={() => handleSelect(items[index])}
             />
         </DragDropList>
-    {:else if !showItems && selectedItem}
+    {:else if !showItems && items.includes(selectedItem)}
         <ListElement
         item={selectedItem}
         selected={true}
