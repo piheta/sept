@@ -36,7 +36,7 @@
             }}
         ></div>
         <div class="flex flex-col flex-grow mr-2 mb-2">
-            <div class="bg-gray-700 flex-none h-16 rounded-md mt-1"><Header title={"Some Person"} /></div>
+            <div class="flex-none h-16 rounded-md mt-1"><Header title={"Some Person"} /></div>
             <div class="bg-gray-700 flex-grow rounded-md mt-2"></div>
             <div class="flex-none h-24 rounded-md mt-2"><Footer /></div>
         </div>
