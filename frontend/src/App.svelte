@@ -1,4 +1,5 @@
 <script>
+    // @ts-nocheck
     import Sidebar from "./components/Sidebar/Sidebar.svelte";
     import Footer from "./components/Footer.svelte";
     import { onDrag } from "./components/Sidebar/SidebarResizer";
