@@ -11,9 +11,9 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/swagger"
-	"github.com/piheta/sept/controllers"
-	_ "github.com/piheta/sept/docs"
-	weberrors "github.com/piheta/sept/errors"
+	"github.com/piheta/sept/login-server/controllers"
+	_ "github.com/piheta/sept/login-server/docs"
+	weberrors "github.com/piheta/sept/login-server/errors"
 )
 
 func NewRouter(

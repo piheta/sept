@@ -3,7 +3,7 @@ package errors
 import (
 	"errors"
 
-	weberrors "github.com/piheta/sept/errors"
+	weberrors "github.com/piheta/sept/login-server/errors"
 
 	"gorm.io/gorm"
 )

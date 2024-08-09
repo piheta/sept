@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/piheta/sept/models"
+	"github.com/piheta/sept/login-server/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

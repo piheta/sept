@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	weberrors "github.com/piheta/sept/errors"
-	"github.com/piheta/sept/repos"
+	weberrors "github.com/piheta/sept/login-server/errors"
+	"github.com/piheta/sept/login-server/repos"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/argon2"

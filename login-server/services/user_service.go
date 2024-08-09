@@ -5,10 +5,10 @@ import (
 	"regexp"
 
 	"github.com/google/uuid"
-	weberrors "github.com/piheta/sept/errors"
+	weberrors "github.com/piheta/sept/login-server/errors"
 
-	"github.com/piheta/sept/models"
-	"github.com/piheta/sept/repos"
+	"github.com/piheta/sept/login-server/models"
+	"github.com/piheta/sept/login-server/repos"
 )
 
 type UserService struct {

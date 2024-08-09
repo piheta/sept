@@ -2,10 +2,10 @@ package repos
 
 import (
 	"github.com/google/uuid"
-	weberrors "github.com/piheta/sept/errors"
-	weberrormapper "github.com/piheta/sept/errors/mappers"
+	weberrors "github.com/piheta/sept/login-server/errors"
+	weberrormapper "github.com/piheta/sept/login-server/errors/mappers"
 
-	"github.com/piheta/sept/models"
+	"github.com/piheta/sept/login-server/models"
 	"gorm.io/gorm"
 )
 

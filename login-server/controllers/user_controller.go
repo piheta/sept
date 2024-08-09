@@ -3,9 +3,9 @@ package controllers
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	weberrors "github.com/piheta/sept/errors"
-	"github.com/piheta/sept/models"
-	"github.com/piheta/sept/services"
+	weberrors "github.com/piheta/sept/login-server/errors"
+	"github.com/piheta/sept/login-server/models"
+	"github.com/piheta/sept/login-server/services"
 )
 
 type UserController struct {

@@ -4,9 +4,9 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-	weberrors "github.com/piheta/sept/errors"
-	"github.com/piheta/sept/models"
-	"github.com/piheta/sept/services"
+	weberrors "github.com/piheta/sept/login-server/errors"
+	"github.com/piheta/sept/login-server/models"
+	"github.com/piheta/sept/login-server/services"
 )
 
 // Shared auth controller-logic for mapping jwt claim to object

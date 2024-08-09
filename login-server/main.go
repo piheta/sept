@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/piheta/sept/config"
-	"github.com/piheta/sept/controllers"
-	"github.com/piheta/sept/repos"
-	"github.com/piheta/sept/services"
+	"github.com/piheta/sept/login-server/config"
+	"github.com/piheta/sept/login-server/controllers"
+	"github.com/piheta/sept/login-server/repos"
+	"github.com/piheta/sept/login-server/services"
 )
 
 // @Title sept-login-server
