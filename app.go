@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+
+	"github.com/pion/webrtc/v4"
 )
 
 // App struct
@@ -18,6 +20,14 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+}
+
+type ConnectionRequest struct {
+	Type      string               `json:"type"`
+	DestIP    string               `json:"destip"`
+	SrcIP     *string              `json:"srcip"`
+	Data      string               `json:"data"`
+	Candidate *webrtc.ICECandidate `json:"candidate,omitempty"`
 }
 
 type server_model struct {
