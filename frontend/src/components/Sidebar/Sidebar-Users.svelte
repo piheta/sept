@@ -46,7 +46,7 @@
 />
 
 <List
-    title="Rooms"
+    title="Friend-Group-1"
     items={rooms}
     selectedItem={selection.value}
     collapsible={true}

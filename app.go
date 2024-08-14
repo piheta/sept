@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-
-	"github.com/pion/webrtc/v4"
 )
 
 // App struct
@@ -22,14 +20,6 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 }
 
-type ConnectionRequest struct {
-	Type      string               `json:"type"`
-	DestIP    string               `json:"destip"`
-	SrcIP     *string              `json:"srcip"`
-	Data      string               `json:"data"`
-	Candidate *webrtc.ICECandidate `json:"candidate,omitempty"`
-}
-
 type server_model struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
@@ -41,14 +31,9 @@ type user_model struct {
 	Ip   string `json:"ip"`
 }
 
-type room_model struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-var rooms = []room_model{
-	{1, "Study"},
-	{2, "Game"},
+var user_group = []user_model{
+	{1, "User8", ""},
+	{2, "User9", ""},
 }
 
 var servers = []server_model{
@@ -79,6 +64,6 @@ func (a *App) GetUsers() []user_model {
 	return users
 }
 
-func (a *App) GetRooms() []room_model {
-	return rooms
+func (a *App) GetRooms() []user_model {
+	return user_group
 }

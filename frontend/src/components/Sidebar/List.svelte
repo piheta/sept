@@ -35,7 +35,7 @@
 {#if title}
     {#if collapsible}
         <button
-            class="w-full flex items-center align-middle text-center mt-0 pt-0 pr-20 pb-1 pl-2 select-none cursor-pointer"
+            class="w-full flex items-center align-middle text-center mt-0 pt-0 pb-1 pl-2 select-none cursor-pointer"
             on:click={toggleShow}
         >
             <span

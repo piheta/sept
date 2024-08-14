@@ -2,17 +2,37 @@ package main
 
 import (
 	"embed"
+	"flag"
+	"fmt"
+	"os"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
+
+	"github.com/piheta/sept/infra"
 )
 
 //go:embed all:frontend/dist
 var assets embed.FS
 
 func main() {
+	// Define a boolean flag
+	bFlag := flag.Bool("b", false, "Only start the backend")
+	fFlag := flag.Bool("f", false, "Only start the frontend")
+
+	// Parse command-line flags
+	flag.Parse()
+
+	if *bFlag {
+		fmt.Println("The -b flag was passed")
+		peer.Peer()
+	}
+	if *fFlag {
+		fmt.Println("The -f flag was passed")
+	}
+
 	// Create an instance of the app structure
 	app := NewApp()
 
@@ -55,6 +75,7 @@ func main() {
 	})
 
 	if err != nil {
-		println("Error:", err.Error())
+		fmt.Println("Error:", err.Error())
+		os.Exit(1)
 	}
 }
