@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+
+	"github.com/piheta/sept/infra/db"
 )
 
 // App struct
@@ -18,6 +20,7 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	db.InitDb()
 }
 
 type server_model struct {
@@ -29,6 +32,13 @@ type user_model struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 	Ip   string `json:"ip"`
+}
+
+type message_model struct {
+	ID      int    `json:"id"`
+	UserID  int    `json:"user_id"`
+	Content string `json:"content"`
+	Time    string `json:"time"`
 }
 
 var user_group = []user_model{
