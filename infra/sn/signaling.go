@@ -2,7 +2,6 @@ package sn
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"sync"
 
@@ -89,10 +88,6 @@ func send(remoteAddr string, message []byte) error {
 		}
 	}
 	return nil
-}
-
-func Test() {
-	fmt.Println("test")
 }
 
 func SuperNode() {
