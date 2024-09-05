@@ -6,4 +6,8 @@ export function GetRooms():Promise<Array<main.user_model>>;
 
 export function GetServers():Promise<Array<main.server_model>>;
 
+export function GetUserUserMessages(arg1:number):Promise<string>;
+
 export function GetUsers():Promise<Array<main.user_model>>;
+
+export function SendMessage(arg1:string):Promise<string>;

@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -48,4 +49,75 @@ func InitDb() {
 	}
 
 	fmt.Println("Database schema created successfully")
+}
+
+func AddMessage(chatID int, userID int, content string) {
+	db, err := sql.Open("sqlite3", "./infra/db/sept.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	query := `
+		INSERT INTO messages (chat_id, user_id, content, created_at) 
+		VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+	`
+
+	_, err = db.Exec(query, chatID, userID, content)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Message added successfully")
+}
+
+type Message struct {
+	ID        int    `json:"id"`
+	ChatID    int    `json:"chat_id"`
+	UserID    int    `json:"user_id"`
+	Content   string `json:"content"`
+	CreatedAt string `json:"created_at"`
+}
+
+// GetMessagesByChatID retrieves all messages for a specific chat
+func GetMessagesByChatID(chatID int) string {
+	db, err := sql.Open("sqlite3", "./infra/db/sept.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	query := `
+		SELECT id, chat_id, user_id, content, created_at
+		FROM messages
+		WHERE chat_id = ?
+	`
+
+	rows, err := db.Query(query, chatID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var messages []Message
+	for rows.Next() {
+		var msg Message
+		if err := rows.Scan(&msg.ID, &msg.ChatID, &msg.UserID, &msg.Content, &msg.CreatedAt); err != nil {
+			log.Fatal(err)
+		}
+		messages = append(messages, msg)
+	}
+
+	// Check for errors from iterating over rows.
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	// Convert messages slice to JSON
+	messagesJSON, err := json.Marshal(messages)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return string(messagesJSON)
 }

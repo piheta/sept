@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/piheta/sept/infra/db"
 )
@@ -76,4 +77,14 @@ func (a *App) GetUsers() []user_model {
 
 func (a *App) GetRooms() []user_model {
 	return user_group
+}
+
+func (a *App) SendMessage(message string) string {
+	fmt.Println(message)
+	db.AddMessage(1, 1, message)
+	return db.GetMessagesByChatID(1)
+}
+
+func (a *App) GetUserUserMessages(user_id int) string {
+	return db.GetMessagesByChatID(1)
 }
