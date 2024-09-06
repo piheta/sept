@@ -52,8 +52,8 @@
             <div class="flex-none h-16 rounded-md mt-1">
                 <Header recipient={"Some Person"} />
             </div>
-                <Messages />
 
+                <Messages />
 
             <div
                 role="separator"
