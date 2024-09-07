@@ -4,7 +4,8 @@
     import Footer from "./components/Footer.svelte";
     import { onDrag } from "./components/Sidebar/SidebarResizer";
     import Header from "./components/Header.svelte";
-    import Messages from "./components/Messages.svelte";
+    import Messages from "./components/Chatbox.svelte";
+    import Chatbox from "./components/Chatbox.svelte";
     
     let width = 205;
     let resizeWidth = width;
@@ -53,7 +54,7 @@
                 <Header recipient={"Some Person"} />
             </div>
 
-                <Messages />
+                <Chatbox />
 
             <div
                 role="separator"

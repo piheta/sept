@@ -10,6 +10,10 @@ export function GetServers() {
   return window['go']['main']['App']['GetServers']();
 }
 
+export function GetUser(arg1) {
+  return window['go']['main']['App']['GetUser'](arg1);
+}
+
 export function GetUserUserMessages(arg1) {
   return window['go']['main']['App']['GetUserUserMessages'](arg1);
 }
@@ -18,6 +22,6 @@ export function GetUsers() {
   return window['go']['main']['App']['GetUsers']();
 }
 
-export function SendMessage(arg1) {
-  return window['go']['main']['App']['SendMessage'](arg1);
+export function SendMessage(arg1, arg2) {
+  return window['go']['main']['App']['SendMessage'](arg1, arg2);
 }

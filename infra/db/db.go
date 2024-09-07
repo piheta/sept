@@ -7,6 +7,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/piheta/sept/models"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -67,8 +69,6 @@ func AddMessage(chatID int, userID int, content string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Println("Message added successfully")
 }
 
 type Message struct {
@@ -120,4 +120,67 @@ func GetMessagesByChatID(chatID int) string {
 	}
 
 	return string(messagesJSON)
+}
+
+func GetUser(userID int) models.User_model {
+	db, err := sql.Open("sqlite3", "./infra/db/sept.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	query := `
+        SELECT id, user_id, username, ip, avatar
+        FROM users
+        WHERE id = ?
+    `
+
+	row := db.QueryRow(query, userID)
+
+	var user models.User_model
+	err = row.Scan(&user.ID, &user.UserID, &user.Username, &user.Ip, &user.Avatar)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			log.Fatal("No user found")
+		} else {
+			log.Fatal(err)
+		}
+	}
+
+	return user
+}
+
+func GetAllUsers() []models.User_model {
+	db, err := sql.Open("sqlite3", "./infra/db/sept.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	query := `
+		SELECT id, user_id, username, ip, avatar
+		FROM users
+	`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	var users []models.User_model
+	for rows.Next() {
+		var user models.User_model
+		if err := rows.Scan(&user.ID, &user.UserID, &user.Username, &user.Ip, &user.Avatar); err != nil {
+			log.Fatal(err)
+		}
+		users = append(users, user)
+	}
+
+	// Check for errors from iterating over rows.
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return users
 }

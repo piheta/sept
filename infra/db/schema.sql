@@ -1,7 +1,7 @@
 -- Users Table
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    userid TEXT NOT NULL UNIQUE, -- Unique identifier for the user, e.g., a UUID or username
+    user_id TEXT NOT NULL UNIQUE, -- Unique identifier for the user, e.g., a UUID or username
     username TEXT NOT NULL,     -- Display name of the user
     ip TEXT,                    -- IP address of the user
     avatar TEXT                 -- URL or path to the user's avatar

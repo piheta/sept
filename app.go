@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/piheta/sept/infra/db"
+	"github.com/piheta/sept/models"
 )
 
 // App struct
@@ -29,12 +30,6 @@ type server_model struct {
 	Name string `json:"name"`
 }
 
-type user_model struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-	Ip   string `json:"ip"`
-}
-
 type message_model struct {
 	ID      int    `json:"id"`
 	UserID  int    `json:"user_id"`
@@ -42,10 +37,7 @@ type message_model struct {
 	Time    string `json:"time"`
 }
 
-var user_group = []user_model{
-	{1, "User8", ""},
-	{2, "User9", ""},
-}
+var user_group = []models.User_model{}
 
 var servers = []server_model{
 	{1, "Sept"},
@@ -57,34 +49,28 @@ var servers = []server_model{
 	{7, "Apple"},
 }
 
-var users = []user_model{
-	{1, "User1", ""},
-	{2, "User2", ""},
-	{3, "User3", ""},
-	{4, "User4", ""},
-	{5, "User5", ""},
-	{6, "User6", ""},
-	{7, "User7", ""},
-}
-
 func (a *App) GetServers() []server_model {
 	return servers
 }
 
-func (a *App) GetUsers() []user_model {
-	return users
+func (a *App) GetUsers() []models.User_model {
+	return db.GetAllUsers()
 }
 
-func (a *App) GetRooms() []user_model {
+func (a *App) GetRooms() []models.User_model {
 	return user_group
 }
 
-func (a *App) SendMessage(message string) string {
+func (a *App) SendMessage(message string, chat_id int) string {
 	fmt.Println(message)
-	db.AddMessage(1, 1, message)
-	return db.GetMessagesByChatID(1)
+	db.AddMessage(chat_id, 1, message)
+	return db.GetMessagesByChatID(chat_id)
 }
 
-func (a *App) GetUserUserMessages(user_id int) string {
-	return db.GetMessagesByChatID(1)
+func (a *App) GetUserUserMessages(chat_id int) string {
+	return db.GetMessagesByChatID(chat_id)
+}
+
+func (a *App) GetUser(user_id int) models.User_model {
+	return db.GetUser(user_id)
 }
