@@ -15,7 +15,6 @@
         }
         try {
             let user = await GetUser(user_id);
-            console.log("user", user)
             let parsedData;
             if (typeof user === 'string') {
                 parsedData = JSON.parse(user);
@@ -35,7 +34,7 @@
 
     async function getMessages() {
         try {
-            let chatId = $selection_store; // Ensure reactivity
+            let chatId = $selection_store.id; // Ensure reactivity
             let messages = await GetUserUserMessages(chatId);
             let parsedData;
 
@@ -87,6 +86,8 @@
           content={message.content}
           created_at={message.created_at}
           last_message_create_at={i > 0 ? $message_store[i - 1].created_at : null}
+          user_id={message.user_id}
+          last_sender_user_id={i > 0 ? $message_store[i - 1].user_id : null}
           index={i}
           username={participants.get(message.user_id)?.username ?? 'Unknown'}
           avatar={participants.get(message.user_id)?.avatar ?? 'default-avatar-url'}
