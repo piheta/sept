@@ -3,7 +3,6 @@
     import { message_store } from '../stores/messageStore.js';
     import { selection_store } from '../stores/selectionStore.js';
 
-
     export let recipient;
     let input_txt = "";
 
@@ -14,25 +13,12 @@
 
             input_txt
             let allMessagesInChat = await SendMessage(message, chat_id);
-
-            // Check if the response is a JSON string and parse it if necessary
-            let parsedData;
-            if (typeof allMessagesInChat === 'string') {
-                parsedData = JSON.parse(allMessagesInChat);
-            } else {
-                parsedData = allMessagesInChat;
-            }
-
-            // Set the parsed JSON data to the message store
-            message_store.set(parsedData);
+            message_store.set(allMessagesInChat);
             input_txt = ""
-
-            console.log("Message sent and response received: ", parsedData);
         } catch (error) {
             console.error("Error sending message: ", error);
         }
     }
-
 
     function handleKeyDown(event) {
         if (event.key === 'Enter' && !event.shiftKey) {
