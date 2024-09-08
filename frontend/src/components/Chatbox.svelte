@@ -57,8 +57,8 @@
     $: $selection_store, getMessages(); // Trigger getMessages whenever selection_store changes
 </script>
 
-<div bind:this={chatbox} class="bg-gray-700 flex-grow h-20 rounded-md overflow-auto mt-2 p-2 scrollbar-chatbox flex flex-col-reverse">
-    <div>
+<div bind:this={chatbox} class="bg-gray-700 flex-grow h-20 rounded-md overflow-auto mt-2 scrollbar-chatbox flex flex-col-reverse">
+    <div class="p-2">
         {#each $message_store as message, i}
             <Message
                 content={message.content}
