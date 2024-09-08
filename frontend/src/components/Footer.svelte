@@ -10,7 +10,6 @@
         input_txt = input_txt.trim()
         if (input_txt.length < 1) return;
         try {
-
             input_txt
             let allMessagesInChat = await SendMessage(message, chat_id);
             message_store.set(allMessagesInChat);
