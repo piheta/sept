@@ -7,8 +7,6 @@
     export let index;
     export let username;
     export let avatar;
-
-    console.log(last_sender_user_id, user_id)
 </script>
 
 {#if last_sender_user_id !== user_id || (index > 0 && (new Date(created_at).getTime() - new Date(last_message_create_at).getTime()) > 1 * 60 * 1000)}

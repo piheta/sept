@@ -2,7 +2,6 @@ package db
 
 import (
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -71,16 +70,8 @@ func AddMessage(chatID int, userID int, content string) {
 	}
 }
 
-type Message struct {
-	ID        int    `json:"id"`
-	ChatID    int    `json:"chat_id"`
-	UserID    int    `json:"user_id"`
-	Content   string `json:"content"`
-	CreatedAt string `json:"created_at"`
-}
-
 // GetMessagesByChatID retrieves all messages for a specific chat
-func GetMessagesByChatID(chatID int) string {
+func GetMessagesByChatID(chatID int) []models.Message {
 	db, err := sql.Open("sqlite3", "./infra/db/sept.db")
 	if err != nil {
 		log.Fatal(err)
@@ -99,9 +90,9 @@ func GetMessagesByChatID(chatID int) string {
 	}
 	defer rows.Close()
 
-	var messages []Message
+	var messages []models.Message
 	for rows.Next() {
-		var msg Message
+		var msg models.Message
 		if err := rows.Scan(&msg.ID, &msg.ChatID, &msg.UserID, &msg.Content, &msg.CreatedAt); err != nil {
 			log.Fatal(err)
 		}
@@ -113,16 +104,10 @@ func GetMessagesByChatID(chatID int) string {
 		log.Fatal(err)
 	}
 
-	// Convert messages slice to JSON
-	messagesJSON, err := json.Marshal(messages)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return string(messagesJSON)
+	return messages
 }
 
-func GetUser(userID int) models.User_model {
+func GetUser(userID int) models.User {
 	db, err := sql.Open("sqlite3", "./infra/db/sept.db")
 	if err != nil {
 		log.Fatal(err)
@@ -137,7 +122,7 @@ func GetUser(userID int) models.User_model {
 
 	row := db.QueryRow(query, userID)
 
-	var user models.User_model
+	var user models.User
 	err = row.Scan(&user.ID, &user.UserID, &user.Username, &user.Ip, &user.Avatar)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -150,7 +135,7 @@ func GetUser(userID int) models.User_model {
 	return user
 }
 
-func GetAllUsers() []models.User_model {
+func GetAllUsers() []models.User {
 	db, err := sql.Open("sqlite3", "./infra/db/sept.db")
 	if err != nil {
 		log.Fatal(err)
@@ -168,9 +153,9 @@ func GetAllUsers() []models.User_model {
 	}
 	defer rows.Close()
 
-	var users []models.User_model
+	var users []models.User
 	for rows.Next() {
-		var user models.User_model
+		var user models.User
 		if err := rows.Scan(&user.ID, &user.UserID, &user.Username, &user.Ip, &user.Avatar); err != nil {
 			log.Fatal(err)
 		}

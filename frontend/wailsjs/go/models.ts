@@ -1,25 +1,26 @@
-export namespace main {
+export namespace models {
 	
-	export class server_model {
+	export class Message {
 	    id: number;
-	    name: string;
+	    chat_id: number;
+	    user_id: number;
+	    content: string;
+	    created_at: string;
 	
 	    static createFrom(source: any = {}) {
-	        return new server_model(source);
+	        return new Message(source);
 	    }
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.id = source["id"];
-	        this.name = source["name"];
+	        this.chat_id = source["chat_id"];
+	        this.user_id = source["user_id"];
+	        this.content = source["content"];
+	        this.created_at = source["created_at"];
 	    }
 	}
-
-}
-
-export namespace models {
-	
-	export class User_model {
+	export class User {
 	    id: number;
 	    user_id: string;
 	    username: string;
@@ -27,7 +28,7 @@ export namespace models {
 	    avatar: string;
 	
 	    static createFrom(source: any = {}) {
-	        return new User_model(source);
+	        return new User(source);
 	    }
 	
 	    constructor(source: any = {}) {

@@ -16,4 +16,29 @@
   .wails-drag {
     --wails-draggable: drag;
   }
+
+  .scrollbar-chatbox {
+    overflow: hidden; /* Hide scrollbar by default */
+    scrollbar-color: theme("colors.gray.900") rgba(0,0,0,0); /* Style scrollbar color */
+  }
+
+  .scrollbar-chatbox:hover {
+      overflow: auto; /* Show scrollbar on hover */
+  }
+
+  /* For Webkit browsers (Chrome, Safari) */
+  .scrollbar-chatbox::-webkit-scrollbar {
+      width: 12px; /* Full width of the scrollbar */
+  }
+
+  .scrollbar-chatbox::-webkit-scrollbar-thumb {
+      background-color: theme("colors.gray.900");
+      border-radius: 8px;
+      border: 2px solid theme("colors.gray.700"); /* Creates space around the thumb */
+      box-sizing: border-box; /* Ensure the border adds space inside the track */
+  }
+
+  .scrollbar-chatbox::-webkit-scrollbar-track {
+      background-color: rgba(0,0,0,0); /* Track background */
+  }
 }
