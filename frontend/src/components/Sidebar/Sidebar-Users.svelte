@@ -1,56 +1,27 @@
 <script>
-    import { GetUsers, GetRooms } from "../../../wailsjs/go/main/App.js";
+    import { GetUsers } from "../../../wailsjs/go/main/App.js";
     import List from "./List.svelte";
+    import { selection_store } from '../../stores/selectionStore.js';
 
     let users = [];
-    let rooms = [];
     let showUsers = true;
-    let showRooms = true;
-    let selection = { type: 0, value: "" };
 
     async function getUsers() {
         const result = await GetUsers();
         console.log("Received users:", result);
         users = result;
-        if (users.length > 0) {
-            setSelection({ type: 0, value: users[0] });
+        if (users.length > 0 && $selection_store.username == "none") { //Automatically selects the first user: If there are users available and no user has been selected yet
+            $selection_store = users[0]
         }
     }
 
-    async function getRooms() {
-        const result = await GetRooms();
-        console.log("Received rooms:", result);
-        rooms = result;
-    }
-
-    function setSelection(obj) {
-        selection = obj;
-    }
-
-    function handleSelect(event) {
-        setSelection({ type: event.detail.type, value: event.detail.item });
-    }
 
     getUsers();
-    getRooms();
 </script>
 
 <List
     title="Friends"
     items={users}
-    selectedItem={selection.value}
     collapsible={true}
-    on:select={(event) =>
-        handleSelect({ detail: { type: 0, item: event.detail } })}
     bind:showItems={showUsers}
-/>
-
-<List
-    title="Friend-Group-1"
-    items={rooms}
-    selectedItem={selection.value}
-    collapsible={true}
-    on:select={(event) =>
-        handleSelect({ detail: { type: 1, item: event.detail } })}
-    bind:showItems={showRooms}
 />

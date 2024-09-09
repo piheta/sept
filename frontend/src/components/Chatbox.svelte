@@ -58,7 +58,7 @@
 </script>
 
 <div bind:this={chatbox} class="bg-gray-700 flex-grow h-20 rounded-md overflow-auto mt-2 scrollbar-chatbox flex flex-col-reverse">
-    <div class="p-2">
+    <div class="p-2 pointer-events-none">
         {#each $message_store as message, i}
             <Message
                 content={message.content}

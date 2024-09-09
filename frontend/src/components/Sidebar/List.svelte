@@ -1,15 +1,14 @@
 <script>
-    import { createEventDispatcher } from "svelte";
+    import { afterUpdate, createEventDispatcher } from "svelte";
     import ListElement from "./ListElement.svelte";
+    import DragDropList, { VerticalDropZone, reorder } from "svelte-dnd-list";
+    import { selection_store } from '../../stores/selectionStore.js';
 
     export let title = "";
     export let collapsible = false;
     export let draggable;
     export let showItems = true;
     export let items = [];
-    export let selectedItem = null;
-
-    const dispatch = createEventDispatcher();
 
     function toggleShow() {
         if (collapsible) {
@@ -17,11 +16,8 @@
         }
     }
 
-    function handleSelect(item) {
-        dispatch("select", item);
-    }
 
-    import DragDropList, { VerticalDropZone, reorder } from "svelte-dnd-list";
+
 
     function onDrop({ detail: { from, to } }) {
         if (!to || from === to) {
@@ -85,14 +81,13 @@
         >
             <ListElement
                 item={items[index]}
-                selected={items[index] === selectedItem}
+                selected={items[index].id === $selection_store.id}
                 isLast={items[index].id === items[items.length - 1].id}
-                on:select={() => handleSelect(items[index])}
             />
         </DragDropList>
-    {:else if !showItems && items.includes(selectedItem)}
+    {:else if !showItems && items.some(item => item.id === $selection_store.id)}
         <ListElement
-        item={selectedItem}
+        item={$selection_store}
         selected={true}
         isLast={true}
     />

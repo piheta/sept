@@ -16,7 +16,6 @@
                 ip: item.ip,
                 avatar: item.avatar
             });
-            dispatch("select", item);
         }
     }
 
@@ -28,10 +27,8 @@
             ip: item.ip,
             avatar: item.avatar
          });
-        dispatch("select", item)
     }
 
-    const dispatch = createEventDispatcher();
 </script>
 
 <li
