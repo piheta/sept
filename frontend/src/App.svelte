@@ -6,8 +6,7 @@
     import Header from "./components/Header.svelte";
     import Messages from "./components/Chatbox.svelte";
     import Chatbox from "./components/Chatbox.svelte";
-    import Login from "./Login.svelte";
-    import Register from "./Register.svelte";
+    import Auth from "./Auth.svelte";
     
     let width = 205;
     let resizeWidth = width;
@@ -33,7 +32,7 @@
 </script>
 
 <main class="h-full">
-    <Register />
+    <Auth />
     <div class="wails-drag w-full h-6 m-0"></div>
     <div class="flex w-full h-[calc(100vh-1.5rem)]">
         <div

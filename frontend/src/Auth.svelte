@@ -6,6 +6,11 @@
     let email = '';
     let password = '';
     let showPassword = false;
+    let login = true;
+
+    function toggleLogin() {
+        login = !login;
+    }
 
     function togglePassword() {
         showPassword = !showPassword;
@@ -26,7 +31,7 @@
 
 <div class="h-[100vh] w-full flex justify-center items-center">
     <div class="pr-6">
-        <pre class="text-2xl text-gray-900 font-bold">
+        <pre class="text-2xl text-gray-900 font-bold translate-y-[0.35rem]">
 ╔═╗╔═╗╔═╗╔╦╗
 ╚═╗╠═ ╠═╝ ║
 ╠═╝╚═╝╩   ╩
@@ -37,7 +42,15 @@
         <fieldset>
             <!-- <legend class="text-center text-white mb-4 text-lg">Register</legend> -->
             <div class="flex flex-col w-56">
-                <label for="username">Register</label>
+                <!-- <label class="cursor-pointer" for="username">Register <span class="text-gray-400 pl-2">Login</span></label> 
+                <label class="cursor-pointer" for="username">Login <span on:click={login=!login} class="text-gray-400 pl-2">Register</span></label>  -->
+                <label for="username">
+                    {login ? 'Login' : 'Register'} 
+                    <span on:click={toggleLogin} class="text-gray-400 pl-2 hover:underline cursor-pointer">
+                      {login ? 'Register' : 'Login'}
+                    </span>
+                  </label>
+
                 <div class="flex relative mt-2 mb-2 h-8">
                     <svg class="absolute left-2 top-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></g></svg>
                     <input
@@ -51,18 +64,19 @@
                 </div>
 
                 <!-- <label for="user-email">Email:</label> -->
-                <div class="flex relative mb-2 h-8">
-                    <svg class="absolute left-2 top-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></g></svg>
-                    <input
-                        id="user-email"
-                        bind:value={email}
-                        type="email"
-                        class="w-full bg-gray-900 text-white placeholder-gray-500 rounded-md pl-8 focus:outline-none"
-                        placeholder="Email"
-                    />
-                </div>
+                 {#if !login}
+                    <div class="flex relative mb-2 h-8">
+                        <svg class="absolute left-2 top-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></g></svg>
+                        <input
+                            id="user-email"
+                            bind:value={email}
+                            type="email"
+                            class="w-full bg-gray-900 text-white placeholder-gray-500 rounded-md pl-8 focus:outline-none"
+                            placeholder="Email"
+                        />
+                    </div>
+                {/if}
 
-                <!-- <label for="password">Password:</label> -->
                 <div class="flex relative mb-2 h-8">
                     <svg class="absolute left-2 top-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"/><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/></svg>
                     {#if showPassword}
@@ -96,7 +110,7 @@
 
                 </div>
 
-                {#if password.length > 0}
+                {#if !login && password.length > 0}
                     <div class="text-[0.9rem]" transition:slide>
                         <p class="flex"><Checkmark hide={password.length < 8} /> At least 8 characters long</p>
                         <p class="flex"><Checkmark hide={!/[a-z]/.test(password)} /> At least 1 lowercase letter</p>
@@ -105,7 +119,7 @@
                         <p class="flex"><Checkmark hide={!/\d/.test(password)} /> At least 1 number</p>
                     </div>
                 {/if}
-                <input class="bg-gray-700 text-white mt-4 h-8 rounded-md cursor-pointer" type="submit" value="Register">
+                <input class="bg-gray-700 text-white mt-2 h-8 rounded-md cursor-pointer" type="submit" value={login ? 'Login' : 'Register'}>
             </div>
         </fieldset>
     </form>
