@@ -31,7 +31,7 @@
 
 <div class="h-[100vh] w-full flex justify-center items-center">
     <div class="pr-6">
-        <pre class="text-2xl text-gray-900 font-bold translate-y-[0.35rem]">
+        <pre class="text-2xl text-gray-900 font-bold translate-y-[0.35rem] leading-6">
 ╔═╗╔═╗╔═╗╔╦╗
 ╚═╗╠═ ╠═╝ ║
 ╠═╝╚═╝╩   ╩
@@ -42,8 +42,6 @@
         <fieldset>
             <!-- <legend class="text-center text-white mb-4 text-lg">Register</legend> -->
             <div class="flex flex-col w-56">
-                <!-- <label class="cursor-pointer" for="username">Register <span class="text-gray-400 pl-2">Login</span></label> 
-                <label class="cursor-pointer" for="username">Login <span on:click={login=!login} class="text-gray-400 pl-2">Register</span></label>  -->
                 <label for="username">
                     {login ? 'Login' : 'Register'} 
                     <span on:click={toggleLogin} class="text-gray-400 pl-2 hover:underline cursor-pointer">
