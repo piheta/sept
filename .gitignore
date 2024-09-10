@@ -16,4 +16,5 @@ node_modules
 frontend/dist
 
 # Ignore db
-sept.db
+*.db
+*.salt
