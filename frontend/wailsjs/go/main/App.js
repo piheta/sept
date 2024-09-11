@@ -18,6 +18,14 @@ export function GetUsers() {
   return window['go']['main']['App']['GetUsers']();
 }
 
+export function Login(arg1, arg2) {
+  return window['go']['main']['App']['Login'](arg1, arg2);
+}
+
+export function Register(arg1, arg2, arg3) {
+  return window['go']['main']['App']['Register'](arg1, arg2, arg3);
+}
+
 export function SendMessage(arg1, arg2) {
   return window['go']['main']['App']['SendMessage'](arg1, arg2);
 }

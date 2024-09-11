@@ -1,5 +1,4 @@
 <script>
-    import { createEventDispatcher } from "svelte";
     import { selection_store } from "../../stores/selectionStore.js"
 
     export let item;

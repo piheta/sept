@@ -1,25 +1,44 @@
 <script>
     import { slide } from 'svelte/transition';
-    import Checkmark from './assets/icons/Checkmark.svelte';
+    import Checkmark from '../assets/icons/Checkmark.svelte';
+    import { auth_store } from "../stores/authStore.js"
+    import { Register, Login } from '../../wailsjs/go/main/App';
 
     let username = '';
     let email = '';
     let password = '';
     let showPassword = false;
-    let login = true;
+    let loginForm = true;
 
-    function toggleLogin() {
-        login = !login;
+    function toggleLoginForm() {
+        loginForm = !loginForm;
     }
 
     function togglePassword() {
         showPassword = !showPassword;
     }
 
-    function handleSubmit(event) {
+
+    async function handleSubmit(event) {
         event.preventDefault();
-        // Handle form submission
-        console.log({ username, email, password });
+
+        if (!loginForm) {
+            await Register(username,email,password)
+            toggleLoginForm()
+            return
+        }
+
+        let jwt = await Login(email,password)
+
+        // get payload from jwt
+        // auth_store.set({
+        //     id: 1,
+        //     user_id: payload.user.id,
+        //     username: payload.user.name,
+        //     ip: "127.0.0.1",
+        //     avatar: getRandomAvatar()
+        // });
+
     }
 </script>
 
@@ -29,9 +48,12 @@
     }
 </style>
 
+<div class="absolute top-0 w-full h-20 wails-drag">
+
+</div>
 <div class="h-[100vh] w-full flex justify-center items-center">
     <div class="pr-6">
-        <pre class="text-2xl text-gray-900 font-bold translate-y-[0.35rem] leading-6">
+        <pre class="text-2xl text-gray-900 font-bold translate-y-[0.35rem] leading-6 select-none cursor-default">
 ╔═╗╔═╗╔═╗╔╦╗
 ╚═╗╠═ ╠═╝ ║
 ╠═╝╚═╝╩   ╩
@@ -43,34 +65,34 @@
             <!-- <legend class="text-center text-white mb-4 text-lg">Register</legend> -->
             <div class="flex flex-col w-56">
                 <label for="username">
-                    {login ? 'Login' : 'Register'} 
-                    <span on:click={toggleLogin} class="text-gray-400 pl-2 hover:underline cursor-pointer">
-                      {login ? 'Register' : 'Login'}
+                    {loginForm ? 'Login' : 'Register'} 
+                    <span on:click={toggleLoginForm} class="text-gray-400 pl-2 hover:underline cursor-pointer">
+                      {loginForm ? 'Register' : 'Login'}
                     </span>
                   </label>
-
-                <div class="flex relative mt-2 mb-2 h-8">
-                    <svg class="absolute left-2 top-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></g></svg>
+                  
+                <div class="flex relative mb-2 mt-2 h-8">
+                    <svg class="absolute left-2 top-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></g></svg>
                     <input
-                        id="username"
-                        bind:value={username}
-                        type="text"
+                        id="user-email"
+                        bind:value={email}
+                        type="email"
                         class="w-full bg-gray-900 text-white placeholder-gray-500 rounded-md pl-8 focus:outline-none"
-                        placeholder="Username"
-                        autofocus
+                        placeholder="Email"
                     />
                 </div>
 
                 <!-- <label for="user-email">Email:</label> -->
-                 {#if !login}
+                 {#if !loginForm}
                     <div class="flex relative mb-2 h-8">
-                        <svg class="absolute left-2 top-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></g></svg>
+                        <svg class="absolute left-2 top-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></g></svg>
                         <input
-                            id="user-email"
-                            bind:value={email}
-                            type="email"
+                            id="username"
+                            bind:value={username}
+                            type="text"
                             class="w-full bg-gray-900 text-white placeholder-gray-500 rounded-md pl-8 focus:outline-none"
-                            placeholder="Email"
+                            placeholder="Username"
+                            autofocus
                         />
                     </div>
                 {/if}
@@ -108,7 +130,7 @@
 
                 </div>
 
-                {#if !login && password.length > 0}
+                {#if !loginForm && password.length > 0}
                     <div class="text-[0.9rem]" transition:slide>
                         <p class="flex"><Checkmark hide={password.length < 8} /> At least 8 characters long</p>
                         <p class="flex"><Checkmark hide={!/[a-z]/.test(password)} /> At least 1 lowercase letter</p>
@@ -117,7 +139,7 @@
                         <p class="flex"><Checkmark hide={!/\d/.test(password)} /> At least 1 number</p>
                     </div>
                 {/if}
-                <input class="bg-gray-700 text-white mt-2 h-8 rounded-md cursor-pointer" type="submit" value={login ? 'Login' : 'Register'}>
+                <input class="bg-gray-700 text-white mt-2 h-8 rounded-md cursor-pointer" type="submit" value={loginForm ? 'Login' : 'Register'}>
             </div>
         </fieldset>
     </form>
