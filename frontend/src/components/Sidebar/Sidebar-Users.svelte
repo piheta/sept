@@ -10,7 +10,8 @@
         const result = await GetUsers();
         console.log("Received users:", result);
         users = result;
-        if (users.length > 0 && $selection_store.username == "none") { //Automatically selects the first user: If there are users available and no user has been selected yet
+        if (users.length > 0 && $selection_store.username) { //Automatically selects the first user: If there are users available and no user has been selected yet
+            console.log(users[0])
             $selection_store = users[0]
         }
     }

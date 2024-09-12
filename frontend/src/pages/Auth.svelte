@@ -28,16 +28,19 @@
             return
         }
 
-        let jwt = await Login(email,password)
+        let user = await Login(email,password)
 
+        //chech jwt signature then set auth_store and go to dashboard
+        
+        
         // get payload from jwt
-        // auth_store.set({
-        //     id: 1,
-        //     user_id: payload.user.id,
-        //     username: payload.user.name,
-        //     ip: "127.0.0.1",
-        //     avatar: getRandomAvatar()
-        // });
+        auth_store.set({
+            id: 1,
+            user_id: user.user_id,
+            username: user.username,
+            ip: user.ip,
+            avatar: user.avatar
+        });
 
     }
 </script>

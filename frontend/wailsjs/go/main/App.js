@@ -6,10 +6,6 @@ export function GetChatMessages(arg1) {
   return window['go']['main']['App']['GetChatMessages'](arg1);
 }
 
-export function GetRooms() {
-  return window['go']['main']['App']['GetRooms']();
-}
-
 export function GetUser(arg1) {
   return window['go']['main']['App']['GetUser'](arg1);
 }

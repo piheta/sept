@@ -29,18 +29,12 @@ func (a *App) startup(ctx context.Context) {
 	//get latest version
 }
 
-var user_group = []models.User{}
-
 func (a *App) GetUsers() ([]models.User, error) {
 	users, err := db.GetAllUsers()
 	if err != nil {
 		return nil, fmt.Errorf("error sending HTTP request: %w", err)
 	}
 	return users, nil
-}
-
-func (a *App) GetRooms() []models.User {
-	return user_group
 }
 
 func (a *App) SendMessage(message string, chat_id int) ([]models.Message, error) {
@@ -59,7 +53,7 @@ func (a *App) GetUser(user_id int) (models.User, error) {
 	return db.GetUser(user_id)
 }
 
-func (a *App) Login(email, password string) (*string, error) {
+func (a *App) Login(email, password string) (*models.User, error) {
 	data := map[string]string{
 		"email":    email,
 		"password": password,
@@ -95,11 +89,13 @@ func (a *App) Login(email, password string) (*string, error) {
 		return nil, fmt.Errorf("token not found in response")
 	}
 
-	db.InitDb(user.UserID, password)
-	// db.CreateSaltFile(user.UserID)
+	db.InitDb(user.UserID, password) // creates db and salt file for future encryption.
 	db.AddUser(user)
+	db.AddChat(user.Username) // Create chat named the same as the username of the user
+	chat, _ := db.GetChatByName(user.Username)
+	db.AddUserToChat(user.UserID, chat.ID) // link user with the chat
 
-	return &token, nil
+	return &user, nil
 }
 
 func (a *App) Register(username, email, password string) (*map[string]interface{}, error) {
@@ -159,7 +155,7 @@ func extractUserFromUnverifiedClaims(tokenString string) (models.User, error) {
 		UserID:   user_id,
 		Username: username,
 		Ip:       "127.0.0.1",
-		Avatar:   "",
+		Avatar:   "https://fuibax.github.io/images/fulls/knight_sylvia.png",
 	}
 
 	return user, nil

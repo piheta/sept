@@ -8,10 +8,9 @@ import (
 	"os"
 	"sync"
 
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/piheta/sept/models"
 	"golang.org/x/crypto/argon2"
-
-	_ "github.com/mattn/go-sqlite3"
 )
 
 const (
@@ -169,9 +168,22 @@ func GetMessagesByChatID(chatID int) ([]models.Message, error) {
 	return messages, nil
 }
 
+func AddChat(name string) error {
+	query := `INSERT OR IGNORE INTO chats (name) VALUES (?)`
+	chat, err := db.Exec(query, name)
+	fmt.Println(chat)
+	return err
+}
+
 func AddUser(user models.User) error {
 	query := `INSERT OR IGNORE INTO users (user_id, username, ip, avatar) VALUES (?, ?, ?, ?)`
 	_, err := db.Exec(query, user.UserID, user.Username, user.Ip, user.Avatar)
+	return err
+}
+
+func AddUserToChat(user_id string, chat_id int) error {
+	query := `INSERT OR IGNORE INTO user_chats (user_id, chat_id) VALUES (?, ?)`
+	_, err := db.Exec(query, user_id, chat_id)
 	return err
 }
 
@@ -212,6 +224,23 @@ func GetAllUsers() ([]models.User, error) {
 		return nil, err
 	}
 	return users, nil
+}
+
+func GetChatByName(chatName string) (models.Chat, error) {
+	query := `
+		SELECT id, name
+		FROM chats
+		WHERE name = ?
+	`
+	var chat models.Chat
+	err := db.QueryRow(query, chatName).Scan(&chat.ID, &chat.Name)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return models.Chat{}, fmt.Errorf("chat with name %s not found", chatName)
+		}
+		return models.Chat{}, err
+	}
+	return chat, nil
 }
 
 // CloseDB closes the database connection
