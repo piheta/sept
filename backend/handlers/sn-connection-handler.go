@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
-	"github.com/piheta/sept/models"
+	"github.com/piheta/sept/backend/models"
 	"github.com/pion/webrtc/v4"
 )
 

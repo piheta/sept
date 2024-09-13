@@ -9,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/pion/webrtc/v4"
 
-	"github.com/piheta/sept/models"
+	"github.com/piheta/sept/backend/models"
 )
 
 var (

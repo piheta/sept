@@ -1,7 +1,7 @@
 package peer
 
 import (
-	"github.com/piheta/sept/infra/handlers"
+	"github.com/piheta/sept/backend/handlers"
 )
 
 func Peer() {

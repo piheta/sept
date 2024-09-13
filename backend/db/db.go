@@ -9,7 +9,7 @@ import (
 	"sync"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/piheta/sept/models"
+	"github.com/piheta/sept/backend/models"
 	"golang.org/x/crypto/argon2"
 )
 
@@ -33,8 +33,8 @@ func InitDb(id, password string) error {
 	dbMutex.Lock()
 	defer dbMutex.Unlock()
 
-	dbName = "./infra/db/" + id + ".db"
-	saltName = "./infra/db/" + id + ".salt"
+	dbName = "./sept_data/" + id + ".db"
+	saltName = "./sept_data/" + id + ".salt"
 
 	// Create or load salt
 	salt, err := loadOrCreateSalt()
@@ -115,7 +115,7 @@ func createTablesIfNotExist() error {
 	}
 
 	// Read schema from file
-	schema, err := os.ReadFile("./infra/db/schema.sql")
+	schema, err := os.ReadFile("./backend/db/schema.sql")
 	if err != nil {
 		return err
 	}

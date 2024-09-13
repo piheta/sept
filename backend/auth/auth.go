@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/piheta/sept/infra/db"
-	"github.com/piheta/sept/models"
+	"github.com/piheta/sept/backend/db"
+	"github.com/piheta/sept/backend/models"
 )
 
 func Login(email, password string) (*models.User, error) {

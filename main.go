@@ -11,7 +11,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
 
-	"github.com/piheta/sept/infra"
+	peer "github.com/piheta/sept/backend"
 )
 
 //go:embed all:frontend/dist
