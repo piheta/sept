@@ -31,11 +31,14 @@ func Signaling(c *websocket.Conn) {
 	clients[c] = c.RemoteAddr().String()
 	clientsLock.Unlock()
 
-	// Send the list of connected IPs to the client
+	// Send the list of connected IPs (excluding the client's own IP) to the client
 	clientsLock.Lock()
 	var ips []string
+	clientIP := c.RemoteAddr().String() // Get the current client's IP
 	for _, ip := range clients {
-		ips = append(ips, ip)
+		if ip != clientIP { // Exclude the client's own IP:port
+			ips = append(ips, ip)
+		}
 	}
 	clientsLock.Unlock()
 
