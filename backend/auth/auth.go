@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/golang-jwt/jwt"
@@ -47,6 +48,10 @@ func Login(email, password string) (*models.User, error) {
 		return nil, fmt.Errorf("token not found in response")
 	}
 
+	if err := VerifyToken(token); err != nil {
+		return nil, fmt.Errorf("failed to verify token")
+	}
+
 	db.InitDb(user.UserID, password) // creates db and salt file for future encryption.
 	db.AddUser(user)
 	db.AddChat(user.Username) // Create chat named the same as the username of the user
@@ -55,10 +60,6 @@ func Login(email, password string) (*models.User, error) {
 
 	return &user, nil
 }
-
-// func IsTokenValid() bool {
-
-// }
 
 func Register(username, email, password string) (*map[string]interface{}, error) {
 	fmt.Println(username, email, password)
@@ -121,4 +122,49 @@ func extractUserFromUnverifiedClaims(tokenString string) (models.User, error) {
 	}
 
 	return user, nil
+}
+
+type PublicKeyResponse struct {
+	PublicKey string `json:"public_key"`
+}
+
+func VerifyToken(tokenString string) error {
+	resp, err := http.Get("http://localhost:8080/api/key")
+	if err != nil {
+		return fmt.Errorf("error fetching public key: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return fmt.Errorf("error reading response body: %w", err)
+	}
+
+	var keyResp PublicKeyResponse
+	err = json.Unmarshal(body, &keyResp)
+	if err != nil {
+		return fmt.Errorf("error unmarshaling JSON: %w", err)
+	}
+
+	// Parse the public key
+	publicKey, err := jwt.ParseECPublicKeyFromPEM([]byte(keyResp.PublicKey))
+	if err != nil {
+		return fmt.Errorf("error parsing public key: %w", err)
+	}
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodECDSA); !ok { // Verify the signing method
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return publicKey, nil
+	})
+	if err != nil {
+		return fmt.Errorf("invalid token: %w", err)
+	}
+
+	if !token.Valid {
+		return fmt.Errorf("token is not valid")
+	}
+
+	return nil // Token is valid
 }
