@@ -109,26 +109,12 @@
         </div>
 
         <div class="flex relative mt-2 mb-2 ml-2 h-8">
-            <svg
-                class="absolute left-2 top-2 text-gray-500"
-                xmlns="http://www.w3.org/2000/svg"
-                width="1em"
-                height="1em"
-                viewBox="0 0 24 24"
-                ><g
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    ><circle cx="11" cy="11" r="8" /><path
-                        d="m21 21l-4.3-4.3"
-                    /></g
-                ></svg
-            >
+            <svg class="absolute left-2 top-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="11" cy="11" r="8" /><path d="m21 21l-4.3-4.3"/></g></svg>
             <input
                 class="w-full bg-gray-900 placeholder-gray-500 rounded-md pl-8 focus:outline-none"
                 placeholder="Search"
+                autocapitalize="off"
+                autocomplete="off"
             />
         </div>
     </div>

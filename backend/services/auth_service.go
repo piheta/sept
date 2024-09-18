@@ -1,4 +1,4 @@
-package auth
+package services
 
 import (
 	"bytes"
@@ -52,7 +52,10 @@ func Login(email, password string) (*models.User, error) {
 		return nil, fmt.Errorf("failed to verify token")
 	}
 
+	//FIRST TIME LOGIN
 	db.InitDb(user.UserID, password) // creates db and salt file for future encryption.
+	//CREATE KEYPAIR
+	SetUpKeys()
 	db.AddUser(user)
 	db.AddChat(user.Username) // Create chat named the same as the username of the user
 	chat, _ := db.GetChatByName(user.Username)
@@ -124,30 +127,13 @@ func extractUserFromUnverifiedClaims(tokenString string) (models.User, error) {
 	return user, nil
 }
 
-type PublicKeyResponse struct {
-	PublicKey string `json:"public_key"`
-}
-
 func VerifyToken(tokenString string) error {
-	resp, err := http.Get("http://localhost:8080/api/key")
+	publicKeyString, err := GetPublicKey()
 	if err != nil {
-		return fmt.Errorf("error fetching public key: %w", err)
-	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return fmt.Errorf("error reading response body: %w", err)
+		return fmt.Errorf("error retrieving the public key: %w", err)
 	}
 
-	var keyResp PublicKeyResponse
-	err = json.Unmarshal(body, &keyResp)
-	if err != nil {
-		return fmt.Errorf("error unmarshaling JSON: %w", err)
-	}
-
-	// Parse the public key
-	publicKey, err := jwt.ParseECPublicKeyFromPEM([]byte(keyResp.PublicKey))
+	publicKey, err := jwt.ParseECPublicKeyFromPEM([]byte(publicKeyString))
 	if err != nil {
 		return fmt.Errorf("error parsing public key: %w", err)
 	}
@@ -167,4 +153,25 @@ func VerifyToken(tokenString string) error {
 	}
 
 	return nil // Token is valid
+}
+
+func GetPublicKey() (string, error) {
+	resp, err := http.Get("http://localhost:8080/api/key")
+	if err != nil {
+		return "", fmt.Errorf("error fetching public key: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("error reading response body: %w", err)
+	}
+
+	var keyResp models.PublicKeyResponse
+	err = json.Unmarshal(body, &keyResp)
+	if err != nil {
+		return "", fmt.Errorf("error unmarshaling JSON: %w", err)
+	}
+
+	return keyResp.PublicKey, nil
 }

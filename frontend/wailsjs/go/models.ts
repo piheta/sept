@@ -6,6 +6,7 @@ export namespace models {
 	    user_id: number;
 	    content: string;
 	    created_at: string;
+	    signature: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Message(source);
@@ -18,6 +19,7 @@ export namespace models {
 	        this.user_id = source["user_id"];
 	        this.content = source["content"];
 	        this.created_at = source["created_at"];
+	        this.signature = source["signature"];
 	    }
 	}
 	export class User {

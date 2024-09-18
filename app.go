@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/piheta/sept/backend/auth"
 	"github.com/piheta/sept/backend/db"
 	"github.com/piheta/sept/backend/models"
+	"github.com/piheta/sept/backend/services"
 )
 
 type App struct {
@@ -47,9 +47,9 @@ func (a *App) GetUser(user_id int) (models.User, error) {
 }
 
 func (a *App) Login(email, password string) (*models.User, error) {
-	return auth.Login(email, password)
+	return services.Login(email, password)
 }
 
 func (a *App) Register(username, email, password string) (*map[string]interface{}, error) {
-	return auth.Register(username, email, password)
+	return services.Register(username, email, password)
 }
