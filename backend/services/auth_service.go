@@ -53,13 +53,13 @@ func Login(email, password string) (*models.User, error) {
 	}
 
 	//FIRST TIME LOGIN
-	db.InitDb(user.UserID, password) // creates db and salt file for future encryption.
+	db.InitDb(user.ID, password) // creates db and salt file for future encryption.
 	//CREATE KEYPAIR
 	SetUpKeys()
 	db.AddUser(user)
 	db.AddChat(user.Username) // Create chat named the same as the username of the user
 	chat, _ := db.GetChatByName(user.Username)
-	db.AddUserToChat(user.UserID, chat.ID) // link user with the chat
+	db.AddUserToChat(user.ID, chat.ID) // link user with the chat
 
 	return &user, nil
 }
@@ -118,10 +118,11 @@ func extractUserFromUnverifiedClaims(tokenString string) (models.User, error) {
 	}
 
 	user := models.User{
-		UserID:   user_id,
-		Username: username,
-		Ip:       "127.0.0.1",
-		Avatar:   "https://fuibax.github.io/images/fulls/knight_sylvia.png",
+		ID:        user_id,
+		Username:  username,
+		Ip:        "127.0.0.1",
+		Avatar:    "https://fuibax.github.io/images/fulls/knight_sylvia.png",
+		PublicKey: "",
 	}
 
 	return user, nil

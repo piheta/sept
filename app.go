@@ -42,7 +42,7 @@ func (a *App) GetChatMessages(chat_id int) ([]models.Message, error) {
 	return db.GetMessagesByChatID(chat_id)
 }
 
-func (a *App) GetUser(user_id int) (models.User, error) {
+func (a *App) GetUser(user_id string) (models.User, error) {
 	return db.GetUser(user_id)
 }
 
