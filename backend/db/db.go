@@ -1,7 +1,6 @@
 package db
 
 import (
-	"crypto/rand"
 	"database/sql"
 	"fmt"
 	"os"
@@ -10,23 +9,12 @@ import (
 	"github.com/google/uuid"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/piheta/sept/backend/models"
-	"golang.org/x/crypto/argon2"
-)
-
-const (
-	saltSize = 16
-	keySize  = 32
-	time     = 1
-	memory   = 64 * 1024
-	threads  = 4
 )
 
 var (
-	db         *sql.DB
-	dbMutex    sync.Mutex
-	dbName     string
-	saltName   string
-	encryptKey []byte
+	db      *sql.DB
+	dbMutex sync.Mutex
+	dbName  string
 )
 
 func InitDb(id, password string) error {
@@ -34,36 +22,23 @@ func InitDb(id, password string) error {
 	defer dbMutex.Unlock()
 
 	dbName = "./sept_data/" + id + ".db"
-	saltName = "./sept_data/" + id + ".salt"
 
-	// Create or load salt
-	salt, err := loadOrCreateSalt()
-	if err != nil {
-		return fmt.Errorf("failed to load or create salt: %w", err)
-	}
-
-	// Derive encryption key
-	encryptKey = deriveKey(password, salt)
-	// keyHex := hex.EncodeToString(encryptKey)
-
+	var err error
 	db, err = sql.Open("sqlite3", dbName)
 	if err != nil {
 		return fmt.Errorf("failed to open database: %w", err)
 	}
-	// Test the connection
+
 	err = db.Ping()
 	if err != nil {
 		return fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	// Check if tables exist, create if not
 	err = createTablesIfNotExist()
 	if err != nil {
-		fmt.Println("WORK5", err)
 		return fmt.Errorf("failed to create tables: %w", err)
 	}
 
-	// Set permissions for the database file
 	err = os.Chmod(dbName, 0600)
 	if err != nil {
 		return fmt.Errorf("failed to set database file permissions: %w", err)
@@ -73,35 +48,8 @@ func InitDb(id, password string) error {
 	return nil
 }
 
-func loadOrCreateSalt() ([]byte, error) {
-	salt := make([]byte, saltSize)
-	_, err := os.Stat(saltName)
-	if os.IsNotExist(err) {
-		// Generate new salt
-		_, err := rand.Read(salt)
-		if err != nil {
-			return nil, fmt.Errorf("error generating salt: %w", err)
-		}
-		// Save salt to file
-		err = os.WriteFile(saltName, salt, 0600)
-		if err != nil {
-			return nil, fmt.Errorf("error saving salt: %w", err)
-		}
-	} else if err != nil {
-		return nil, fmt.Errorf("error checking salt file: %w", err)
-	} else {
-		// Load existing salt
-		salt, err = os.ReadFile(saltName)
-		if err != nil {
-			return nil, fmt.Errorf("error reading salt: %w", err)
-		}
-	}
-	return salt, nil
-}
-
 func createTablesIfNotExist() error {
 	// Check if any of the tables in the schema already exist
-	fmt.Println("WORK1")
 	tables := []string{"users", "chats", "user_chats", "messages"}
 	for _, table := range tables {
 		query := fmt.Sprintf("SELECT name FROM sqlite_master WHERE type='table' AND name='%s';", table)
@@ -129,10 +77,6 @@ func createTablesIfNotExist() error {
 	}
 
 	return nil
-}
-
-func deriveKey(password string, salt []byte) []byte {
-	return argon2.IDKey([]byte(password), salt, time, memory, threads, keySize)
 }
 
 func AddMessage(chatID string, userID string, content string) error {
