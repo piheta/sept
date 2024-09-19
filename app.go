@@ -30,15 +30,15 @@ func (a *App) GetUsers() ([]models.User, error) {
 	return users, nil
 }
 
-func (a *App) SendMessage(message string, chat_id int) ([]models.Message, error) {
-	err := db.AddMessage(chat_id, 1, message)
+func (a *App) SendMessage(message string, chat_id string, user_id string) ([]models.Message, error) {
+	err := db.AddMessage(chat_id, user_id, message)
 	if err != nil {
 		return nil, fmt.Errorf("failed to add message: %w", err)
 	}
 	return db.GetMessagesByChatID(chat_id)
 }
 
-func (a *App) GetChatMessages(chat_id int) ([]models.Message, error) {
+func (a *App) GetChatMessages(chat_id string) ([]models.Message, error) {
 	return db.GetMessagesByChatID(chat_id)
 }
 

@@ -16,8 +16,8 @@ CREATE TABLE chats (
 
 -- User Chats Table (many-to-many relationship)
 CREATE TABLE user_chats (
-    user_id INTEGER,
-    chat_id INTEGER,
+    user_id TEXT,
+    chat_id TEXT,
     role TEXT,
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, chat_id),
@@ -28,8 +28,8 @@ CREATE TABLE user_chats (
 -- Messages Table
 CREATE TABLE messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    chat_id INTEGER,
-    user_id INTEGER,
+    chat_id TEXT,
+    user_id TEXT,
     content TEXT NOT NULL,
     signature TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

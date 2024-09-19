@@ -135,7 +135,7 @@ func deriveKey(password string, salt []byte) []byte {
 	return argon2.IDKey([]byte(password), salt, time, memory, threads, keySize)
 }
 
-func AddMessage(chatID int, userID int, content string) error {
+func AddMessage(chatID string, userID string, content string) error {
 	query := `
 		INSERT INTO messages (chat_id, user_id, content, created_at) 
 		VALUES (?, ?, ?, CURRENT_TIMESTAMP)
@@ -144,7 +144,7 @@ func AddMessage(chatID int, userID int, content string) error {
 	return err
 }
 
-func GetMessagesByChatID(chatID int) ([]models.Message, error) {
+func GetMessagesByChatID(chatID string) ([]models.Message, error) {
 	query := `
 		SELECT id, chat_id, user_id, content, created_at
 		FROM messages
@@ -159,7 +159,7 @@ func GetMessagesByChatID(chatID int) ([]models.Message, error) {
 	var messages []models.Message
 	for rows.Next() {
 		var msg models.Message
-		if err := rows.Scan(&msg.ID, &msg.UserID, &msg.Content, &msg.CreatedAt); err != nil {
+		if err := rows.Scan(&msg.ID, &msg.ChatID, &msg.UserID, &msg.Content, &msg.CreatedAt); err != nil {
 			return nil, err
 		}
 		messages = append(messages, msg)

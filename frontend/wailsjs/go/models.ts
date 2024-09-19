@@ -2,8 +2,8 @@ export namespace models {
 	
 	export class Message {
 	    id: number;
-	    chat_id: number;
-	    user_id: number;
+	    chat_id: string;
+	    user_id: string;
 	    content: string;
 	    created_at: string;
 	    signature: string;
