@@ -11,3 +11,10 @@ temp/
 *.log
 .DS_Store
 */.DS_Store
+build/bin
+node_modules
+frontend/dist
+
+# Ignore db
+*.db
+*.salt
