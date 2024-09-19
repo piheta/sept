@@ -25,3 +25,7 @@ export function Register(arg1, arg2, arg3) {
 export function SendMessage(arg1, arg2) {
   return window['go']['main']['App']['SendMessage'](arg1, arg2);
 }
+
+export function StartUpFromJwt(arg1) {
+  return window['go']['main']['App']['StartUpFromJwt'](arg1);
+}

@@ -3,11 +3,11 @@ package db
 import (
 	"crypto/rand"
 	"database/sql"
-	"encoding/hex"
 	"fmt"
 	"os"
 	"sync"
 
+	"github.com/google/uuid"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/piheta/sept/backend/models"
 	"golang.org/x/crypto/argon2"
@@ -44,9 +44,9 @@ func InitDb(id, password string) error {
 
 	// Derive encryption key
 	encryptKey = deriveKey(password, salt)
-	keyHex := hex.EncodeToString(encryptKey)
+	// keyHex := hex.EncodeToString(encryptKey)
 
-	db, err = sql.Open("sqlite3", fmt.Sprintf("%s?_pragma_key=x'%s'&_pragma_cipher_page_size=4096", dbName, keyHex))
+	db, err = sql.Open("sqlite3", dbName)
 	if err != nil {
 		return fmt.Errorf("failed to open database: %w", err)
 	}
@@ -59,6 +59,7 @@ func InitDb(id, password string) error {
 	// Check if tables exist, create if not
 	err = createTablesIfNotExist()
 	if err != nil {
+		fmt.Println("WORK5", err)
 		return fmt.Errorf("failed to create tables: %w", err)
 	}
 
@@ -100,6 +101,7 @@ func loadOrCreateSalt() ([]byte, error) {
 
 func createTablesIfNotExist() error {
 	// Check if any of the tables in the schema already exist
+	fmt.Println("WORK1")
 	tables := []string{"users", "chats", "user_chats", "messages"}
 	for _, table := range tables {
 		query := fmt.Sprintf("SELECT name FROM sqlite_master WHERE type='table' AND name='%s';", table)
@@ -157,7 +159,7 @@ func GetMessagesByChatID(chatID int) ([]models.Message, error) {
 	var messages []models.Message
 	for rows.Next() {
 		var msg models.Message
-		if err := rows.Scan(&msg.ID, &msg.ChatID, &msg.UserID, &msg.Content, &msg.CreatedAt); err != nil {
+		if err := rows.Scan(&msg.ID, &msg.UserID, &msg.Content, &msg.CreatedAt); err != nil {
 			return nil, err
 		}
 		messages = append(messages, msg)
@@ -169,32 +171,33 @@ func GetMessagesByChatID(chatID int) ([]models.Message, error) {
 }
 
 func AddChat(name string) error {
-	query := `INSERT OR IGNORE INTO chats (name) VALUES (?)`
-	chat, err := db.Exec(query, name)
+	chat_id := uuid.New()
+	query := `INSERT OR IGNORE INTO chats (id, name) VALUES (?, ?)`
+	chat, err := db.Exec(query, chat_id, name)
 	fmt.Println(chat)
 	return err
 }
 
 func AddUser(user models.User) error {
-	query := `INSERT OR IGNORE INTO users (user_id, username, ip, avatar) VALUES (?, ?, ?, ?)`
-	_, err := db.Exec(query, user.UserID, user.Username, user.Ip, user.Avatar)
+	query := `INSERT OR IGNORE INTO users (id, username, ip, avatar) VALUES (?, ?, ?, ?)`
+	_, err := db.Exec(query, user.ID, user.Username, user.Ip, user.Avatar)
 	return err
 }
 
-func AddUserToChat(user_id string, chat_id int) error {
+func AddUserToChat(user_id string, chat_id string) error {
 	query := `INSERT OR IGNORE INTO user_chats (user_id, chat_id) VALUES (?, ?)`
 	_, err := db.Exec(query, user_id, chat_id)
 	return err
 }
 
-func GetUser(userID int) (models.User, error) {
+func GetUser(userID string) (models.User, error) {
 	query := `
         SELECT id, user_id, username, ip, avatar
         FROM users
-        WHERE id = ?
+        WHERE user_id = ?
     `
 	var user models.User
-	err := db.QueryRow(query, userID).Scan(&user.ID, &user.UserID, &user.Username, &user.Ip, &user.Avatar)
+	err := db.QueryRow(query, userID).Scan(&user.ID, &user.Username, &user.Ip, &user.Avatar)
 	if err != nil {
 		return models.User{}, err
 	}
@@ -202,8 +205,11 @@ func GetUser(userID int) (models.User, error) {
 }
 
 func GetAllUsers() ([]models.User, error) {
+	if db == nil {
+		return nil, fmt.Errorf("database not initialized")
+	}
 	query := `
-		SELECT id, user_id, username, ip, avatar
+		SELECT id, username, ip, avatar, public_key
 		FROM users
 	`
 	rows, err := db.Query(query)
@@ -215,7 +221,7 @@ func GetAllUsers() ([]models.User, error) {
 	var users []models.User
 	for rows.Next() {
 		var user models.User
-		if err := rows.Scan(&user.ID, &user.UserID, &user.Username, &user.Ip, &user.Avatar); err != nil {
+		if err := rows.Scan(&user.ID, &user.Username, &user.Ip, &user.Avatar, &user.PublicKey); err != nil {
 			return nil, err
 		}
 		users = append(users, user)
@@ -249,4 +255,17 @@ func CloseDB() error {
 		return db.Close()
 	}
 	return nil
+}
+
+func DbExists(userID string) error {
+	dbPath := "./sept_data/" + userID + ".db"
+
+	_, err := os.Stat(dbPath)
+	if os.IsNotExist(err) {
+		return err // File does not exist
+	} else if err != nil {
+		return fmt.Errorf("error checking database existence: %w", err)
+	}
+
+	return nil // File exists
 }

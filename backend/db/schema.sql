@@ -1,16 +1,15 @@
 -- Users Table
 CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL UNIQUE,
+    id TEXT PRIMARY KEY UNIQUE,
     username TEXT NOT NULL,
     ip TEXT,
     avatar TEXT,
-    public_key TEXT NOT NULL,
+    public_key TEXT DEFAULT "TEST"
 );
 
 -- Chats Table
 CREATE TABLE chats (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id TEXT PRIMARY KEY UNIQUE,
     name TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

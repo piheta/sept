@@ -2,7 +2,7 @@ import { writable } from 'svelte/store';
 
 // Initialize the store with data from localStorage if it exists, otherwise with a default object
 const storedUser = JSON.parse(localStorage.getItem('user')) || {
-    user_id: null,
+    id: null,
     username: null,
     ip: null,
     avatar: null

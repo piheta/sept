@@ -1,5 +1,4 @@
 <script>
-    import { afterUpdate, createEventDispatcher } from "svelte";
     import ListElement from "./ListElement.svelte";
     import DragDropList, { VerticalDropZone, reorder } from "svelte-dnd-list";
     import { selection_store } from '../../stores/selectionStore.js';
@@ -15,9 +14,6 @@
             showItems = !showItems;
         }
     }
-
-
-
 
     function onDrop({ detail: { from, to } }) {
         if (!to || from === to) {

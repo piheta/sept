@@ -1,5 +1,6 @@
 <script>
     import List from "./List.svelte";
+    import { auth_store } from "../../stores/authStore";
 
     let selection = "";
 
@@ -17,6 +18,8 @@
     ];
 
     setSelection(settings[0].id);
+
+    
 </script>
 
 <List
@@ -26,3 +29,4 @@
     draggable={0}
     img={false}
 />
+<button on:click={() => {$auth_store = null}}>Log Out</button>

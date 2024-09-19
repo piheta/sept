@@ -35,8 +35,7 @@
         
         // get payload from jwt
         auth_store.set({
-            id: 1,
-            user_id: user.user_id,
+            id: user.id,
             username: user.username,
             ip: user.ip,
             avatar: user.avatar

@@ -23,8 +23,7 @@ export namespace models {
 	    }
 	}
 	export class User {
-	    id: number;
-	    user_id: string;
+	    id: string;
 	    username: string;
 	    ip: string;
 	    avatar: string;
@@ -36,7 +35,6 @@ export namespace models {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.id = source["id"];
-	        this.user_id = source["user_id"];
 	        this.username = source["username"];
 	        this.ip = source["ip"];
 	        this.avatar = source["avatar"];
