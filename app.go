@@ -22,6 +22,15 @@ func (a *App) startup(ctx context.Context) {
 	//get latest version
 }
 
+func (a *App) StartLoggedIn(user_id string) error {
+	if err := db.DbExists(user_id); err != nil {
+		return fmt.Errorf("db does not exist %w", err)
+	}
+
+	db.InitDb(user_id)
+	return nil
+}
+
 func (a *App) GetUsers() ([]models.User, error) {
 	users, err := db.GetAllUsers()
 	if err != nil {
