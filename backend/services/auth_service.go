@@ -53,7 +53,7 @@ func Login(email, password string) (*models.User, error) {
 	}
 
 	//FIRST TIME LOGIN
-	db.InitDb(user.ID, password) // creates db and salt file for future encryption.
+	db.InitDb(user.ID) // creates db and salt file for future encryption.
 	//CREATE KEYPAIR
 	SetUpKeys()
 	db.AddUser(user)

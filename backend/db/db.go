@@ -17,7 +17,7 @@ var (
 	dbName  string
 )
 
-func InitDb(id, password string) error {
+func InitDb(id string) error {
 	dbMutex.Lock()
 	defer dbMutex.Unlock()
 
