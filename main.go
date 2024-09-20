@@ -12,19 +12,29 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
 
 	peer "github.com/piheta/sept/backend"
+	"github.com/piheta/sept/backend/db"
+	"github.com/piheta/sept/backend/repos"
+	"github.com/piheta/sept/backend/services"
 )
 
 //go:embed all:frontend/dist
 var assets embed.FS
 
 func main() {
+	// Init the db and repos
+	user_repo := repos.NewUserRepo(db.DB)
+	chat_repo := repos.NewChatRepo(db.DB)
+	userchat_repo := repos.NewUserchatRepo(db.DB)
+	message_repo := repos.NewMessageRepo(db.DB)
+
+	auth_service := services.NewAuthSerivce(user_repo, chat_repo, userchat_repo)
+
 	// Define a boolean flag
 	bFlag := flag.Bool("b", false, "Only start the backend")
 	fFlag := flag.Bool("f", false, "Only start the frontend")
 
 	// Parse command-line flags
 	flag.Parse()
-
 	if *bFlag {
 		fmt.Println("The -b flag was passed")
 		peer.Peer()
@@ -34,7 +44,14 @@ func main() {
 	}
 
 	// Create an instance of the app structure
-	app := NewApp()
+	app := NewApp(
+		user_repo,
+		chat_repo,
+		userchat_repo,
+		message_repo,
+
+		auth_service,
+	)
 
 	// Create application with options
 	err := wails.Run(&options.App{

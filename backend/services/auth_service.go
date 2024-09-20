@@ -10,9 +10,24 @@ import (
 	"github.com/golang-jwt/jwt"
 	"github.com/piheta/sept/backend/db"
 	"github.com/piheta/sept/backend/models"
+	"github.com/piheta/sept/backend/repos"
 )
 
-func Login(email, password string) (*models.User, error) {
+type AuthService struct {
+	user_repo     *repos.UserRepo
+	chat_repo     *repos.ChatRepo
+	userchat_repo *repos.UserchatRepo
+}
+
+func NewAuthSerivce(userRepo *repos.UserRepo, chatRepo *repos.ChatRepo, userchatRepo *repos.UserchatRepo) *AuthService {
+	return &AuthService{
+		user_repo:     userRepo,
+		chat_repo:     chatRepo,
+		userchat_repo: userchatRepo,
+	}
+}
+
+func (as *AuthService) Login(email, password string) (*models.User, error) {
 	data := map[string]string{
 		"email":    email,
 		"password": password,
@@ -43,28 +58,28 @@ func Login(email, password string) (*models.User, error) {
 		return nil, fmt.Errorf("token not found in response")
 	}
 
-	user, err := extractUserFromUnverifiedClaims(token)
+	user, err := as.extractUserFromUnverifiedClaims(token)
 	if err != nil {
 		return nil, fmt.Errorf("token not found in response")
 	}
 
-	if err := VerifyToken(token); err != nil {
+	if err := as.VerifyToken(token); err != nil {
 		return nil, fmt.Errorf("failed to verify token")
 	}
 
 	//FIRST TIME LOGIN
 	db.InitDb(user.ID) // creates db and salt file for future encryption.
 	//CREATE KEYPAIR
-	SetUpKeys()
-	db.AddUser(user)
-	db.AddChat(user.Username) // Create chat named the same as the username of the user
-	chat, _ := db.GetChatByName(user.Username)
-	db.AddUserToChat(user.ID, chat.ID) // link user with the chat
+	// SetUpKeys()
+	as.user_repo.AddUser(user)
+	as.chat_repo.AddChat(user.Username) // Create chat named the same as the username of the user
+	chat, _ := as.chat_repo.GetChatByName(user.Username)
+	as.userchat_repo.AddUserToChat(user.ID, chat.ID) // link user with the chat
 
 	return &user, nil
 }
 
-func Register(username, email, password string) (*map[string]interface{}, error) {
+func (as *AuthService) Register(username, email, password string) (*map[string]interface{}, error) {
 	fmt.Println(username, email, password)
 	data := map[string]string{
 		"name":     username,
@@ -95,7 +110,7 @@ func Register(username, email, password string) (*map[string]interface{}, error)
 	return &res, nil
 }
 
-func extractUserFromUnverifiedClaims(tokenString string) (models.User, error) {
+func (as *AuthService) extractUserFromUnverifiedClaims(tokenString string) (models.User, error) {
 	var user_id string
 	var username string
 	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
@@ -128,8 +143,8 @@ func extractUserFromUnverifiedClaims(tokenString string) (models.User, error) {
 	return user, nil
 }
 
-func VerifyToken(tokenString string) error {
-	publicKeyString, err := GetPublicKey()
+func (as *AuthService) VerifyToken(tokenString string) error {
+	publicKeyString, err := as.GetPublicKey()
 	if err != nil {
 		return fmt.Errorf("error retrieving the public key: %w", err)
 	}
@@ -156,7 +171,7 @@ func VerifyToken(tokenString string) error {
 	return nil // Token is valid
 }
 
-func GetPublicKey() (string, error) {
+func (as *AuthService) GetPublicKey() (string, error) {
 	resp, err := http.Get("http://localhost:8080/api/key")
 	if err != nil {
 		return "", fmt.Errorf("error fetching public key: %w", err)

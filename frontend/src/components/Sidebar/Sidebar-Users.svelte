@@ -16,6 +16,12 @@
         }
     }
 
+    async function getChats() {
+        const result = await GetChats();
+        console.log("Received chats:", result);
+
+    }
+
 
     getUsers();
 </script>
