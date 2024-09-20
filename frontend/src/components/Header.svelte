@@ -7,7 +7,7 @@
 <div class="flex items-center h-full w-full">
     <img class="w-16 h-16 rounded-md object-cover object-top" alt="" src={$selection_store.avatar}/>
 
-    <h1 class="pl-2 mr-2 ml-2 rounded-md text-lg flex-grow bg-gray-700 h-16 flex items-center">{$selection_store.username}</h1>
+    <h1 class="pl-1 pr-1 mr-2 ml-2 rounded-md text-[1.25rem] flex-grow bg-gray-700 h-16 flex justify-center items-center">{$selection_store.username}</h1>
 
     <button
     on:click={() => {
