@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/piheta/sept/backend/models"
 )
 
 var (
