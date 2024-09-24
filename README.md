@@ -13,27 +13,22 @@ sept is inspired by various projects, such as hamachi and the old skype p2p infr
 - **fast:** faster than other chat and communication programs because of its p2p nature
 - **better video quality:** your streams are directly being sent to your peers, no server will throttle your performance
 
-<div style="position: relative;">
-  <!-- Left Section -->
-  <div style="position: absolute; left:0;">
-    <h2>Prerequisites</h2>
-    <p>You need a <a href="https://github.com/piheta/sept-login-server">sept login server</a></p>
+## prequisites
+you need a [sept login server](https://github.com/piheta/sept-login-server)
 
-    <h2>Build</h2>
-    <pre><code>
-    git clone https://github.com/piheta/sept.git
-    wails dev
-    </code></pre>
-  </div>
+## build
+ ```sh
+  git clone https://github.com/piheta/sept.git
+  wails dev
+  ```
 
-  <!-- Right Section -->
-  <div style="position: absolute; right:0;">
-    <h2>Dev Roadmap</h2>
-    <ul>
-      <!-- Add your roadmap items here -->
-    </ul>
-  </div>
-</div>
+## dev roadmap
+- [x] 👍 Local per user db
+- [x] 👍 P2P Message exchange
+- [ ] ⌛ Backend-Frontend connection
+- [ ] ⌛ User search
+- [ ] ⌛ DB encryption
+- [ ] ⌛ VXLAN implementation
 
 ## license
 sept is released under the [GPL v3 License](LICENSE).
