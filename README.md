@@ -13,9 +13,9 @@ sept is inspired by various projects, such as hamachi and the old skype p2p infr
 - **fast:** faster than other chat and communication programs because of its p2p nature
 - **better video quality:** your streams are directly being sent to your peers, no server will throttle your performance
 
-<div style="display: flex; justify-content: space-between;">
+<div style="position: relative;">
   <!-- Left Section -->
-  <div style="flex: 1; margin-right: 20px;">
+  <div style="position: absolute; left:0;">
     <h2>Prerequisites</h2>
     <p>You need a <a href="https://github.com/piheta/sept-login-server">sept login server</a></p>
 
@@ -27,7 +27,7 @@ sept is inspired by various projects, such as hamachi and the old skype p2p infr
   </div>
 
   <!-- Right Section -->
-  <div style="flex: 1;">
+  <div style="position: absolute; right:0;">
     <h2>Dev Roadmap</h2>
     <ul>
       <!-- Add your roadmap items here -->
