@@ -8,22 +8,33 @@ sept is inspired by various projects, such as hamachi and the old skype p2p infr
 ![network system diagram](./docs/images/sept.png)
 
 ## features
-- **private & encrypted:** all messages and files are encrypted and  stored on your device. Sept can't see anything
+- **private & encrypted:** all messages are sent over an encrypted channel and stored on your device. Sept can't see anything
 - **no upload limits:** share terrabytes of files for free. No need to upload them
 - **fast:** faster than other chat and communication programs because of its p2p nature
 - **better video quality:** your streams are directly being sent to your peers, no server will throttle your performance
 
+<div style="display: flex; justify-content: space-between;">
+  <!-- Left Section -->
+  <div style="flex: 1; margin-right: 20px;">
+    <h2>Prerequisites</h2>
+    <p>You need a <a href="https://github.com/piheta/sept-login-server">sept login server</a></p>
 
-## prequisites
-you need a [sept login server](https://github.com/piheta/sept-login-server)
+    <h2>Build</h2>
+    <pre><code>
+    git clone https://github.com/piheta/sept.git
+    wails dev
+    </code></pre>
+  </div>
 
-## build
+  <!-- Right Section -->
+  <div style="flex: 1;">
+    <h2>Dev Roadmap</h2>
+    <ul>
+      <!-- Add your roadmap items here -->
+    </ul>
+  </div>
+</div>
 
- ```sh
-  git clone https://github.com/piheta/sept.git
-  wails dev
-  ```
-  
 ## license
 sept is released under the [GPL v3 License](LICENSE).
 
