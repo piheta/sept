@@ -71,8 +71,16 @@ func (a *App) GetUser(user_id string) (models.User, error) {
 
 func (a *App) Login(email, password string) (*models.User, error) {
 	// if database does not exist (first time login)
-	a.user_repo = repos.NewUserRepo(db.DB)
-	return a.auth_service.Login(email, password)
+	user, err := a.auth_service.Login(email, password)
+	if err != nil {
+		return &models.User{}, fmt.Errorf("failed to login %w", err)
+	}
+
+	if err := a.handleFirstTimeLogin(*user); err != nil {
+		return &models.User{}, fmt.Errorf("failed to init db %w", err)
+	}
+
+	return user, nil
 }
 
 func (a *App) Register(username, email, password string) (*map[string]interface{}, error) {
@@ -86,6 +94,12 @@ func (a *App) handleFirstTimeLogin(user models.User) error {
 	if err := db.InitDb(user.ID); err != nil {
 		return fmt.Errorf("failed to initialize database: %w", err)
 	}
+
+	// Reinit app fields
+	a.user_repo = repos.NewUserRepo(db.DB)
+	a.chat_repo = repos.NewChatRepo(db.DB)
+	a.userchat_repo = repos.NewUserchatRepo(db.DB)
+	a.message_repo = repos.NewMessageRepo(db.DB)
 
 	// Add the user to the database
 	if err := a.user_repo.AddUser(user); err != nil {
@@ -102,7 +116,7 @@ func (a *App) handleFirstTimeLogin(user models.User) error {
 	if err != nil {
 		return fmt.Errorf("failed to get chat: %w", err)
 	}
-
+	fmt.Println(chat)
 	// Add the user to the chat
 	if err := a.userchat_repo.AddUserToChat(user.ID, chat.ID); err != nil {
 		return fmt.Errorf("failed to add user to chat: %w", err)

@@ -18,3 +18,4 @@ frontend/dist
 # Ignore db
 *.db
 *.salt
+*.jwt

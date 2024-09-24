@@ -10,8 +10,8 @@
 </script>
 
 
-{#if $auth_store.id }
-    <Dashboard />
-{:else}
+<!-- {#if $auth_store.id } -->
+    <!-- <Dashboard /> -->
+<!-- {:else} -->
     <Auth />
-{/if}
+<!-- {/if} -->

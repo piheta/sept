@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/piheta/sept/backend/db"
 	"github.com/piheta/sept/backend/models"
 	"github.com/piheta/sept/backend/repos"
 )
@@ -67,14 +67,9 @@ func (as *AuthService) Login(email, password string) (*models.User, error) {
 		return nil, fmt.Errorf("failed to verify token")
 	}
 
-	//FIRST TIME LOGIN
-	db.InitDb(user.ID) // creates db and salt file for future encryption.
-	//CREATE KEYPAIR
-	// SetUpKeys()
-	as.user_repo.AddUser(user)
-	as.chat_repo.AddChat(user.Username) // Create chat named the same as the username of the user
-	chat, _ := as.chat_repo.GetChatByName(user.Username)
-	as.userchat_repo.AddUserToChat(user.ID, chat.ID) // link user with the chat
+	if err := as.saveJwt(user.ID, token); err != nil {
+		return nil, fmt.Errorf("error saving jwt to file")
+	}
 
 	return &user, nil
 }
@@ -190,4 +185,20 @@ func (as *AuthService) GetPublicKey() (string, error) {
 	}
 
 	return keyResp.PublicKey, nil
+}
+
+func (as *AuthService) saveJwt(filename string, content string) error {
+	file, err := os.Create("./sept_data/" + filename + ".jwt")
+	if err != nil {
+		return fmt.Errorf("error creating file: %w", err)
+	}
+	defer file.Close()
+
+	// Content to write to the file
+	_, err = file.WriteString(content)
+	if err != nil {
+		return fmt.Errorf("error writing to file: %w", err)
+	}
+
+	return nil
 }

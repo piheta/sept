@@ -21,16 +21,17 @@ func InitDb(id string) error {
 
 	dbName = "./sept_data/" + id + ".db"
 
-	var err error
-	DB, err = sql.Open("sqlite3", dbName)
+	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
 		return fmt.Errorf("failed to open database: %w", err)
 	}
 
-	err = DB.Ping()
+	err = db.Ping()
 	if err != nil {
 		return fmt.Errorf("failed to ping database: %w", err)
 	}
+
+	DB = db
 
 	err = createTablesIfNotExist()
 	if err != nil {
