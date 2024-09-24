@@ -1,27 +1,30 @@
 # sept/ʂɛpt/
-## decentralized, synchronous p2p chat
+## decentralized, asynchronous p2p chat
 
-sept uses udp multicast to discover and connect with peers within the same network.
-when a connection is established between two or more nodes in the network.
+sept is a video/chat application similar to discord with no central server. The clients connect directly to eachother making the connection faster than similar applications. Other limitations such as file upload limit are also non existent. 
+sept is inspired by various projects, such as hamachi and the old skype p2p infrastructure.
 
-![network system diagram](./docs/images/diagram.png)
+![network system diagram](./docs/images/sept.png)
 
 ## features
-- **decentralized:** operates in p2p fashion, eliminating the need for a central server
-- **lightweight:** no external libraries are used 
-- **thread safe:** multiplexes the io and runs synchronously
+- **private & encrypted:** all messages and files are encrypted and  stored on your device. Sept can't see anything
+- **no upload limits:** share terrabytes of files for free. No need to upload them
+- **fast:** faster than other chat and communication programs because of its p2p nature
+- **better video quality:** your streams are directly being sent to your peers, no server will throttle your performance
 
 
-sept uses the unix socket.h library for network communication, and is thus currently only supported on Linux and macOS.
-## installation
+## prequisites
+you need a [sept login server](https://github.com/piheta/sept-login-server)
+
+## build
 
  ```sh
   git clone https://github.com/piheta/sept.git
-  cd sept
-  make
-  make clean
-  ./sept
+  wails dev
   ```
   
 ## license
 sept is released under the [GPL v3 License](LICENSE).
+
+## c++ poc
+check out the legacy multicast [implementation of sept](https://github.com/piheta/sept/tree/legacy)
