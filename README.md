@@ -13,10 +13,8 @@ sept is inspired by various projects, such as hamachi and the old skype p2p infr
 - **fast:** faster than other chat and communication programs because of its p2p nature
 - **better video quality:** your streams are directly being sent to your peers, no server will throttle your performance
 
-## prequisites
-you need a [sept login server](https://github.com/piheta/sept-login-server)
-
 ## build
+first, deploy a [sept login server](https://github.com/piheta/sept-login-server)
  ```sh
   git clone https://github.com/piheta/sept.git
   wails dev
