@@ -43,7 +43,6 @@ func InitDb(id string) error {
 		return fmt.Errorf("failed to set database file permissions: %w", err)
 	}
 
-	fmt.Println("Database initialized successfully")
 	return nil
 }
 
@@ -89,4 +88,16 @@ func DbExists(userID string) error {
 	}
 
 	return nil // File exists
+}
+
+func RemoveDb(userID string) error {
+	// currently only used for testing
+	// Todo also check password before deletion
+	dbPath := "./sept_data/" + userID + ".db"
+	err := os.Remove(dbPath)
+	if err != nil {
+		return fmt.Errorf("error removing database: %w", err)
+	}
+
+	return nil
 }
