@@ -29,6 +29,9 @@ jobs:
     - name: Run Wails doctor
       run: wails doctor
 
+    - name: Run Wails build
+      run: wails build
+
     - name: Build
       run: go build -v ./...
 
