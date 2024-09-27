@@ -6,11 +6,8 @@
     import { onMount } from 'svelte';
     import {replace} from 'svelte-spa-router'
 
-
-    // Import your route components
     import Auth from "./routes/Login.svelte";
     import Dashboard from "./routes/Dashboard.svelte";
-    // Import other route components as needed
 
     let isAuthenticated = false;
 
