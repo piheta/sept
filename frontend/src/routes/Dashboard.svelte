@@ -30,7 +30,7 @@
     }
 </script>
 
-<main class="h-full">
+<main class="h-full select-none">
     <div class="wails-drag w-full h-6 m-0"></div>
     <div class="flex w-full h-[calc(100vh-1.5rem)]">
         <div
@@ -53,9 +53,7 @@
             <div class="flex-none h-16 rounded-md mt-1">
                 <Header recipient={"Some Person"} />
             </div>
-
                 <Chatbox />
-
             <div
                 role="separator"
                 aria-orientation="horizontal"

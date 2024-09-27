@@ -27,7 +27,7 @@
 {#if title}
     {#if collapsible}
         <button
-            class="w-full flex items-center align-middle text-center mt-0 pt-0 pb-1 pl-2 select-none cursor-pointer"
+            class="w-full flex items-center align-middle text-center mt-0 pt-0 pb-1 pl-2 cursor-pointer"
             on:click={toggleShow}
         >
             <span
@@ -54,7 +54,7 @@
         </button>
     {:else}
         <div
-            class="w-full flex items-center align-middle text-center mt-0 pt-0 pr-20 pb-1 pl-2 select-none"
+            class="w-full flex items-center align-middle text-center mt-0 pt-0 pr-20 pb-1 pl-2"
         >
             <p class="text-lg inline-block ml-1">
                 {title}
@@ -63,7 +63,7 @@
     {/if}
 {/if}
 
-<ul class="cursor-pointer select-none">
+<ul class="cursor-pointer">
     {#if showItems}
         <!-- todo, make this godforsaken itemsize calculate automatically -->
         <DragDropList

@@ -21,29 +21,28 @@ import (
 var assets embed.FS
 
 func main() {
-	// Init the db and repos
-	user_repo := repos.NewUserRepo(db.DB)
-	chat_repo := repos.NewChatRepo(db.DB)
-	userchat_repo := repos.NewUserchatRepo(db.DB)
-	message_repo := repos.NewMessageRepo(db.DB)
-
-	auth_service := services.NewAuthSerivce(user_repo, chat_repo, userchat_repo)
-
-	// Define a boolean flag
+	// cli args
 	bFlag := flag.Bool("b", false, "Only start the backend")
-	fFlag := flag.Bool("f", false, "Only start the frontend")
-
-	// Parse command-line flags
 	flag.Parse()
 	if *bFlag {
 		fmt.Println("The -b flag was passed")
 		peer.Peer()
 	}
-	if *fFlag {
-		fmt.Println("The -f flag was passed")
-	}
 
-	// Create an instance of the app structure
+	//
+	// startup logic
+	// try to init db with jwt
+	// if this fails, init repos with null
+	// on login, repos will be correctly initialized from inside of "app" controller
+	//
+	auth_service := services.NewAuthSerivce()
+	auth_service.LogInWithExistingJwt()
+
+	user_repo := repos.NewUserRepo(db.DB)
+	chat_repo := repos.NewChatRepo(db.DB)
+	userchat_repo := repos.NewUserchatRepo(db.DB)
+	message_repo := repos.NewMessageRepo(db.DB)
+
 	app := NewApp(
 		user_repo,
 		chat_repo,
@@ -53,7 +52,6 @@ func main() {
 		auth_service,
 	)
 
-	// Create application with options
 	err := wails.Run(&options.App{
 		Width:  700,
 		Height: 512,
@@ -85,7 +83,7 @@ func main() {
 			},
 		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
-		OnStartup:        app.startup,
+		// OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,
 		},

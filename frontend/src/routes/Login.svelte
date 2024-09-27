@@ -20,20 +20,27 @@
 
 
     async function handleSubmit(event) {
-        event.preventDefault();
+    event.preventDefault(); // Prevent default form submission behavior
 
+    console.log("Submitting form with:", { username, email, password });
+
+    try {
         if (!loginForm) {
-            await Register(username,email,password)
-            toggleLoginForm()
-            return
+            // Register the user if it's not the login form
+            await Register(username, email, password);
+            toggleLoginForm(); // Switch to the login form after registration
+            return;
         }
 
-        let user = await Login(email,password)
+        // Login the user
+        let user = await Login(email, password);
+        if (!user) {
+            throw new Error("Invalid login credentials");
+        }
 
-        //chech jwt signature then set auth_store and go to dashboard
-        
-        
-        // get payload from jwt
+        console.log("Logged in user:", user);
+
+        // Set the auth store with user details
         auth_store.set({
             id: user.id,
             username: user.username,
@@ -41,7 +48,14 @@
             avatar: user.avatar
         });
 
+        // Redirect to homepage after successful login
+        window.location.href = '/';
+        
+    } catch (error) {
+        console.error("Error during submission:", error.message);
+        // You can also display the error to the user, e.g., set an error state
     }
+}
 </script>
 
 <style>

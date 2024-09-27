@@ -4,27 +4,31 @@ import (
 	"testing"
 
 	"github.com/piheta/sept/backend/db"
+	"github.com/piheta/sept/backend/models"
 )
 
-var testDb = "DB-TEST"
+var testUsr = models.User{
+	ID:        "TEST",
+	Username:  "TEST",
+	Ip:        "TEST",
+	Avatar:    "TEST",
+	PublicKey: "TEST",
+}
 
-// TestInitDbAndDbExists tests the InitDb and DbExists functions.
-func TestInitDbAndDbExists(t *testing.T) {
-	err := db.InitDb(testDb)
+func TestInitDb(t *testing.T) {
+	err := db.InitDb(testUsr)
 	if err != nil {
 		t.Fatalf("Failed to initialize database: %v", err)
 	}
-
 }
 
-// Test DbExists with the same test ID
 func TestDbExists(t *testing.T) {
-	err := db.DbExists(testDb)
+	err := db.DbExists(testUsr.ID)
 	if err != nil {
 		t.Errorf("Expected DbExists to return no error for existing database, got: %v", err)
 	}
 
 	t.Cleanup(func() {
-		db.RemoveDb(testDb)
+		db.RemoveDb(testUsr.ID)
 	})
 }

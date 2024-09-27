@@ -1,6 +1,8 @@
 <script>
     import List from "./List.svelte";
     import { auth_store } from "../../stores/authStore";
+    import { LogOut } from "../../../wailsjs/go/main/App";
+    import { push } from "svelte-spa-router";
 
     let selection = "";
 
@@ -19,6 +21,32 @@
 
     setSelection(settings[0].id);
 
+
+    async function logOut() {
+    try {
+        let logout_err = await LogOut();
+        if (logout_err != null) {
+            console.error("Failed to log out:", logout_err);
+            return;
+        }
+
+        auth_store.set({
+            id: null,
+            username: null,
+            ip: null,
+            avatar: null,
+        });
+        
+        // Clear any other relevant stores or local storage here
+        localStorage.clear();
+        sessionStorage.clear();
+
+        // Use standard web navigation
+        push('/login')
+    } catch (error) {
+        console.error("An unexpected error occurred during logout:", error);
+    }
+}
     
 </script>
 
@@ -29,4 +57,4 @@
     draggable={0}
     img={false}
 />
-<button on:click={() => {$auth_store = null}}>Log Out</button>
+<button on:click={logOut}>Log Out</button>

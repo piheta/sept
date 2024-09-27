@@ -54,7 +54,7 @@ func (ur *UserRepo) GetUsers() ([]models.User, error) {
 }
 
 func (ur *UserRepo) AddUser(user models.User) error {
-	query := `INSERT OR IGNORE INTO users (id, username, ip, avatar) VALUES (?, ?, ?, ?)`
-	_, err := ur.db.Exec(query, user.ID, user.Username, user.Ip, user.Avatar)
+	query := `INSERT OR IGNORE INTO users (id, username, ip, avatar, public_key) VALUES (?, ?, ?, ?, ?)`
+	_, err := ur.db.Exec(query, user.ID, user.Username, user.Ip, user.Avatar, user.PublicKey)
 	return err
 }
