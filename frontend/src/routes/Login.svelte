@@ -3,6 +3,7 @@
     import Checkmark from '../assets/icons/Checkmark.svelte';
     import { auth_store } from "../stores/authStore.js"
     import { Register, Login } from '../../wailsjs/go/main/App';
+    import { replace } from 'svelte-spa-router';
 
     let username = '';
     let email = '';
@@ -49,7 +50,7 @@
         });
 
         // Redirect to homepage after successful login
-        window.location.href = '/';
+        replace("/")
         
     } catch (error) {
         console.error("Error during submission:", error.message);

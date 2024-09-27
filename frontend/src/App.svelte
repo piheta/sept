@@ -4,6 +4,8 @@
     import { GetAuthedUser } from "../wailsjs/go/main/App";
     import { auth_store } from "./stores/authStore";
     import { onMount } from 'svelte';
+    import {push, pop, replace} from 'svelte-spa-router'
+
 
     // Import your route components
     import Auth from "./routes/Login.svelte";
@@ -16,27 +18,24 @@
         '/': wrap({
             component: Dashboard,
             conditions: [
-                () => isAuthenticated
+                () => isAuthenticated // Route to Dashboard only if authenticated
             ]
         }),
         '/login': wrap({
             component: Auth,
             conditions: [
-                () => !isAuthenticated
+                () => !isAuthenticated // Route to Login only if not authenticated
             ]
-        }),
-        // Add other routes as needed
+        })
     };
 
     async function checkAuth() {
         try {
-            let user = await GetAuthedUser()
-            $auth_store = user
-            isAuthenticated = !!user.id
-            console.log(user)
+            let user = await GetAuthedUser();
+            $auth_store = user;
+            isAuthenticated = !!user.id;
         } catch (error) {
-            console.error("failed to get authed")
-            isAuthenticated = false
+            isAuthenticated = false;
         }
     }
 
@@ -44,12 +43,15 @@
         checkAuth();
     });
 
-    // Reactive statement to update routing when auth state changes
+    // Watch auth_store for changes
+    $: isAuthenticated = !!$auth_store.id;
+
     $: if (isAuthenticated) {
-        window.location.hash = '/';
+        replace("/");
     } else {
-        window.location.hash = '/login';
+        replace("/login");
     }
+
 </script>
 
 <main>
