@@ -9,22 +9,17 @@ import (
 	"os"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/piheta/sept/backend/db"
 	"github.com/piheta/sept/backend/models"
-	"github.com/piheta/sept/backend/repos"
 )
 
+var AuthedUser = models.User{}
+
 type AuthService struct {
-	user_repo     *repos.UserRepo
-	chat_repo     *repos.ChatRepo
-	userchat_repo *repos.UserchatRepo
 }
 
-func NewAuthSerivce(userRepo *repos.UserRepo, chatRepo *repos.ChatRepo, userchatRepo *repos.UserchatRepo) *AuthService {
-	return &AuthService{
-		user_repo:     userRepo,
-		chat_repo:     chatRepo,
-		userchat_repo: userchatRepo,
-	}
+func NewAuthSerivce() *AuthService {
+	return &AuthService{}
 }
 
 func (as *AuthService) Login(email, password string) (*models.User, error) {
@@ -58,7 +53,7 @@ func (as *AuthService) Login(email, password string) (*models.User, error) {
 		return nil, fmt.Errorf("token not found in response")
 	}
 
-	user, err := as.extractUserFromUnverifiedClaims(token)
+	user, err := as.ExtractUserFromJwt(token)
 	if err != nil {
 		return nil, fmt.Errorf("token not found in response")
 	}
@@ -67,15 +62,17 @@ func (as *AuthService) Login(email, password string) (*models.User, error) {
 		return nil, fmt.Errorf("failed to verify token")
 	}
 
-	if err := as.saveJwt(user.ID, token); err != nil {
+	if err := as.saveJwt(token); err != nil {
 		return nil, fmt.Errorf("error saving jwt to file")
 	}
+
+	db.InitDb(user)
 
 	return &user, nil
 }
 
 func (as *AuthService) Register(username, email, password string) (*map[string]interface{}, error) {
-	fmt.Println(username, email, password)
+	fmt.Println(username, email)
 	data := map[string]string{
 		"name":     username,
 		"email":    email,
@@ -105,7 +102,7 @@ func (as *AuthService) Register(username, email, password string) (*map[string]i
 	return &res, nil
 }
 
-func (as *AuthService) extractUserFromUnverifiedClaims(tokenString string) (models.User, error) {
+func (as *AuthService) ExtractUserFromJwt(tokenString string) (models.User, error) {
 	var user_id string
 	var username string
 	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
@@ -187,8 +184,8 @@ func (as *AuthService) GetPublicKey() (string, error) {
 	return keyResp.PublicKey, nil
 }
 
-func (as *AuthService) saveJwt(filename string, content string) error {
-	file, err := os.Create("./sept_data/" + filename + ".jwt")
+func (as *AuthService) saveJwt(content string) error {
+	file, err := os.Create("./sept_data/user.jwt")
 	if err != nil {
 		return fmt.Errorf("error creating file: %w", err)
 	}
@@ -198,6 +195,37 @@ func (as *AuthService) saveJwt(filename string, content string) error {
 	_, err = file.WriteString(content)
 	if err != nil {
 		return fmt.Errorf("error writing to file: %w", err)
+	}
+
+	return nil
+}
+
+func (as *AuthService) LogInWithExistingJwt() error {
+	jwt, err := os.ReadFile("./sept_data/user.jwt")
+	if err != nil {
+		return fmt.Errorf("jwt does not exist %w ", err)
+	}
+	jwtString := string(jwt)
+
+	if err := as.VerifyToken(jwtString); err != nil {
+		return fmt.Errorf("jwt is not valid %w ", err)
+	}
+
+	user, _ := as.ExtractUserFromJwt(jwtString)
+
+	if err := db.InitDb(user); err != nil {
+		return fmt.Errorf("failed to init db with jwt %w ", err)
+	}
+
+	AuthedUser = user
+
+	return nil
+}
+
+func (as *AuthService) LogOut() error {
+	err := os.Remove("./sept_data/user.jwt")
+	if err != nil {
+		return fmt.Errorf("failed to log out, can't delete jwt %w ", err)
 	}
 
 	return nil

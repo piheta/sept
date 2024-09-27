@@ -19,8 +19,7 @@ func NewChatRepo(db *sql.DB) *ChatRepo {
 func (cr *ChatRepo) AddChat(name string) error {
 	chat_id := uuid.New()
 	query := `INSERT OR IGNORE INTO chats (id, name) VALUES (?, ?)`
-	chat, err := cr.db.Exec(query, chat_id, name)
-	fmt.Println(chat)
+	_, err := cr.db.Exec(query, chat_id, name)
 	return err
 }
 

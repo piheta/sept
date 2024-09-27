@@ -7,6 +7,8 @@ import (
 	"sync"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/piheta/sept/backend/models"
+	"github.com/piheta/sept/backend/repos"
 )
 
 var (
@@ -15,11 +17,11 @@ var (
 	dbName  string
 )
 
-func InitDb(id string) error {
+func InitDb(user models.User) error {
 	dbMutex.Lock()
 	defer dbMutex.Unlock()
 
-	dbName = "./sept_data/" + id + ".db"
+	dbName = "./sept_data/" + user.ID + ".db"
 
 	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
@@ -33,7 +35,7 @@ func InitDb(id string) error {
 
 	DB = db
 
-	err = createTablesIfNotExist()
+	err = createTablesIfNotExist(user)
 	if err != nil {
 		return fmt.Errorf("failed to create tables: %w", err)
 	}
@@ -46,7 +48,7 @@ func InitDb(id string) error {
 	return nil
 }
 
-func createTablesIfNotExist() error {
+func createTablesIfNotExist(user models.User) error {
 	// Check if any of the tables in the schema already exist
 	tables := []string{"users", "chats", "user_chats", "messages"}
 	for _, table := range tables {
@@ -72,6 +74,41 @@ func createTablesIfNotExist() error {
 	_, err = DB.Exec(string(schema))
 	if err != nil {
 		return err
+	}
+
+	err = populateTables(user)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func populateTables(user models.User) error {
+	// create repos, use them to fill database
+	user_repo := repos.NewUserRepo(DB)
+	chat_repo := repos.NewChatRepo(DB)
+	userchat_repo := repos.NewUserchatRepo(DB)
+
+	// Add the user to the database
+	if err := user_repo.AddUser(user); err != nil {
+		return fmt.Errorf("failed to add user: %w", err)
+	}
+
+	// Add a new chat for the user
+	if err := chat_repo.AddChat(user.Username); err != nil {
+		return fmt.Errorf("failed to add chat: %w", err)
+	}
+
+	// Retrieve the created chat by username
+	chat, err := chat_repo.GetChatByName(user.Username)
+	if err != nil {
+		return fmt.Errorf("failed to get chat: %w", err)
+	}
+	fmt.Println("chat:", chat)
+	// Add the user to the chat
+	if err := userchat_repo.AddUserToChat(user.ID, chat.ID); err != nil {
+		return fmt.Errorf("failed to add user to chat: %w", err)
 	}
 
 	return nil

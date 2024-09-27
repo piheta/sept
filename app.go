@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/piheta/sept/backend/db"
@@ -11,7 +10,6 @@ import (
 )
 
 type App struct {
-	ctx           context.Context
 	user_repo     *repos.UserRepo
 	chat_repo     *repos.ChatRepo
 	userchat_repo *repos.UserchatRepo
@@ -31,18 +29,59 @@ func NewApp(userRepo *repos.UserRepo, chatRepo *repos.ChatRepo, userchatRepo *re
 	}
 }
 
-func (a *App) startup(ctx context.Context) {
-	a.ctx = ctx
-	//get latest version
-}
+///
+/// AUTH ENDPOINTS
+///
 
-func (a *App) StartLoggedIn(user_id string) error {
-	if err := db.DbExists(user_id); err != nil {
-		return fmt.Errorf("db does not exist %w", err)
+func (a *App) GetAuthedUser() models.User {
+	err := a.auth_service.LogInWithExistingJwt()
+	if err != nil {
+		fmt.Println(err)
 	}
 
-	db.InitDb(user_id)
+	return services.AuthedUser
+}
+
+func (a *App) Login(email, password string) (*models.User, error) {
+	user, err := a.auth_service.Login(email, password)
+	if err != nil {
+		return &models.User{}, fmt.Errorf("failed to login %w", err)
+	}
+
+	a.user_repo = repos.NewUserRepo(db.DB)
+	a.chat_repo = repos.NewChatRepo(db.DB)
+	a.userchat_repo = repos.NewUserchatRepo(db.DB)
+	a.message_repo = repos.NewMessageRepo(db.DB)
+
+	return user, nil
+}
+
+func (a *App) Register(username, email, password string) (*map[string]interface{}, error) {
+	return a.auth_service.Register(username, email, password)
+}
+
+func (a *App) LogOut() error {
+	err := a.auth_service.LogOut()
+	if err != nil {
+		return err
+	}
+
+	a.user_repo = repos.NewUserRepo(nil)
+	a.chat_repo = repos.NewChatRepo(nil)
+	a.userchat_repo = repos.NewUserchatRepo(nil)
+	a.message_repo = repos.NewMessageRepo(nil)
+
+	services.AuthedUser = models.User{}
+
 	return nil
+}
+
+///
+/// APP ENDPOINTS
+///
+
+func (a *App) GetUser(user_id string) (models.User, error) {
+	return a.user_repo.GetUser(user_id)
 }
 
 func (a *App) GetUsers() ([]models.User, error) {
@@ -63,64 +102,4 @@ func (a *App) SendMessage(message string, chat_id string, user_id string) ([]mod
 
 func (a *App) GetChatMessages(chat_id string) ([]models.Message, error) {
 	return a.message_repo.GetMessagesByChatID(chat_id)
-}
-
-func (a *App) GetUser(user_id string) (models.User, error) {
-	return a.user_repo.GetUser(user_id)
-}
-
-func (a *App) Login(email, password string) (*models.User, error) {
-	// if database does not exist (first time login)
-	user, err := a.auth_service.Login(email, password)
-	if err != nil {
-		return &models.User{}, fmt.Errorf("failed to login %w", err)
-	}
-
-	if err := a.handleFirstTimeLogin(*user); err != nil {
-		return &models.User{}, fmt.Errorf("failed to init db %w", err)
-	}
-
-	return user, nil
-}
-
-func (a *App) Register(username, email, password string) (*map[string]interface{}, error) {
-	return a.auth_service.Register(username, email, password)
-}
-
-// helper
-// function
-func (a *App) handleFirstTimeLogin(user models.User) error {
-	// Initialize the user's database based on their ID
-	if err := db.InitDb(user.ID); err != nil {
-		return fmt.Errorf("failed to initialize database: %w", err)
-	}
-
-	// Reinit app fields
-	a.user_repo = repos.NewUserRepo(db.DB)
-	a.chat_repo = repos.NewChatRepo(db.DB)
-	a.userchat_repo = repos.NewUserchatRepo(db.DB)
-	a.message_repo = repos.NewMessageRepo(db.DB)
-
-	// Add the user to the database
-	if err := a.user_repo.AddUser(user); err != nil {
-		return fmt.Errorf("failed to add user: %w", err)
-	}
-
-	// Add a new chat for the user
-	if err := a.chat_repo.AddChat(user.Username); err != nil {
-		return fmt.Errorf("failed to add chat: %w", err)
-	}
-
-	// Retrieve the created chat by username
-	chat, err := a.chat_repo.GetChatByName(user.Username)
-	if err != nil {
-		return fmt.Errorf("failed to get chat: %w", err)
-	}
-	fmt.Println(chat)
-	// Add the user to the chat
-	if err := a.userchat_repo.AddUserToChat(user.ID, chat.ID); err != nil {
-		return fmt.Errorf("failed to add user to chat: %w", err)
-	}
-
-	return nil
 }
