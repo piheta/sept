@@ -4,7 +4,7 @@
     import { GetAuthedUser } from "../wailsjs/go/main/App";
     import { auth_store } from "./stores/authStore";
     import { onMount } from 'svelte';
-    import {push, pop, replace} from 'svelte-spa-router'
+    import {replace} from 'svelte-spa-router'
 
 
     // Import your route components
