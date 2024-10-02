@@ -4,12 +4,14 @@
     import SidebarSettings from "./Sidebar-Settings.svelte";
 
     let sidebar_mode = 0;
+
+    window.runtime.Window
 </script>
 
 <!-- 3 BUTTONS -->
 <div class="flex flex-col h-full">
     <div class="flex-shrink-0">
-        <div class="flex justify-center items-center gap-2 ml-2">
+        <div class="flex justify-center items-center gap-2 ml-2 *:shadow-xl">
             <button
                 on:click={() => {
                     sidebar_mode = 0;
@@ -108,10 +110,10 @@
             </button>
         </div>
 
-        <div class="flex relative mt-2 mb-2 ml-2 h-8">
+        <div class="flex relative mt-2 mb-2 ml-2 h-8 sha">
             <svg class="absolute left-2 top-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="11" cy="11" r="8" /><path d="m21 21l-4.3-4.3"/></g></svg>
             <input
-                class="w-full bg-gray-900 placeholder-gray-500 rounded-md pl-8 focus:outline-none"
+                class="w-full bg-gray-900 placeholder-gray-500 rounded-md pl-8 focus:outline-none shadow-xl"
                 placeholder="Search"
                 autocapitalize="off"
                 autocomplete="off"
@@ -129,5 +131,6 @@
         {:else}
             <h1>error</h1>
         {/if}
+        <button on:click={() => {WindowReo}}></button>
     </div>
 </div>

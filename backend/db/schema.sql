@@ -11,6 +11,7 @@ CREATE TABLE users (
 CREATE TABLE chats (
     id TEXT PRIMARY KEY UNIQUE,
     name TEXT,
+    avatar TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

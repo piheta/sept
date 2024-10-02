@@ -12,14 +12,42 @@ type ChatRepo struct {
 	db *sql.DB
 }
 
+func (cr *ChatRepo) GetChats() ([]models.Chat, error) {
+	query := `
+		SELECT id, name, avatar
+		FROM chats
+	`
+	rows, err := cr.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var chats []models.Chat
+	for rows.Next() {
+		var chat models.Chat
+		err := rows.Scan(&chat.ID, &chat.Name, &chat.Avatar)
+		if err != nil {
+			return nil, err
+		}
+		chats = append(chats, chat)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return chats, nil
+}
+
 func NewChatRepo(db *sql.DB) *ChatRepo {
 	return &ChatRepo{db: db}
 }
 
-func (cr *ChatRepo) AddChat(name string) error {
+func (cr *ChatRepo) AddChat(name string, avatar string) error {
 	chat_id := uuid.New()
-	query := `INSERT OR IGNORE INTO chats (id, name) VALUES (?, ?)`
-	_, err := cr.db.Exec(query, chat_id, name)
+	query := `INSERT OR IGNORE INTO chats (id, name, avatar) VALUES (?, ?, ?)`
+	_, err := cr.db.Exec(query, chat_id, name, avatar)
 	return err
 }
 

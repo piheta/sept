@@ -208,7 +208,8 @@ func (as *AuthService) LogInWithExistingJwt() error {
 	jwtString := string(jwt)
 
 	if err := as.VerifyToken(jwtString); err != nil {
-		return fmt.Errorf("jwt is not valid %w ", err)
+		as.LogOut()
+		return fmt.Errorf("jwt is not valid %w, ", err)
 	}
 
 	user, _ := as.ExtractUserFromJwt(jwtString)

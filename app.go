@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
 	"fmt"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 
 	"github.com/piheta/sept/backend/db"
 	"github.com/piheta/sept/backend/models"
@@ -10,6 +13,8 @@ import (
 )
 
 type App struct {
+	ctx context.Context
+
 	user_repo     *repos.UserRepo
 	chat_repo     *repos.ChatRepo
 	userchat_repo *repos.UserchatRepo
@@ -27,6 +32,14 @@ func NewApp(userRepo *repos.UserRepo, chatRepo *repos.ChatRepo, userchatRepo *re
 
 		auth_service: authService,
 	}
+}
+
+func (a *App) startup(ctx context.Context) {
+	a.ctx = ctx
+}
+
+func (a *App) Exit() {
+	runtime.Quit(a.ctx)
 }
 
 ///
@@ -92,8 +105,16 @@ func (a *App) GetUsers() ([]models.User, error) {
 	return users, nil
 }
 
-func (a *App) SendMessage(message string, chat_id string, user_id string) ([]models.Message, error) {
-	err := a.message_repo.AddMessage(chat_id, user_id, message)
+func (a *App) GetChats() ([]models.Chat, error) {
+	chats, err := a.chat_repo.GetChats()
+	if err != nil {
+		return nil, fmt.Errorf("failed to retrieve chats: %w", err)
+	}
+	return chats, nil
+}
+
+func (a *App) SendMessage(message string, chat_id string) ([]models.Message, error) {
+	err := a.message_repo.AddMessage(chat_id, services.AuthedUser.ID, message)
 	if err != nil {
 		return nil, fmt.Errorf("failed to add message: %w", err)
 	}

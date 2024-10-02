@@ -10,9 +10,7 @@
         if (event.key === "Enter" || event.key === " ") {
             selection_store.set({
                 id: item.id,
-                user_id: item.user_id,
-                username: item.username,
-                ip: item.ip,
+                name: item.name,
                 avatar: item.avatar
             });
         }
@@ -21,9 +19,7 @@
     function clickItem() {
         selection_store.set({
             id: item.id,
-            user_id: item.user_id,
-            username: item.username,
-            ip: item.ip,
+            name: item.name,
             avatar: item.avatar
          });
     }
@@ -45,6 +41,6 @@
                 src={item.avatar}
             />
         {/if}
-        {item.username}
+        {item.name}
     </div>
 </li>

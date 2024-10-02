@@ -1,7 +1,7 @@
 <script>
     import List from "./List.svelte";
     import { auth_store } from "../../stores/authStore";
-    import { LogOut } from "../../../wailsjs/go/main/App";
+    import { Exit, LogOut } from "../../../wailsjs/go/main/App";
     import {replace} from 'svelte-spa-router'
 
     let selection = "";
@@ -54,3 +54,4 @@
     img={false}
 />
 <button on:click={logOut}>Log Out</button>
+<button on:click={() => {Exit()}}>Exit</button>

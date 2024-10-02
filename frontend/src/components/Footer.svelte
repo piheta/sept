@@ -27,12 +27,12 @@
     }
 </script>
 
-<div class="h-full w-full rounded-md bg-gray-900 p-1 flex flex-col">
+<div class="h-full w-full rounded-md bg-gray-900 p-1 flex flex-col shadow-xl">
     <div>o o o o</div>
     <textarea
         bind:value={input_txt}
         class="w-full bg-gray-900 resize-none m-0 focus:outline-none active:outline-none flex-grow"
-        placeholder="Message {$selection_store.username}"
+        placeholder="Message {$selection_store.name}"
         on:keydown={handleKeyDown}
     />
     <div class="m-1 flex justify-end">

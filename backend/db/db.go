@@ -96,7 +96,7 @@ func populateTables(user models.User) error {
 	}
 
 	// Add a new chat for the user
-	if err := chat_repo.AddChat(user.Username); err != nil {
+	if err := chat_repo.AddChat(user.Username, user.Avatar); err != nil {
 		return fmt.Errorf("failed to add chat: %w", err)
 	}
 

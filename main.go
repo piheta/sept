@@ -51,7 +51,6 @@ func main() {
 
 		auth_service,
 	)
-
 	err := wails.Run(&options.App{
 		Width:  700,
 		Height: 512,
@@ -83,7 +82,7 @@ func main() {
 			},
 		},
 		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
-		// OnStartup:        app.startup,
+		OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,
 		},
