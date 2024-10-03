@@ -14,12 +14,12 @@ func NewMessageRepo(db *sql.DB) *MessageRepo {
 	return &MessageRepo{db: db}
 }
 
-func (mr *MessageRepo) AddMessage(chatID string, userID string, content string) error {
+func (mr *MessageRepo) AddMessage(message models.Message) error {
 	query := `
-		INSERT INTO messages (chat_id, user_id, content, created_at) 
-		VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+		INSERT INTO messages (chat_id, user_id, content, signature, created_at) 
+		VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
 	`
-	_, err := mr.db.Exec(query, chatID, userID, content)
+	_, err := mr.db.Exec(query, message.ChatID, message.UserID, message.Content, message.Signature)
 	return err
 }
 

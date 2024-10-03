@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 
@@ -66,7 +67,18 @@ func (as *AuthService) Login(email, password string) (*models.User, error) {
 		return nil, fmt.Errorf("error saving jwt to file")
 	}
 
+	// Generate keys after successful login
+	if err = SetUpKeys(); err != nil {
+		return nil, fmt.Errorf("error setting up keys: %w", err)
+	}
+
+	user.PublicKey, err = GetPublicKeyBase64()
+	if err != nil {
+		log.Fatalf("failed to get public key")
+	}
 	db.InitDb(user)
+
+	AuthedUser = user
 
 	return &user, nil
 }
@@ -212,7 +224,15 @@ func (as *AuthService) LogInWithExistingJwt() error {
 		return fmt.Errorf("jwt is not valid %w, ", err)
 	}
 
+	if !KeysExist() {
+		return fmt.Errorf("failed to log in with jwt %w, ", err)
+	}
+
 	user, _ := as.ExtractUserFromJwt(jwtString)
+	user.PublicKey, err = GetPublicKeyBase64()
+	if err != nil {
+		log.Fatalf("failed to get public key")
+	}
 
 	if err := db.InitDb(user); err != nil {
 		return fmt.Errorf("failed to init db with jwt %w ", err)

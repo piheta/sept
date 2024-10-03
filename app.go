@@ -113,10 +113,21 @@ func (a *App) GetChats() ([]models.Chat, error) {
 	return chats, nil
 }
 
-func (a *App) SendMessage(message string, chat_id string) ([]models.Message, error) {
-	err := a.message_repo.AddMessage(chat_id, services.AuthedUser.ID, message)
+func (a *App) SendMessage(content string, chat_id string) ([]models.Message, error) {
+
+	msg := models.Message{
+		ChatID:  chat_id,
+		UserID:  services.AuthedUser.ID,
+		Content: content,
+	}
+	signedMsg, err := services.SignMessage(msg)
 	if err != nil {
-		return nil, fmt.Errorf("failed to add message: %w", err)
+		return nil, fmt.Errorf("failed to send message %w, ", err)
+	}
+
+	err = a.message_repo.AddMessage(signedMsg)
+	if err != nil {
+		return nil, fmt.Errorf("failed to send message: %w", err)
 	}
 	return a.message_repo.GetMessagesByChatID(chat_id)
 }
