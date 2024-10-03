@@ -16,7 +16,7 @@
         <div class="flex flex-col justify-between ml-2">
             <h1 class="leading-none">
                 <span class="font-semibold">{username ?? 'Unknown'}</span>
-                <span class="text-gray-300 text-sm ml-2">
+                <span class="text-gray-400 text-sm ml-2">
                     {created_at ? new Date(created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Unknown Time'}
                 </span>
             </h1>
@@ -27,7 +27,11 @@
     </div>
     {:else}
     <!-- Show only the message content -->
-    <div class="flex-col pl-12">
-        <p>{@html content?.replace(/\n/g, '<br>') ?? 'No content available'}</p>
+    <div class="flex-col pl-12 pointer-events-auto relative group">
+        <span class="text-gray-400 text-[0.7rem] absolute left-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            {created_at ? new Date(created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+        </span>
+        <p class="select-text">{@html content?.replace(/\n/g, '<br>') ?? 'No content available'}</p>
     </div>
+    
 {/if}
