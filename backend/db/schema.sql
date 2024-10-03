@@ -29,8 +29,8 @@ CREATE TABLE user_chats (
 -- Messages Table
 CREATE TABLE messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    chat_id TEXT,
-    user_id TEXT,
+    chat_id TEXT NOT NULL,
+    user_id TEXT NOT NULL,
     content TEXT NOT NULL,
     signature TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
