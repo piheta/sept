@@ -27,8 +27,8 @@
 </script>
 
 <li
-    class="text-[0.9rem] p-[0.3rem] m-0 rounded-md focus:list-none focus:outline-none outline-none hover:bg-[rgba(0,0,0,0.125)] focus:bg-[rgba(0,0,0,0.125)]"
-    class:!bg-gray-900={selected}
+    class="text-[0.9rem] p-[0.3rem] m-0 rounded-md focus:list-none focus:outline-none outline-none hover:bg-[rgba(0,0,0,0.125)] focus:bg-[rgba(0,0,0,0.125)] ml-2"
+    style={selected ? "background-color: rgba(17, 24, 39, 0.5);" : ""}
     class:!mb-3={isLast}
     tabindex="0"
     on:click={clickItem}

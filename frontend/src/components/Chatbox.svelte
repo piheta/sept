@@ -55,7 +55,7 @@
     $: $selection_store, getMessages(); // Trigger getMessages whenever selection_store changes
 </script>
 
-<div bind:this={chatbox} class="bg-gray-700 flex-grow h-20 rounded-md overflow-auto mt-2 scrollbar-chatbox flex flex-col-reverse shadow-xl">
+<div bind:this={chatbox} style="background-color: rgba(17, 24, 39, 0.5);" class="flex-grow h-20 rounded-md overflow-auto mt-2 scrollbar-chatbox flex flex-col-reverse shadow-xl">
     <div class="p-2 pointer-events-none">
         {#each $message_store as message, i}
             <Message

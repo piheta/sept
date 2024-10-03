@@ -7,9 +7,9 @@
     import Messages from "/src/components/Chatbox.svelte";
     import Chatbox from "/src/components/Chatbox.svelte";
     
-    let width = 205;
+    let width = 180;
     let resizeWidth = width;
-    const minWidth = 205;
+    const minWidth = 180;
     const maxWidth = () => window.innerWidth / 2;
 
     $: console.log(resizeWidth);
@@ -31,10 +31,10 @@
 </script>
 
 <main class="h-full select-none">
-    <div class="wails-drag w-full h-6 m-0"></div>
-    <div class="flex w-full h-[calc(100vh-1.5rem)]">
+    <div class="wails-drag w-full h-6 absolute top-0 left-0"></div>
+    <div class="flex w-full h-[calc(100vh)]">
         <div
-            class="min-w-[215px] max-w-[50%] mt-1"
+            class="min-w-[180px] max-w-[50%] mt-5"
             style="width: {resizeWidth}px;"
         >
             <Sidebar />
@@ -49,8 +49,8 @@
                 width = resizeWidth;
             }}
         ></div>
-        <div class="flex flex-col flex-grow mr-2 mb-2">
-            <div class="flex-none h-16 rounded-md mt-1">
+        <div class="flex flex-col flex-grow mr-2 mb-2 mt-2.5">
+            <div class="flex-none h-16 rounded-md">
                 <Header recipient={"Some Person"} />
             </div>
                 <Chatbox />
