@@ -8,14 +8,14 @@
     let chatbox;
     let participants = new Map(); // Caching user details
 
-    async function getUserDetails(user_id) {
-        if (participants.has(user_id)) {// Check if user details are already in cache
-            return participants.get(user_id);
+    async function getUserDetails(id) {
+        if (participants.has(id)) { // Check if user details are already in cache
+            return participants.get(id);
         }
         try {
-            let user = await GetUser(user_id);
-            participants.set(user_id, { username: user.username, avatar: user.avatar }); // Store user details in cache
-
+            let user = await GetUser(id); // Make sure GetUser is expecting 'id' now
+            console.log(user)
+            participants.set(id, { username: user.username, avatar: user.avatar, public_key: user.public_key }); // Store user details in cache
             return user;
         } catch (error) {
             console.error("Error getting user: ", error);
@@ -47,7 +47,6 @@
         if (!chatbox) {
             return;
         }
-
         // if new message is from sender, snap to bottom.
         // if new message is received, and already at bottom snap to new bottom.
         // if new message is received, and scrolled up, don't snap to bottom.

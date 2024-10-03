@@ -5,5 +5,5 @@ type User struct {
 	Username  string `json:"username"`
 	Ip        string `json:"ip"`
 	Avatar    string `json:"avatar"`
-	PublicKey string `josn:"public_key"`
+	PublicKey string `json:"public_key"`
 }

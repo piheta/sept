@@ -45,6 +45,7 @@ export namespace models {
 	    username: string;
 	    ip: string;
 	    avatar: string;
+	    public_key: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new User(source);
@@ -56,6 +57,7 @@ export namespace models {
 	        this.username = source["username"];
 	        this.ip = source["ip"];
 	        this.avatar = source["avatar"];
+	        this.public_key = source["public_key"];
 	    }
 	}
 

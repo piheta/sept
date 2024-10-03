@@ -14,14 +14,14 @@ func NewUserRepo(db *sql.DB) *UserRepo {
 	return &UserRepo{db: db}
 }
 
-func (ur *UserRepo) GetUser(userID string) (models.User, error) {
+func (ur *UserRepo) GetUser(id string) (models.User, error) {
 	query := `
-        SELECT id, user_id, username, ip, avatar
+        SELECT id, username, ip, avatar, public_key
         FROM users
-        WHERE user_id = ?
+        WHERE id = ?
     `
 	var user models.User
-	err := ur.db.QueryRow(query, userID).Scan(&user.ID, &user.Username, &user.Ip, &user.Avatar)
+	err := ur.db.QueryRow(query, id).Scan(&user.ID, &user.Username, &user.Ip, &user.Avatar, &user.PublicKey)
 	if err != nil {
 		return models.User{}, err
 	}
