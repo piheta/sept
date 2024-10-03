@@ -14,7 +14,6 @@
         }
         try {
             let user = await GetUser(id); // Make sure GetUser is expecting 'id' now
-            console.log(user)
             participants.set(id, { username: user.username, avatar: user.avatar, public_key: user.public_key }); // Store user details in cache
             return user;
         } catch (error) {
