@@ -19,3 +19,4 @@ frontend/dist
 *.db
 *.salt
 *.jwt
+sept_data/*
