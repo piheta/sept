@@ -9,12 +9,14 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/piheta/sept/backend/models"
+	"github.com/piheta/sept/backend/services"
 	"github.com/pion/webrtc/v4"
 )
 
 var chosenIP string
 var peerConnection *webrtc.PeerConnection
 var ws *websocket.Conn
+var Ips []string
 
 // p1p2, connects to the signaling server
 // p1 creates and sends offer to the chosen peer
@@ -86,7 +88,7 @@ func createDataChannel() {
 	})
 
 	sendChannel.OnMessage(func(msg webrtc.DataChannelMessage) {
-		fmt.Printf("%s: %s\n", sendChannel.Label(), string(msg.Data))
+		fmt.Printf("%s: %s\n", sendChannel.Label(), string(msg.Data)) //* HANDLES RECIEVED P2P MESSAGE
 	})
 
 	peerConnection.OnDataChannel(func(d *webrtc.DataChannel) {
@@ -108,6 +110,175 @@ func createDataChannel() {
 		fmt.Printf("ICE Connection State has changed: %s\n", s.String())
 	})
 }
+
+func connectToSignalingServer(wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	var err error
+	ws, _, err = websocket.DefaultDialer.Dial("ws://20.100.14.52:8080/ws", nil)
+	if err != nil {
+		log.Fatalf("Failed to connect to WebSocket server: %v", err)
+	}
+	defer ws.Close()
+
+	userData, err := json.Marshal(services.AuthedUser)
+	if err != nil {
+		log.Fatalf("Failed to marshal user data: %v", err)
+	}
+
+	err = ws.WriteMessage(websocket.TextMessage, userData)
+	if err != nil {
+		log.Fatalf("Failed to send user data: %v", err)
+	}
+
+	_, message, err := ws.ReadMessage()
+	if err != nil {
+		log.Fatalf("Failed to read message: %v", err)
+	}
+
+	if err := json.Unmarshal(message, &Ips); err != nil {
+		log.Fatalf("Failed to unmarshal IPs: %v", err)
+	}
+	log.Printf("Nodes connected to signaling server: %v", Ips)
+
+	if len(Ips) < 2 {
+		chosenIP = "none"
+	} else {
+		fmt.Println("Choose IP:")
+		fmt.Scanln(&chosenIP)
+		sendOffer()
+	}
+
+	for {
+		_, message, err := ws.ReadMessage()
+		if err != nil {
+			log.Printf("Error reading message: %v", err)
+			break
+		}
+
+		var connectionRequest models.ConnectionRequest
+		if err := json.Unmarshal(message, &connectionRequest); err != nil {
+			log.Printf("Failed to unmarshal ConnectionRequest: %v", err)
+			continue
+		}
+
+		switch connectionRequest.Type {
+		case "offer":
+			onOffer(connectionRequest)
+		case "answer":
+			onAnswer(connectionRequest)
+		case "candidate":
+			onCandidate(connectionRequest)
+		default:
+			fmt.Println("Unknown message type:", connectionRequest.Type)
+		}
+	}
+}
+
+//
+// ICE HANDLING
+//
+
+// ICE
+// Senders
+func sendOffer() {
+	cr := models.ConnectionRequest{
+		Type:   "offer",
+		DestIP: chosenIP,
+		Data:   createOffer(),
+	}
+	crBytes, err := json.Marshal(cr)
+	if err != nil {
+		log.Fatalf("Failed to marshal ConnectionRequest: %v", err)
+	}
+
+	err = ws.WriteMessage(websocket.TextMessage, crBytes)
+	if err != nil {
+		log.Fatalf("Failed to send chosen IP: %v", err)
+	}
+}
+
+func sendAnswer(destIP, answer string) {
+	cr := models.ConnectionRequest{
+		Type:   "answer",
+		DestIP: destIP,
+		Data:   answer,
+	}
+	crBytes, err := json.Marshal(cr)
+	if err != nil {
+		log.Fatalf("Failed to marshal ConnectionRequest: %v", err)
+	}
+
+	err = ws.WriteMessage(websocket.TextMessage, crBytes)
+	if err != nil {
+		log.Fatalf("Failed to send answer: %v", err)
+	}
+}
+
+func sendICECandidate(candidate *webrtc.ICECandidate) {
+	candidateJSON, err := json.Marshal(candidate.ToJSON())
+	if err != nil {
+		handleError(err)
+		return
+	}
+
+	cr := models.ConnectionRequest{
+		Type:      "candidate",
+		Candidate: candidate,
+		DestIP:    chosenIP,
+		Data:      string(candidateJSON),
+	}
+	crBytes, err := json.Marshal(cr)
+	if err != nil {
+		handleError(err)
+		return
+	}
+
+	if err := ws.WriteMessage(websocket.TextMessage, crBytes); err != nil {
+		handleError(err)
+	}
+}
+
+// ICE
+// Recievers
+
+func onOffer(connectionRequest models.ConnectionRequest) {
+	fmt.Println("Received offer:", connectionRequest)
+	answer := createAnswer(connectionRequest.Data)
+	sendAnswer(*connectionRequest.SrcIP, answer)
+}
+
+func onAnswer(connectionRequest models.ConnectionRequest) {
+	fmt.Println("Received answer:", connectionRequest.Data)
+	answerBytes, err := base64.StdEncoding.DecodeString(connectionRequest.Data)
+	if err != nil {
+		handleError(err)
+	}
+	answerSDP := string(answerBytes)
+	answerDesc := webrtc.SessionDescription{
+		Type: webrtc.SDPTypeAnswer,
+		SDP:  answerSDP,
+	}
+	if err := peerConnection.SetRemoteDescription(answerDesc); err != nil {
+		handleError(err)
+	}
+}
+
+func onCandidate(connectionRequest models.ConnectionRequest) {
+	fmt.Println("Received ICE candidate")
+	candidate := webrtc.ICECandidateInit{}
+	if err := json.Unmarshal([]byte(connectionRequest.Data), &candidate); err != nil {
+		handleError(err)
+		return
+	}
+	chosenIP = *connectionRequest.SrcIP // Replace "none" with the sender of the offer
+	if err := peerConnection.AddICECandidate(candidate); err != nil {
+		handleError(err)
+	}
+}
+
+// ICE
+// Helpers
 
 func createOffer() string {
 	offer, err := peerConnection.CreateOffer(nil)
@@ -146,151 +317,4 @@ func createAnswer(offerBase64 string) string {
 	}
 
 	return base64.StdEncoding.EncodeToString([]byte(answer.SDP))
-}
-
-func sendICECandidate(candidate *webrtc.ICECandidate) {
-	candidateJSON, err := json.Marshal(candidate.ToJSON())
-	if err != nil {
-		handleError(err)
-		return
-	}
-
-	cr := models.ConnectionRequest{
-		Type:      "candidate",
-		Candidate: candidate,
-		DestIP:    chosenIP,
-		Data:      string(candidateJSON),
-	}
-	crBytes, err := json.Marshal(cr)
-	if err != nil {
-		handleError(err)
-		return
-	}
-
-	if err := ws.WriteMessage(websocket.TextMessage, crBytes); err != nil {
-		handleError(err)
-	}
-}
-
-func connectToSignalingServer(wg *sync.WaitGroup) {
-	defer wg.Done()
-
-	var err error
-	ws, _, err = websocket.DefaultDialer.Dial("ws://20.100.14.52:8080/ws", nil)
-	if err != nil {
-		log.Fatalf("Failed to connect to WebSocket server: %v", err)
-	}
-	defer ws.Close()
-
-	_, message, err := ws.ReadMessage()
-	if err != nil {
-		log.Fatalf("Failed to read message: %v", err)
-	}
-	var ips []string
-	if err := json.Unmarshal(message, &ips); err != nil {
-		log.Fatalf("Failed to unmarshal IPs: %v", err)
-	}
-	log.Printf("Nodes connected to signaling server: %v", ips)
-
-	if len(ips) < 2 {
-		chosenIP = "none"
-	} else {
-		fmt.Println("Choose IP:")
-		fmt.Scanln(&chosenIP)
-		sendOffer()
-	}
-
-	for {
-		_, message, err := ws.ReadMessage()
-		if err != nil {
-			log.Printf("Error reading message: %v", err)
-			break
-		}
-
-		var connectionRequest models.ConnectionRequest
-		if err := json.Unmarshal(message, &connectionRequest); err != nil {
-			log.Printf("Failed to unmarshal ConnectionRequest: %v", err)
-			continue
-		}
-
-		switch connectionRequest.Type {
-		case "offer":
-			onOffer(connectionRequest)
-		case "answer":
-			onAnswer(connectionRequest)
-		case "candidate":
-			onCandidate(connectionRequest)
-		default:
-			fmt.Println("Unknown message type:", connectionRequest.Type)
-		}
-	}
-}
-
-func sendOffer() {
-	cr := models.ConnectionRequest{
-		Type:   "offer",
-		DestIP: chosenIP,
-		Data:   createOffer(),
-	}
-	crBytes, err := json.Marshal(cr)
-	if err != nil {
-		log.Fatalf("Failed to marshal ConnectionRequest: %v", err)
-	}
-
-	err = ws.WriteMessage(websocket.TextMessage, crBytes)
-	if err != nil {
-		log.Fatalf("Failed to send chosen IP: %v", err)
-	}
-}
-
-func sendAnswer(destIP, answer string) {
-	cr := models.ConnectionRequest{
-		Type:   "answer",
-		DestIP: destIP,
-		Data:   answer,
-	}
-	crBytes, err := json.Marshal(cr)
-	if err != nil {
-		log.Fatalf("Failed to marshal ConnectionRequest: %v", err)
-	}
-
-	err = ws.WriteMessage(websocket.TextMessage, crBytes)
-	if err != nil {
-		log.Fatalf("Failed to send answer: %v", err)
-	}
-}
-
-func onOffer(connectionRequest models.ConnectionRequest) {
-	fmt.Println("Received offer:", connectionRequest)
-	answer := createAnswer(connectionRequest.Data)
-	sendAnswer(*connectionRequest.SrcIP, answer)
-}
-
-func onAnswer(connectionRequest models.ConnectionRequest) {
-	fmt.Println("Received answer:", connectionRequest.Data)
-	answerBytes, err := base64.StdEncoding.DecodeString(connectionRequest.Data)
-	if err != nil {
-		handleError(err)
-	}
-	answerSDP := string(answerBytes)
-	answerDesc := webrtc.SessionDescription{
-		Type: webrtc.SDPTypeAnswer,
-		SDP:  answerSDP,
-	}
-	if err := peerConnection.SetRemoteDescription(answerDesc); err != nil {
-		handleError(err)
-	}
-}
-
-func onCandidate(connectionRequest models.ConnectionRequest) {
-	fmt.Println("Received ICE candidate")
-	candidate := webrtc.ICECandidateInit{}
-	if err := json.Unmarshal([]byte(connectionRequest.Data), &candidate); err != nil {
-		handleError(err)
-		return
-	}
-	chosenIP = *connectionRequest.SrcIP // Replace "none" with the sender of the offer
-	if err := peerConnection.AddICECandidate(candidate); err != nil {
-		handleError(err)
-	}
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
 	"github.com/piheta/sept/backend/db"
+	"github.com/piheta/sept/backend/handlers"
 	"github.com/piheta/sept/backend/models"
 	"github.com/piheta/sept/backend/repos"
 	"github.com/piheta/sept/backend/services"
@@ -134,4 +135,8 @@ func (a *App) SendMessage(content string, chat_id string) ([]models.Message, err
 
 func (a *App) GetChatMessages(chat_id string) ([]models.Message, error) {
 	return a.message_repo.GetMessagesByChatID(chat_id)
+}
+
+func (a *App) GetIps() []string {
+	return handlers.Ips
 }

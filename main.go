@@ -26,7 +26,7 @@ func main() {
 	flag.Parse()
 	if *bFlag {
 		fmt.Println("The -b flag was passed")
-		peer.Peer()
+		go peer.Peer()
 	}
 
 	//

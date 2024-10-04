@@ -18,6 +18,10 @@ export function GetChats() {
   return window['go']['main']['App']['GetChats']();
 }
 
+export function GetIps() {
+  return window['go']['main']['App']['GetIps']();
+}
+
 export function GetUser(arg1) {
   return window['go']['main']['App']['GetUser'](arg1);
 }
