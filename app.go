@@ -140,3 +140,7 @@ func (a *App) GetChatMessages(chat_id string) ([]models.Message, error) {
 func (a *App) GetIps() []string {
 	return handlers.Ips
 }
+
+func (a *App) Search(searchString string) ([]string, error) {
+	return db.Search(searchString)
+}

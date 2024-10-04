@@ -22,4 +22,6 @@ export function Login(arg1:string,arg2:string):Promise<models.User>;
 
 export function Register(arg1:string,arg2:string,arg3:string):Promise<any>;
 
+export function Search(arg1:string):Promise<Array<string>>;
+
 export function SendMessage(arg1:string,arg2:string):Promise<Array<models.Message>>;

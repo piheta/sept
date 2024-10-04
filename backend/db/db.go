@@ -138,3 +138,45 @@ func RemoveDb(userID string) error {
 
 	return nil
 }
+
+func Search(searchString string) ([]string, error) {
+	var results []string
+
+	// Search in chats table (search by chat name)
+	chatsQuery := `SELECT name FROM chats WHERE name LIKE ?`
+	rows, err := DB.Query(chatsQuery, "%"+searchString+"%")
+	if err != nil {
+		return nil, fmt.Errorf("failed to search chats: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var chatName string
+		if err := rows.Scan(&chatName); err != nil {
+			return nil, fmt.Errorf("failed to scan chat: %w", err)
+		}
+		results = append(results, fmt.Sprintf("Chat: %s", chatName))
+	}
+
+	if len(results) > 0 {
+		return results, nil
+	}
+
+	// Search in messages table (search by message content)
+	messagesQuery := `SELECT content FROM messages WHERE content LIKE ?`
+	rows, err = DB.Query(messagesQuery, "%"+searchString+"%")
+	if err != nil {
+		return nil, fmt.Errorf("failed to search messages: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var messageContent string
+		if err := rows.Scan(&messageContent); err != nil {
+			return nil, fmt.Errorf("failed to scan message: %w", err)
+		}
+		results = append(results, messageContent)
+	}
+
+	return results, nil
+}
