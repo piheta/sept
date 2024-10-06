@@ -4,6 +4,7 @@
     import { message_store } from '../stores/messageStore.js';
     import { selection_store } from '../stores/selectionStore.js';
     import Message from './Message.svelte';
+    import Header from './Header.svelte';
 
     let chatbox;
     let participants = new Map(); // Caching user details
@@ -55,19 +56,23 @@
     $: $selection_store, getMessages(); // Trigger getMessages whenever selection_store changes
 </script>
 
-<div bind:this={chatbox} style="background-color: rgba(17, 24, 39, 0.5);" class="flex-grow h-20 rounded-md overflow-auto mt-2 scrollbar-chatbox flex flex-col-reverse shadow-xl">
-    <div class="p-2 pointer-events-none">
-        {#each $message_store as message, i}
-            <Message
-                content={message.content}
-                created_at={message.created_at}
-                last_message_create_at={i > 0 ? $message_store[i - 1].created_at : null}
-                user_id={message.user_id}
-                last_sender_user_id={i > 0 ? $message_store[i - 1].user_id : null}
-                index={i}
-                username={participants.get(message.user_id)?.username ?? 'Unknown'}
-                avatar={participants.get(message.user_id)?.avatar ?? 'default-avatar-url'}
-            />
-        {/each}
+<div style="background-color: rgba(17, 24, 39, 0.5);" class="flex h-full flex-col rounded-md">
+    <Header recipient={"Some Person"} />
+
+    <div bind:this={chatbox}  class="flex-grow h-20 overflow-auto scrollbar-chatbox flex flex-col-reverse shadow-xl">
+        <div class="p-2 pointer-events-none">
+            {#each $message_store as message, i}
+                <Message
+                    content={message.content}
+                    created_at={message.created_at}
+                    last_message_create_at={i > 0 ? $message_store[i - 1].created_at : null}
+                    user_id={message.user_id}
+                    last_sender_user_id={i > 0 ? $message_store[i - 1].user_id : null}
+                    index={i}
+                    username={participants.get(message.user_id)?.username ?? 'Unknown'}
+                    avatar={participants.get(message.user_id)?.avatar ?? 'default-avatar-url'}
+                />
+            {/each}
+        </div>
     </div>
 </div>

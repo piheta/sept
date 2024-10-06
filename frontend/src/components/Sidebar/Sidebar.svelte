@@ -71,6 +71,6 @@
         {:else}
             <h1>error</h1>
         {/if}
-        <h1>{searchResult}</h1>
+        <!-- <h1>{searchResult}</h1> -->
     </div>
 </div>
