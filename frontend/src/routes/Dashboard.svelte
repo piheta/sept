@@ -47,7 +47,7 @@
                 class="h-2 min-h-2"
             ></div>
             <!-- <div class="flex-none rounded-md" style="height: {resizeFooterHeight}px;"> -->
-                <Footer recipient={"Some Person"} height={96} />
+                <Footer recipient={"Some Person"} height={120} />
             <!-- </div> -->
         </div>
     </div>
