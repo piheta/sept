@@ -2,7 +2,9 @@
     import { GetChats } from "../../../wailsjs/go/main/App.js";
     import List from "./List.svelte";
     import { selection_store } from '../../stores/selectionStore.js';
+    import SmallList from "./SmallList.svelte";
 
+    export let small;
     let chats = [];
     let showChats = true; // Updated to show chats instead of users
 
@@ -20,9 +22,15 @@
     getChats();
 </script>
 
-<List
-    title="Friends"
-    items={chats}
-    collapsible={true}
-    bind:showItems={showChats}
-/>
+{#if small}
+    <SmallList 
+        items={chats}
+    />
+{:else}
+    <List
+        title="Friends"
+        items={chats}
+        collapsible={true}
+        bind:showItems={showChats}
+    />
+{/if}
