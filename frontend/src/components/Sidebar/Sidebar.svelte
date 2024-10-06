@@ -3,27 +3,28 @@
     import SidebarServers from "./Sidebar-Servers.svelte";
     import SidebarSettings from "./Sidebar-Settings.svelte";
     import { Search } from "../../../wailsjs/go/main/App";
+    import { slide } from 'svelte/transition';
 
     let sidebar_mode = 0;
     let searchQuery = ""
     let searchResult = null;
 
     async function search(query) {
-    try {
-      let result = await Search(query);
-      searchResult = result;  // This should trigger reactivity
-    } catch (error) {
-      console.error(error);
+        try {
+            let result = await Search(query);
+            searchResult = result;
+        } catch (error) {
+            console.error(error);
+        }
     }
-  }
 
-  function handleInput(event) {
-    if(searchQuery.length > 2) {
-        search(searchQuery); // Call search() with the search query
-    } else {
-        searchResult = null
+    function handleInput(event) {
+        if(searchQuery.length > 2) {
+            search(searchQuery);
+        } else {
+            searchResult = null
+        }
     }
-  }
 </script>
 
 

@@ -20,7 +20,7 @@
                     {created_at ? new Date(created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Unknown Time'}
                 </span>
             </h1>
-            <p class="{content?.includes('\n') ? '' : 'leading-none'} text-gray-200">
+            <p class="{content?.includes('\n') ? '' : 'leading-none'} text-gray-200 text-[0.95rem]">
                 {@html content?.replace(/\n/g, '<br>') ?? 'No content available'}
             </p>
         </div>
@@ -31,7 +31,7 @@
         <span class="text-gray-400 text-[0.7rem] absolute left-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
             {created_at ? new Date(created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
         </span>
-        <p class="select-text text-gray-200">{@html content?.replace(/\n/g, '<br>') ?? 'No content available'}</p>
+        <p class="select-text text-gray-200 text-[0.95rem]">{@html content?.replace(/\n/g, '<br>') ?? 'No content available'}</p>
     </div>
     
 {/if}
