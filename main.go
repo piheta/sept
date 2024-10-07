@@ -52,8 +52,10 @@ func main() {
 		auth_service,
 	)
 	err := wails.Run(&options.App{
-		Width:  700,
-		Height: 512,
+		Width:     700,
+		Height:    512,
+		MinWidth:  400,
+		MinHeight: 250,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},

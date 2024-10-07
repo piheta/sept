@@ -5,7 +5,7 @@
 </script>
 
 <div class="flex items-center h-14 w-full">
-    <img class=" w-10 h-10 ml-2 rounded-md object-cover object-top shadow-xl" alt="" src={$selection_store.avatar}/>
+    <img class=" w-10 min-w-10 h-10 ml-2 rounded-md object-cover object-top shadow-xl" alt="" src={$selection_store.avatar}/>
 
     <h1 class="pl-1 pr-1 mr-2 ml-2 rounded-md text-[1.25rem] flex-grow  h-16 flex justify-start items-center select-text">{$selection_store.name}</h1>
 
