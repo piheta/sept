@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     // @ts-nocheck
     import Sidebar from "/src/components/Sidebar/Sidebar.svelte";
     import Footer from "/src/components/Footer.svelte";

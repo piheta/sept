@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { slide } from 'svelte/transition';
     import Checkmark from '../assets/icons/Checkmark.svelte';
     import { auth_store } from "../stores/authStore.js"
