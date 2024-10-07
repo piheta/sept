@@ -8,35 +8,33 @@
 
     let chatbox;
     let participants = new Map(); // Caching user details
-
-    async function getUserDetails(id) {
+    
+    function getUserDetails(id) {
         if (participants.has(id)) { // Check if user details are already in cache
-            return participants.get(id);
+            return Promise.resolve(participants.get(id)); // Return cached user wrapped in a resolved promise
         }
-        try {
-            let user = await GetUser(id); // Make sure GetUser is expecting 'id' now
+
+        return GetUser(id).then((user) => {
             participants.set(id, { username: user.username, avatar: user.avatar, public_key: user.public_key }); // Store user details in cache
             return user;
-        } catch (error) {
-            console.error("Error getting user: ", error);
-            return null;
-        }
+        }).catch((err) => {
+            console.error("Error getting user: ", err);
+        });
     }
 
     async function getMessages() {
-        try {
-            let chatId = $selection_store.id; // Ensure reactivity
-            let messages = await GetChatMessages(chatId);
-
-            const userIds = new Set(messages.map(message => message.user_id)); // Collect unique user IDs
+        let chatId = $selection_store.id;
+        GetChatMessages(chatId).then(async (messages) => {
+            const userIds = new Set(messages.map(message => message.user_id));
             await Promise.all(
-                Array.from(userIds).map(userId => getUserDetails(userId)) // Fetch user details and update participants map
+                Array.from(userIds).map(userId => getUserDetails(userId))
             );
 
             message_store.set(messages);
-        } catch (error) {
-            console.error("Error getting messages: ", error);
-        }
+        })
+        .catch((err) => {
+            console.error("Failed to populate chatbox with messages:", err);
+        });
     }
 
     onMount(() => {

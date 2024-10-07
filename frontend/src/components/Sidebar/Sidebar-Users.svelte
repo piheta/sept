@@ -8,15 +8,16 @@
     let chats = [];
     let showChats = true; // Updated to show chats instead of users
 
-    async function getChats() {
-        const result = await GetChats();
-        console.log("Received chats:", result);
-        chats = result;
-
-        if (chats.length > 0 && $selection_store.name) { // Automatically selects the first chat if there are chats available and no chat has been selected yet
-            console.log(chats[0]);
-            $selection_store = chats[0];
-        }
+    function getChats() {
+        GetChats().then((result) => {
+            chats = result;
+            // Automatically selects the first chat if there are chats available and no chat has been selected yet
+            if (chats.length > 0 && $selection_store.name) {
+                $selection_store = chats[0];
+            }
+        }).catch((err) => {
+            console.error("failed to get chats, ", err)
+        })
     }
 
     getChats();

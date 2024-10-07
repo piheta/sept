@@ -21,15 +21,8 @@
 
     setSelection(settings[0].id);
 
-
-    async function logOut() {
-        try {
-            let logout_err = await LogOut();
-            if (logout_err != null) {
-                console.error("Failed to log out:", logout_err);
-                return;
-            }
-
+    function logOut() {
+        LogOut().then(() => {
             auth_store.set({
                 id: null,
                 username: null,
@@ -37,20 +30,18 @@
                 avatar: null
             });
 
-            // Clear any other relevant stores or local storage
             replace('/login');
-        } catch (error) {
-            console.error("An unexpected error occurred during logout:", error);
-        }
+        }).catch((err) => {
+            console.error("Failed to log out:", err);
+        })
     }
 
-    async function getIps() {
-        try {
-            let ips = await GetIps()
+    function getIps() {
+        GetIps().then((ips) => {
             console.log("ips:", ips)
-        } catch (error) {
-            console.error("failed to get ips: ", error);
-        }
+        }).catch((err) => {
+            console.error("failed to get ips: ", err);
+        })
     }
     
 </script>

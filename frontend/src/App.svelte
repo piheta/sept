@@ -26,14 +26,13 @@
         })
     };
 
-    async function checkAuth() {
-        try {
-            let user = await GetAuthedUser();
-            $auth_store = user;
+    function checkAuth() {
+        GetAuthedUser().then((user) => {
+            $auth_store = user
             isAuthenticated = !!user.id;
-        } catch (error) {
+        }).catch(() => {
             isAuthenticated = false;
-        }
+        })
     }
 
     onMount(() => {

@@ -52,11 +52,11 @@
         // Redirect to homepage after successful login
         replace("/")
         
-    } catch (error) {
-        console.error("Error during submission:", error.message);
-        // You can also display the error to the user, e.g., set an error state
+        } catch (error) {
+            console.error("Error during submission:", error.message);
+            // You can also display the error to the user, e.g., set an error state
+        }
     }
-}
 </script>
 
 <style>

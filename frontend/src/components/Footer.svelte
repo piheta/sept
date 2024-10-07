@@ -10,23 +10,24 @@
     let originalHeight = height; // Store the original height passed from the parent
     const maxFooterHeight = () => window.innerHeight; // Maximum footer height
 
-    async function sendMessage(message, chat_id) {
-        input_txt = input_txt.trim();
-        if (input_txt.length < 1) return;
-        try {
-            let allMessagesInChat = await SendMessage(message, chat_id);
+    function sendMessage(message, chat_id) {
+        if (message.length < 1) return;
+
+        SendMessage(message, chat_id).then((allMessagesInChat) => {
             message_store.set(allMessagesInChat);
             input_txt = "";
             adjustHeight();
-        } catch (error) {
-            console.error("Error sending message: ", error);
-        }
+            
+        }).catch((err) => {
+            console.error("failed to send message, ", err)
+        });
     }
+        
 
     function handleKeyDown(event) {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
-            sendMessage(input_txt, $selection_store.id);
+            sendMessage(input_txt.trim(), $selection_store.id);
             height = originalHeight; // Reset height to the original after sending
         }
     }
