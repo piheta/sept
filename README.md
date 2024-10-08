@@ -5,7 +5,7 @@
 sept is a video/chat application similar to discord with no central server. The clients connect directly to eachother making the connection faster than similar applications. Other limitations such as file upload limit are also non existent. 
 sept is inspired by various projects and technologies, such as [vxlan](https://www.rfc-editor.org/rfc/rfc7348) and the old [skype p2p](https://arxiv.org/pdf/cs/0412017) infrastructure.
 
-![network system diagram](./docs/images/sept.png)
+![sept ui](./docs/images/sept.gif)
 
 ## features
 - **private & encrypted:** all messages are sent over an encrypted channel and stored on your device. Sept can't see anything
