@@ -57,8 +57,8 @@
 <div style="background-color: rgba(17, 24, 39, 0.5);" class="flex h-full flex-col rounded-md">
     <Header recipient={"Some Person"} />
 
-    <div bind:this={chatbox}  class="flex-grow h-20 overflow-auto scrollbar-chatbox flex flex-col-reverse shadow-xl">
-        <div class="p-2 pointer-events-none">
+    <div bind:this={chatbox} class="flex-grow h-20 overflow-auto scrollbar-chatbox flex flex-col-reverse shadow-xl">
+        <div class="p-2 pr-[0.1rem] pointer-events-none">
             {#each $message_store as message, i}
                 <Message
                     content={message.content}

@@ -23,7 +23,7 @@
                     {created_at ? new Date(created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Unknown Time'}
                 </span>
             </h1>
-            <p class="{content?.includes('\n') ? '' : ''} text-gray-200 text-[0.95rem] mt-0.5">
+            <p class="select-text pointer-events-auto text-gray-200 text-[0.95rem] mt-0.5 break-words overflow-auto max-w-full" class:break-all={!content.includes(" ")}>
                 {@html content?.replace(/\n/g, '<br>') ?? 'No content available'}
             </p>
         </div>

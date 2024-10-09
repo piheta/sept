@@ -18,26 +18,23 @@
   }
 
   .scrollbar-chatbox {
-    overflow: hidden; /* Hide scrollbar by default */
-    scrollbar-color: theme("colors.gray.900") rgba(0,0,0,0); /* Style scrollbar color */
-  }
 
-  .scrollbar-chatbox:hover {
-      overflow: auto; /* Show scrollbar on hover */
   }
-
   /* For Webkit browsers (Chrome, Safari) */
   .scrollbar-chatbox::-webkit-scrollbar {
-      width: 6px; /* Full width of the scrollbar */
+      width: 0.4rem; /* Full width of the scrollbar */
   }
 
   .scrollbar-chatbox::-webkit-scrollbar-thumb {
-      background-color: theme("colors.gray.900");
+      background-color: transparent;
       border-radius: 3px;
-      margin: 2px;
       box-sizing: border-box; /* Ensure the border adds space inside the track */
   }
 
+  .scrollbar-chatbox:hover::-webkit-scrollbar-thumb {
+    background-color: theme("colors.gray.900");
+}
+  
   .scrollbar-chatbox::-webkit-scrollbar-track {
       background-color: rgba(0,0,0,0); /* Track background */
   }
