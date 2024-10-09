@@ -6,9 +6,9 @@
     export let recipient;
     export let height;
     let input_txt = "";
-    const lineHeight = 45; // Height to add for each new line after the first
+    const lineHeight = 20; // Height to add for each new line after the first
     let originalHeight = height; // Store the original height passed from the parent
-    const maxFooterHeight = () => window.innerHeight; // Maximum footer height
+    const maxFooterHeight = () => window.innerHeight / 2; // Maximum footer height
 
     function sendMessage(message, chat_id) {
         if (message.length < 1) return;

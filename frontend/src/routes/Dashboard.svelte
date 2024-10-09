@@ -76,7 +76,7 @@
             <div class="flex flex-col flex-grow mr-2 mb-2 mt-2.5">
                 <Chatbox />
                 <div role="separator" class="h-2 min-h-2"></div>
-                <Footer recipient={"Some Person"} height={120} />
+                <Footer recipient={"Some Person"} height={100} />
             </div>
         </div>
     </main>
