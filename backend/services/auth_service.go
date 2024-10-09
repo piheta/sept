@@ -24,9 +24,20 @@ func NewAuthSerivce() *AuthService {
 }
 
 func (as *AuthService) Login(email, password string) (*models.User, error) {
+	// Generate keys, if they dont exist
+	if err := SetUpKeys(); err != nil {
+		return nil, fmt.Errorf("error setting up keys: %w", err)
+	}
+
+	public_key, err := GetPublicKeyBase64()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get the client's public key: %w", err)
+	}
+
 	data := map[string]string{
-		"email":    email,
-		"password": password,
+		"email":      email,
+		"password":   password,
+		"public_key": public_key,
 	}
 
 	jsonData, err := json.Marshal(data)
@@ -65,11 +76,6 @@ func (as *AuthService) Login(email, password string) (*models.User, error) {
 
 	if err := as.saveJwt(token); err != nil {
 		return nil, fmt.Errorf("error saving jwt to file")
-	}
-
-	// Generate keys after successful login
-	if err = SetUpKeys(); err != nil {
-		return nil, fmt.Errorf("error setting up keys: %w", err)
 	}
 
 	user.PublicKey, err = GetPublicKeyBase64()
