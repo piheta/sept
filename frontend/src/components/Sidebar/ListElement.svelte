@@ -36,7 +36,8 @@
 >
     <div class="flex h-6 items-center">
         {#if img}<img
-                class="h-full mr-2"
+                class="h-full mr-2 select-none"
+                style="-webkit-user-drag: none;"
                 alt=""
                 src={item.avatar}
             />
