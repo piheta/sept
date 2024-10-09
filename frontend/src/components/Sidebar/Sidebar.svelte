@@ -58,10 +58,10 @@
 
         <!--* SEARCH -->
         <div class="flex relative mt-1.5 mb-2 ml-2 h-8" class:hidden={small}>
-            <svg class="absolute left-2 top-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="11" cy="11" r="8" /><path d="m21 21l-4.3-4.3"/></g></svg>
+            <svg class="absolute left-2 top-2 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="11" cy="11" r="8" /><path d="m21 21l-4.3-4.3"/></g></svg>
             <input
                 style="background-color: rgba(17, 24, 39, 0.6);"
-                class="w-full placeholder-gray-500 rounded-md pl-8 focus:outline-none shadow-xl"
+                class="w-full placeholder-gray-400 rounded-md pl-8 focus:outline-none shadow-xl font-normal text-[0.9rem]"
                 placeholder="Search"
                 autocapitalize="off"
                 autocomplete="off"

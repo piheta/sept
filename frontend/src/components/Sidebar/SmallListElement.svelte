@@ -36,7 +36,8 @@
 >
         {#if img}
             <img
-                class="h-10 w-10 object-cover rounded-md"
+                class="h-10 w-10 object-cover rounded-md select-none"
+                style="-webkit-user-drag: none;"
                 alt=""
                 src={item.avatar}
             />

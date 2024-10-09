@@ -15,7 +15,7 @@
     }
 </script>
 
-<div class="w-full ml-2 mb-2 h-[1px] bg-gray-200 bg-opacity-5"></div>
+<div class="w-[calc(100% - 1rem)] ml-2 mb-2 h-[1px] bg-gray-200 bg-opacity-5"></div>
 <ul class="cursor-pointer">
         <!-- todo, make this godforsaken itemsize calculate automatically -->
         <DragDropList
