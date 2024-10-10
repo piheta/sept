@@ -144,3 +144,12 @@ func (a *App) GetIps() []string {
 func (a *App) Search(searchString string) ([]string, error) {
 	return db.Search(searchString)
 }
+
+//
+// SIGNALLING
+//
+
+func (a *App) JoinSignallingServer(jwt string) error {
+
+	return nil
+}

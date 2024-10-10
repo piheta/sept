@@ -50,34 +50,33 @@
             resizeWidth = Math.min(maxWidth(), newWidth);
         }
     }
-    </script>
+</script>
     
-    <main class="h-full select-none">
-        <div class="wails-drag w-full h-6 absolute top-0 left-0"></div>
-        <div class="flex w-full h-[calc(100vh)]">
-            <div
-                class="min-w-[180px] max-w-[50%] mt-5"
-                
-                style="min-width: {resizeWidth === 70 ? '70px' : '180px'}; width: {resizeWidth}px;"
-                >
-                <Sidebar small={resizeWidth===70} />
-            </div>
-            <div
-                role="separator"
-                aria-orientation="vertical"
-                class="w-2 min-w-2"
-                style="cursor: {windowWidth < 450 ? 'unset' : 'col-resize'};"
-                use:onDrag={{ orientation: "vertical" }}
-                on:drag={({ detail: delta }) => handleDrag(delta)}
-                on:dragEnd={() => {
-                    width = resizeWidth;
-                }}
-            ></div>
-            <div class="flex flex-col flex-grow mr-2 mb-2 mt-2.5">
-                <Chatbox />
-                <div role="separator" class="h-2 min-h-2"></div>
-                <Footer recipient={"Some Person"} height={100} />
-            </div>
+<main class="h-full select-none">
+    <div class="wails-drag w-full h-6 absolute top-0 left-0"></div>
+    <div class="flex w-full h-[calc(100vh)]">
+        <div
+            class="min-w-[180px] max-w-[50%] mt-5"
+            
+            style="min-width: {resizeWidth === 70 ? '70px' : '180px'}; width: {resizeWidth}px;"
+            >
+            <Sidebar small={resizeWidth===70} />
         </div>
-    </main>
-    
+        <div
+            role="separator"
+            aria-orientation="vertical"
+            class="w-2 min-w-2"
+            style="cursor: {windowWidth < 450 ? 'unset' : 'col-resize'};"
+            use:onDrag={{ orientation: "vertical" }}
+            on:drag={({ detail: delta }) => handleDrag(delta)}
+            on:dragEnd={() => {
+                width = resizeWidth;
+            }}
+        ></div>
+        <div class="flex flex-col flex-grow mr-2 mb-2 mt-2.5">
+            <Chatbox />
+            <div role="separator" class="h-2 min-h-2"></div>
+            <Footer recipient={"Some Person"} height={100} />
+        </div>
+    </div>
+</main>

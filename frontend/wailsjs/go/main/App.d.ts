@@ -16,6 +16,8 @@ export function GetUser(arg1:string):Promise<models.User>;
 
 export function GetUsers():Promise<Array<models.User>>;
 
+export function JoinSignallingServer(arg1:string):Promise<void>;
+
 export function LogOut():Promise<void>;
 
 export function Login(arg1:string,arg2:string):Promise<models.User>;

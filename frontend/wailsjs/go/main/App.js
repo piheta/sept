@@ -30,6 +30,10 @@ export function GetUsers() {
   return window['go']['main']['App']['GetUsers']();
 }
 
+export function JoinSignallingServer(arg1) {
+  return window['go']['main']['App']['JoinSignallingServer'](arg1);
+}
+
 export function LogOut() {
   return window['go']['main']['App']['LogOut']();
 }
