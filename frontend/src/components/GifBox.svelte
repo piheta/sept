@@ -79,7 +79,7 @@
         />
     </div>
 
-    <div class="overflow-y-auto w-full relative h-[calc(100%-2.5rem)] flex gap-2">
+    <div class="overflow-y-auto w-full relative h-[calc(100%-2.5rem)] flex gap-2 no-scrollbar">
         <div class="w-1/2">
             {#each topGifsLeft as gif}
                 <img

@@ -42,7 +42,7 @@
         />
     </div>
 
-    <div class="overflow-y-auto w-full relative h-[calc(100%-2.5rem)] flex gap-1.5 flex-wrap">
+    <div class="overflow-y-auto w-full grid grid-cols-[repeat(auto-fill,minmax(1.5rem,1fr))] gap-1 no-scrollbar">
         {#each filteredEmotes as emote}
             <img
                 on:click={() => sendEmote(emote.url)}
