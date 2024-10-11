@@ -1,7 +1,7 @@
 <script>
     import Router from 'svelte-spa-router';
     import { wrap } from 'svelte-spa-router/wrap';
-    import { GetAuthedUser } from "../wailsjs/go/main/App";
+    import { GetAuthedUser } from "../wailsjs/go/controllers/App";
     import { auth_store } from "./stores/authStore";
     import { onMount } from 'svelte';
     import {replace} from 'svelte-spa-router'

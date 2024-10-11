@@ -3,6 +3,7 @@ package sn
 import (
 	"encoding/json"
 	"log"
+	"strconv"
 	"sync"
 
 	"github.com/gofiber/contrib/websocket"
@@ -93,7 +94,7 @@ func send(remoteAddr string, message []byte) error {
 	return nil
 }
 
-func SuperNode() {
+func SuperNode(sigport int) {
 	// Start STUN server in a separate goroutine
 	go Stun()
 
@@ -110,8 +111,8 @@ func SuperNode() {
 
 	app.Get("/ws", websocket.New(Signaling))
 
-	log.Println("Signaling server started on port 8080")
-	if err := app.Listen(":8080"); err != nil {
+	log.Println("Signaling server started on port ", sigport)
+	if err := app.Listen(":" + strconv.Itoa(sigport)); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }

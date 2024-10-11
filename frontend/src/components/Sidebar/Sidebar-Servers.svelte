@@ -1,5 +1,5 @@
 <script>
-    // import { GetServers } from "../../../wailsjs/go/main/App.js";
+    // import { GetServers } from "../../../wailsjs/go/controllers/App.js";
     import List from "./List.svelte";
 
     let servers = [];

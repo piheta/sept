@@ -1,7 +1,7 @@
 <script>
     import List from "./List.svelte";
     import { auth_store } from "../../stores/authStore";
-    import { Exit, LogOut, GetIps } from "../../../wailsjs/go/main/App";
+    import { Exit, LogOut, GetIps } from "../../../wailsjs/go/controllers/App";
     import {replace} from 'svelte-spa-router'
 
     let selection = "";

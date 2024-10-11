@@ -12,6 +12,7 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
 
 	peer "github.com/piheta/sept/backend"
+	"github.com/piheta/sept/backend/controllers"
 	"github.com/piheta/sept/backend/db"
 	"github.com/piheta/sept/backend/repos"
 	"github.com/piheta/sept/backend/services"
@@ -43,7 +44,7 @@ func main() {
 	userchat_repo := repos.NewUserchatRepo(db.DB)
 	message_repo := repos.NewMessageRepo(db.DB)
 
-	app := NewApp(
+	app := controllers.NewApp(
 		user_repo,
 		chat_repo,
 		userchat_repo,
@@ -77,7 +78,7 @@ func main() {
 			},
 		},
 		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 0},
-		OnStartup:        app.startup,
+		OnStartup:        app.Startup,
 		Bind: []interface{}{
 			app,
 		},

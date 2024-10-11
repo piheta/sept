@@ -2,7 +2,7 @@
     import SidebarUsers from "./Sidebar-Users.svelte";
     import SidebarServers from "./Sidebar-Servers.svelte";
     import SidebarSettings from "./Sidebar-Settings.svelte";
-    import { Search } from "../../../wailsjs/go/main/App";
+    import { Search } from "../../../wailsjs/go/controllers/App";
 
     export let small;
 

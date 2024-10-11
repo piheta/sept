@@ -1,4 +1,4 @@
-package main
+package controllers
 
 import (
 	"context"
@@ -35,7 +35,7 @@ func NewApp(userRepo *repos.UserRepo, chatRepo *repos.ChatRepo, userchatRepo *re
 	}
 }
 
-func (a *App) startup(ctx context.Context) {
+func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
 }
 

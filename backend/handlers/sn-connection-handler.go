@@ -115,7 +115,7 @@ func connectToSignalingServer(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	var err error
-	ws, _, err = websocket.DefaultDialer.Dial("ws://20.100.14.52:8080/ws", nil)
+	ws, _, err = websocket.DefaultDialer.Dial("ws://127.0.0.1:8081/ws", nil)
 	if err != nil {
 		log.Fatalf("Failed to connect to WebSocket server: %v", err)
 	}

@@ -1,5 +1,5 @@
 <script>
-    import { GetChats } from "../../../wailsjs/go/main/App.js";
+    import { GetChats } from "../../../wailsjs/go/controllers/App.js";
     import List from "./List.svelte";
     import { selection_store } from '../../stores/selectionStore.js';
     import SmallList from "./SmallList.svelte";

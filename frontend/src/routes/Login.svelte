@@ -2,7 +2,7 @@
     import { slide } from 'svelte/transition';
     import Checkmark from '../assets/icons/Checkmark.svelte';
     import { auth_store } from "../stores/authStore.js"
-    import { Register, Login } from '../../wailsjs/go/main/App';
+    import { Register, Login } from '../../wailsjs/go/controllers/App';
     import { replace } from 'svelte-spa-router';
 
     let username = '';

@@ -1,6 +1,6 @@
 <script>
     import { onMount, afterUpdate } from 'svelte';
-    import { GetChatMessages, GetUser } from "../../wailsjs/go/main/App.js";
+    import { GetChatMessages, GetUser } from "../../wailsjs/go/controllers/App.js";
     import { message_store } from '../stores/messageStore.js';
     import { selection_store } from '../stores/selectionStore.js';
     import Message from './Message.svelte';
