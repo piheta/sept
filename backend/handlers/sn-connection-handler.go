@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"sync"
 
 	"github.com/gorilla/websocket"
 	"github.com/piheta/sept/backend/models"
-	"github.com/piheta/sept/backend/services"
 	"github.com/pion/webrtc/v4"
 )
 
@@ -115,13 +115,17 @@ func connectToSignalingServer(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	var err error
-	ws, _, err = websocket.DefaultDialer.Dial("ws://127.0.0.1:8081/ws", nil)
+	ws, _, err = websocket.DefaultDialer.Dial("ws://20.100.14.52:8080/ws", nil)
 	if err != nil {
 		log.Fatalf("Failed to connect to WebSocket server: %v", err)
 	}
 	defer ws.Close()
 
-	userData, err := json.Marshal(services.AuthedUser)
+	cert, err := os.ReadFile("./sept_data/user.jwt")
+	if err != nil {
+		log.Fatalf("Failed to get user cert: %v", err)
+	}
+	userData, err := json.Marshal(string(cert))
 	if err != nil {
 		log.Fatalf("Failed to marshal user data: %v", err)
 	}

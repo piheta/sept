@@ -9,3 +9,7 @@ type ConnectionRequest struct {
 	Data      string               `json:"data"`
 	Candidate *webrtc.ICECandidate `json:"candidate,omitempty"`
 }
+
+type Annonuce struct {
+	Cert string `json:"cert"`
+}
