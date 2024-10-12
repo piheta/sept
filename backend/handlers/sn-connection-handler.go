@@ -164,6 +164,7 @@ func connectToSignalingServer(wg *sync.WaitGroup) {
 				return
 			}
 
+			// todo, send these as sigmsg
 			switch connectionRequest.Type {
 			case "offer":
 				onOffer(connectionRequest)
