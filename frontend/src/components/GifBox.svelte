@@ -50,7 +50,7 @@
     }
 
     function sendGif(giflink) {
-        sendMessage(`<img class="mt-1.5 mb-1 rounded-md max-h-72 max-w-72" src="${giflink}" alt="gif" />`, chat_id);
+        sendMessage(`<img class="mt-1.5 mb-1 rounded-md max-h-72 max-w-72 w-5/6" src="${giflink}" alt="gif" />`, chat_id);
         toggleShow();
     }
 

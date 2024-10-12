@@ -2,12 +2,14 @@ package sn
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"strconv"
 	"sync"
 
 	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt"
 	"github.com/pion/webrtc/v4"
 
 	"github.com/piheta/sept/backend/models"
@@ -18,6 +20,9 @@ var (
 	offersLock  sync.Mutex
 	clients     = make(map[*websocket.Conn]string)
 	clientsLock sync.Mutex
+
+	userDht     = make(map[string]models.DhtUser)
+	userDhtLock sync.RWMutex
 )
 
 func Signaling(c *websocket.Conn) {
@@ -32,22 +37,7 @@ func Signaling(c *websocket.Conn) {
 	clients[c] = c.RemoteAddr().String()
 	clientsLock.Unlock()
 
-	// Send the list of connected IPs (excluding the client's own IP) to the client
-	clientsLock.Lock()
-	var ips []string
-	// clientIP := c.RemoteAddr().String() // Get the current client's IP
-	for _, ip := range clients {
-		// if ip != clientIP { // Exclude the client's own IP:port
-		ips = append(ips, ip)
-		// }
-	}
-	clientsLock.Unlock()
-
-	if err := c.WriteJSON(ips); err != nil {
-		log.Printf("Failed to write message: %v", err)
-		return
-	}
-
+	//* Listen for messages from clients
 	for {
 		_, message, err := c.ReadMessage()
 		if err != nil {
@@ -55,28 +45,118 @@ func Signaling(c *websocket.Conn) {
 			break
 		}
 
-		log.Printf("Received message: %s from %s", message, c.RemoteAddr())
-
-		var cr models.ConnectionRequest
-		if err := json.Unmarshal(message, &cr); err != nil {
+		var clientMessage models.SigMsg
+		if err := json.Unmarshal(message, &clientMessage); err != nil {
 			log.Printf("Failed to unmarshal message: %v", err)
 			continue
 		}
 
-		// Set the source IP
-		cr.SrcIP = func(s string) *string { return &s }(c.RemoteAddr().String())
-
-		// Marshal the updated connection request
-		message, err = json.Marshal(cr)
-		if err != nil {
-			log.Printf("Failed to marshal message: %v", err)
-			continue
-		}
-
-		if err := send(cr.DestIP, message); err != nil {
-			log.Printf("Error sending message: %v", err)
+		switch clientMessage.Type {
+		case models.Announce:
+			fmt.Println("Announce, ", clientMessage.Type)
+			onAnnounceMsg(clientMessage, c.RemoteAddr().String())
+		case models.UserSearch:
+			fmt.Println("Usearsearch, ", clientMessage.Type)
+			onSearchMsg(clientMessage, c.RemoteAddr().String())
+		case models.Connection:
+			fmt.Println("Connection, ", clientMessage.Type)
+			onConnectionMsg(clientMessage, c.RemoteAddr().String())
 		}
 	}
+}
+
+func onSearchMsg(msg models.SigMsg, senderAddr string) {
+	dataBytes, err := json.Marshal(msg.Data)
+	if err != nil {
+		log.Printf("Failed to marshal Data: %v", err)
+		return
+	}
+
+	var srchreq models.UserSearchRequest
+	if err := json.Unmarshal(dataBytes, &srchreq); err != nil {
+		log.Printf("Failed to unmarshal AnnounceRequest: %v", err)
+		return
+	}
+
+	dhtUser := userDht[srchreq.Username]
+
+	sigMsg := models.SigMsg{
+		Type: 1,
+		Data: dhtUser,
+	}
+
+	dhtUserBytes, err := json.Marshal(sigMsg)
+	if err != nil {
+		log.Printf("Failed to marshall dhtUser: %v", err)
+		return
+	}
+	send(senderAddr, dhtUserBytes)
+}
+
+func onAnnounceMsg(msg models.SigMsg, senderAddr string) {
+	dataBytes, err := json.Marshal(msg.Data)
+	if err != nil {
+		log.Printf("Failed to marshal Data: %v", err)
+		return
+	}
+
+	var annreq models.AnnounceRequest
+	if err := json.Unmarshal(dataBytes, &annreq); err != nil {
+		log.Printf("Failed to unmarshal AnnounceRequest: %v", err)
+		return
+	}
+
+	var username string
+	token, _, err := new(jwt.Parser).ParseUnverified(annreq.Cert, jwt.MapClaims{})
+	if err != nil {
+		return
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		username = fmt.Sprint(claims["name"])
+	}
+	if username == "" {
+		return
+	}
+
+	userDhtLock.Lock()
+	userDht[username] = models.DhtUser{
+		LoginCert: annreq.Cert,
+		IP:        senderAddr,
+	}
+	userDhtLock.Unlock()
+
+	fmt.Println(userDht)
+}
+
+func onConnectionMsg(msg models.SigMsg, senderAddr string) {
+	dataBytes, err := json.Marshal(msg.Data)
+	if err != nil {
+		log.Printf("Failed to marshal Data: %v", err)
+		return
+	}
+
+	var conreq models.ConnectionRequest
+	if err := json.Unmarshal(dataBytes, &conreq); err != nil {
+		log.Printf("Failed to unmarshal ConnectionRequest: %v", err)
+		return
+	}
+
+	// Set the sender's address
+	conreq.SrcIP = &senderAddr
+
+	// Marshal the updated connection request
+	message, err := json.Marshal(conreq)
+	if err != nil {
+		log.Printf("Failed to marshal message: %v", err)
+		return
+	}
+
+	if err := send(conreq.DestIP, message); err != nil {
+		log.Printf("Error sending message: %v", err)
+		return
+	}
+
 }
 
 func send(remoteAddr string, message []byte) error {
@@ -88,7 +168,7 @@ func send(remoteAddr string, message []byte) error {
 			if err := client.WriteMessage(websocket.TextMessage, message); err != nil {
 				return err
 			}
-			return nil
+			return fmt.Errorf("client not found for address %s", remoteAddr)
 		}
 	}
 	return nil

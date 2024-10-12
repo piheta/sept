@@ -1,7 +1,7 @@
 <script>
     import List from "./List.svelte";
     import { auth_store } from "../../stores/authStore";
-    import { Exit, LogOut, GetIps } from "../../../wailsjs/go/controllers/App";
+    import { Exit, LogOut, GetIps, SearchDht } from "../../../wailsjs/go/controllers/App";
     import {replace} from 'svelte-spa-router'
 
     let selection = "";
@@ -43,6 +43,13 @@
             console.error("failed to get ips: ", err);
         })
     }
+
+    function searchDht(username) {
+        console.log(username)
+        SearchDht(username).then((user) => {
+            console.log(user)
+        })
+    }
     
 </script>
 
@@ -55,4 +62,5 @@
 />
 <button on:click={logOut}>Log Out</button><br/>
 <button on:click={() => {Exit()}}>Exit</button><br/>
-<button on:click={getIps}>Get Ips</button>
+<button on:click={getIps}>Get Ips</button><br/>
+<button on:click={() => searchDht("Picheta")}>Search DHT</button>

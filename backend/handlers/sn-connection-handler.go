@@ -115,44 +115,24 @@ func connectToSignalingServer(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	var err error
-	ws, _, err = websocket.DefaultDialer.Dial("ws://20.100.14.52:8080/ws", nil)
+	ws, _, err = websocket.DefaultDialer.Dial("ws://127.0.0.1:8081/ws", nil)
 	if err != nil {
 		log.Fatalf("Failed to connect to WebSocket server: %v", err)
 	}
 	defer ws.Close()
 
-	cert, err := os.ReadFile("./sept_data/user.jwt")
+	//! Get and send cert to sig
+	announceMessage, err := createAnnounceRequest()
 	if err != nil {
-		log.Fatalf("Failed to get user cert: %v", err)
-	}
-	userData, err := json.Marshal(string(cert))
-	if err != nil {
-		log.Fatalf("Failed to marshal user data: %v", err)
+		log.Fatalf("Failed to create announce request: %v", err)
 	}
 
-	err = ws.WriteMessage(websocket.TextMessage, userData)
+	err = ws.WriteMessage(websocket.TextMessage, announceMessage)
 	if err != nil {
 		log.Fatalf("Failed to send user data: %v", err)
 	}
 
-	_, message, err := ws.ReadMessage()
-	if err != nil {
-		log.Fatalf("Failed to read message: %v", err)
-	}
-
-	if err := json.Unmarshal(message, &Ips); err != nil {
-		log.Fatalf("Failed to unmarshal IPs: %v", err)
-	}
-	log.Printf("Nodes connected to signaling server: %v", Ips)
-
-	if len(Ips) < 2 {
-		chosenIP = "none"
-	} else {
-		fmt.Println("Choose IP:")
-		fmt.Scanln(&chosenIP)
-		sendOffer()
-	}
-
+	//* Listen for messages from sig
 	for {
 		_, message, err := ws.ReadMessage()
 		if err != nil {
@@ -160,23 +140,87 @@ func connectToSignalingServer(wg *sync.WaitGroup) {
 			break
 		}
 
-		var connectionRequest models.ConnectionRequest
-		if err := json.Unmarshal(message, &connectionRequest); err != nil {
-			log.Printf("Failed to unmarshal ConnectionRequest: %v", err)
+		var sigMessage models.SigMsg
+		if err := json.Unmarshal(message, &sigMessage); err != nil {
+			log.Printf("Failed to unmarshal sigMessage: %v", err)
 			continue
 		}
 
-		switch connectionRequest.Type {
-		case "offer":
-			onOffer(connectionRequest)
-		case "answer":
-			onAnswer(connectionRequest)
-		case "candidate":
-			onCandidate(connectionRequest)
+		switch sigMessage.Type {
+		case models.UserSearch:
+			// todo check jwt signature, add user to db
+			fmt.Println(sigMessage.Data)
+		case models.Connection:
+
+			dataBytes, err := json.Marshal(sigMessage.Data)
+			if err != nil {
+				log.Printf("Failed to marshal Data: %v", err)
+				return
+			}
+
+			var connectionRequest models.ConnectionRequest
+			if err := json.Unmarshal(dataBytes, &connectionRequest); err != nil {
+				log.Printf("Failed to unmarshal AnnounceRequest: %v", err)
+				return
+			}
+
+			switch connectionRequest.Type {
+			case "offer":
+				onOffer(connectionRequest)
+			case "answer":
+				onAnswer(connectionRequest)
+			case "candidate":
+				onCandidate(connectionRequest)
+			}
+
 		default:
-			fmt.Println("Unknown message type:", connectionRequest.Type)
+			fmt.Println("Unknown message type:", sigMessage.Type)
 		}
 	}
+}
+
+func SearchAndOffer(username string) (models.User, error) {
+	req := models.SigMsg{
+		Type: models.UserSearch,
+		Data: models.UserSearchRequest{
+			Username: username,
+		},
+	}
+
+	jsonReq, err := json.Marshal(req)
+	if err != nil {
+		return models.User{}, fmt.Errorf("failed to search request: %v", err)
+	}
+
+	err = ws.WriteMessage(websocket.TextMessage, jsonReq)
+	if err != nil {
+		log.Fatalf("Failed to send user data: %v", err)
+	}
+
+	// sendOffer()
+
+	return models.User{}, nil
+}
+
+func createAnnounceRequest() ([]byte, error) {
+	cert, err := os.ReadFile("./sept_data/user.jwt")
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user cert: %v", err)
+	}
+
+	req := models.SigMsg{
+		Type: models.Announce,
+		Data: models.AnnounceRequest{
+			Cert: string(cert),
+		},
+	}
+
+	jsonReq, err := json.Marshal(req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal user data: %v", err)
+	}
+
+	return jsonReq, nil
 }
 
 //

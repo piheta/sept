@@ -30,10 +30,6 @@ export function GetUsers() {
   return window['go']['controllers']['App']['GetUsers']();
 }
 
-export function JoinSignallingServer(arg1) {
-  return window['go']['controllers']['App']['JoinSignallingServer'](arg1);
-}
-
 export function LogOut() {
   return window['go']['controllers']['App']['LogOut']();
 }
@@ -48,6 +44,10 @@ export function Register(arg1, arg2, arg3) {
 
 export function Search(arg1) {
   return window['go']['controllers']['App']['Search'](arg1);
+}
+
+export function SearchDht(arg1) {
+  return window['go']['controllers']['App']['SearchDht'](arg1);
 }
 
 export function SendMessage(arg1, arg2) {

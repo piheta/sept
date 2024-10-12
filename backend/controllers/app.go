@@ -149,7 +149,10 @@ func (a *App) Search(searchString string) ([]string, error) {
 // SIGNALLING
 //
 
-func (a *App) JoinSignallingServer(jwt string) error {
-
-	return nil
+func (a *App) SearchDht(username string) models.User {
+	user, err := handlers.SearchAndOffer(username)
+	if err != nil {
+		fmt.Println("failed to sesarchdht")
+	}
+	return user
 }

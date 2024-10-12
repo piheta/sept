@@ -12,5 +12,5 @@ import (
 func main() {
 	// Bot logic
 	fmt.Println("Bot is running...")
-	sn.SuperNode(8080)
+	sn.SuperNode(8081)
 }
