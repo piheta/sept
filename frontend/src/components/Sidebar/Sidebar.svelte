@@ -25,6 +25,13 @@
         } else {
             searchResult = null
         }
+
+        if(searchQuery.startsWith("add:")){
+            sidebar_mode = 3
+        }
+        else {
+            sidebar_mode = 0
+        }
     }
 </script>
 
@@ -78,6 +85,11 @@
             <SidebarServers />
         {:else if sidebar_mode === 2}
             <SidebarSettings />
+        {:else if sidebar_mode === 3}
+            <p class="text-md inline-block ml-3">
+                Add Friend
+            </p>
+            
         {:else}
             <h1>error</h1>
         {/if}

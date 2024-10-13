@@ -9,7 +9,7 @@
     let searchTerm = '';
     let emotes = [];
 
-    const emoteImports = import.meta.glob('../assets/emotes/*.webp', { eager: true });
+    const emoteImports = import.meta.glob('../../assets/emotes/*.webp', { eager: true });
 
     onMount(() => {
         emotes = Object.entries(emoteImports).map(([path, module]) => {

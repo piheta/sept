@@ -123,6 +123,8 @@ func (as *AuthService) Register(username, email, password string) (*map[string]i
 func (as *AuthService) ExtractUserFromJwt(tokenString string) (models.User, error) {
 	var user_id string
 	var username string
+	var user_ip string
+	var public_key string
 	token, _, err := new(jwt.Parser).ParseUnverified(tokenString, jwt.MapClaims{})
 	if err != nil {
 		return models.User{}, err
@@ -142,12 +144,26 @@ func (as *AuthService) ExtractUserFromJwt(tokenString string) (models.User, erro
 		return models.User{}, fmt.Errorf("invalid token payload")
 	}
 
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		user_ip = fmt.Sprint(claims["ip"])
+	}
+	if user_ip == "" {
+		return models.User{}, fmt.Errorf("invalid token payload")
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		public_key = fmt.Sprint(claims["public_key"])
+	}
+	if public_key == "" {
+		return models.User{}, fmt.Errorf("invalid token payload")
+	}
+
 	user := models.User{
 		ID:        user_id,
 		Username:  username,
-		Ip:        "127.0.0.1",
+		Ip:        user_ip,
 		Avatar:    "https://fuibax.github.io/images/fulls/knight_sylvia.png",
-		PublicKey: "",
+		PublicKey: public_key,
 	}
 
 	return user, nil

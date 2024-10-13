@@ -10,8 +10,6 @@ export function GetChatMessages(arg1:string):Promise<Array<models.Message>>;
 
 export function GetChats():Promise<Array<models.Chat>>;
 
-export function GetIps():Promise<Array<string>>;
-
 export function GetUser(arg1:string):Promise<models.User>;
 
 export function GetUsers():Promise<Array<models.User>>;

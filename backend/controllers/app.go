@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
@@ -137,10 +138,6 @@ func (a *App) GetChatMessages(chat_id string) ([]models.Message, error) {
 	return a.message_repo.GetMessagesByChatID(chat_id)
 }
 
-func (a *App) GetIps() []string {
-	return handlers.Ips
-}
-
 func (a *App) Search(searchString string) ([]string, error) {
 	return db.Search(searchString)
 }
@@ -150,9 +147,11 @@ func (a *App) Search(searchString string) ([]string, error) {
 //
 
 func (a *App) SearchDht(username string) models.User {
-	user, err := handlers.SearchAndOffer(username)
+	_, err := handlers.SearchAndOffer(username)
 	if err != nil {
 		fmt.Println("failed to sesarchdht")
 	}
-	return user
+
+	time.Sleep(1 * time.Second) //TODO use wails event instead
+	return handlers.FoundUsers[0]
 }

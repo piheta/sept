@@ -1,7 +1,7 @@
 <script lang="ts">
     // @ts-nocheck
     import Sidebar from "/src/components/Sidebar/Sidebar.svelte";
-    import Footer from "/src/components/Footer.svelte";
+    import Footer from "/src/components/Footer/Footer.svelte";
     import { onDrag } from "/src/components/Sidebar/SidebarResizer";
     import Header from "/src/components/Header.svelte";
     import Chatbox from "/src/components/Chatbox.svelte";

@@ -1,9 +1,9 @@
 <script>
-    import { SendMessage } from "../../wailsjs/go/controllers/App.js";
-    import { message_store } from '../stores/messageStore.js';
-    import { selection_store } from '../stores/selectionStore.js';
-    import EmoteBox from "./EmoteBox.svelte";
+    import { SendMessage } from "../../../wailsjs/go/controllers/App.js";
+    import { message_store } from '../../stores/messageStore.js';
+    import { selection_store } from '../../stores/selectionStore.js';
     import GifBox from "./GifBox.svelte";
+    import EmoteBox from "./EmoteBox.svelte";
 
     export let recipient;
     export let height;

@@ -10,13 +10,14 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/piheta/sept/backend/models"
+	"github.com/piheta/sept/backend/services"
 	"github.com/pion/webrtc/v4"
 )
 
 var chosenIP string
 var peerConnection *webrtc.PeerConnection
 var ws *websocket.Conn
-var Ips []string
+var FoundUsers []models.User
 
 // p1p2, connects to the signaling server
 // p1 creates and sends offer to the chosen peer
@@ -150,6 +151,7 @@ func connectToSignalingServer(wg *sync.WaitGroup) {
 		case models.UserSearch:
 			// todo check jwt signature, add user to db
 			fmt.Println(sigMessage.Data)
+			userSearchResponse(sigMessage)
 		case models.Connection:
 
 			dataBytes, err := json.Marshal(sigMessage.Data)
@@ -180,6 +182,7 @@ func connectToSignalingServer(wg *sync.WaitGroup) {
 	}
 }
 
+// ! User search request sent to the sig server. The response is captured in the switch above.
 func SearchAndOffer(username string) (models.User, error) {
 	req := models.SigMsg{
 		Type: models.UserSearch,
@@ -201,6 +204,36 @@ func SearchAndOffer(username string) (models.User, error) {
 	// sendOffer()
 
 	return models.User{}, nil
+}
+
+func userSearchResponse(msg models.SigMsg) {
+	as := services.NewAuthSerivce()
+
+	dataBytes, err := json.Marshal(msg.Data)
+	if err != nil {
+		log.Printf("Failed to marshal Data: %v", err)
+		return
+	}
+
+	var dhtuser models.DhtUser
+	if err := json.Unmarshal(dataBytes, &dhtuser); err != nil {
+		log.Printf("Failed to unmarshal AnnounceRequest: %v", err)
+		return
+	}
+
+	cert := dhtuser.LoginCert
+	if err = as.VerifyToken(cert); err != nil {
+		log.Printf("Token of found user is not valid: %v", err)
+		return
+	}
+
+	user, err := as.ExtractUserFromJwt(cert)
+	if err != nil {
+		log.Printf("Failed to extract found user from jwt, ", err)
+		return
+	}
+
+	FoundUsers = append(FoundUsers, user)
 }
 
 func createAnnounceRequest() ([]byte, error) {
