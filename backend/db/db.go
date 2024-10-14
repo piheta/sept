@@ -19,13 +19,15 @@ var (
 	DB      *sql.DB
 	dbMutex sync.Mutex
 	dbName  string
+
+	SEPT_DATA string
 )
 
 func InitDb(user models.User) error {
 	dbMutex.Lock()
 	defer dbMutex.Unlock()
 
-	dbName = "./sept_data/" + user.ID + ".db"
+	dbName = SEPT_DATA + "/" + user.ID + ".db"
 
 	db, err := sql.Open("sqlite3", dbName)
 	if err != nil {
@@ -113,7 +115,7 @@ func populateTables(user models.User) error {
 }
 
 func DbExists(userID string) error {
-	dbPath := "./sept_data/" + userID + ".db"
+	dbPath := SEPT_DATA + "/" + userID + ".db"
 
 	_, err := os.Stat(dbPath)
 	if os.IsNotExist(err) {
@@ -128,7 +130,7 @@ func DbExists(userID string) error {
 func RemoveDb(userID string) error {
 	// currently only used for testing
 	// Todo also check password before deletion
-	dbPath := "./sept_data/" + userID + ".db"
+	dbPath := SEPT_DATA + "/" + userID + ".db"
 	err := os.Remove(dbPath)
 	if err != nil {
 		return fmt.Errorf("error removing database: %w", err)

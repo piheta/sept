@@ -2,16 +2,15 @@ package main
 
 import (
 	"embed"
-	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
 
-	peer "github.com/piheta/sept/backend"
 	"github.com/piheta/sept/backend/controllers"
 	"github.com/piheta/sept/backend/db"
 	"github.com/piheta/sept/backend/repos"
@@ -22,14 +21,21 @@ import (
 var assets embed.FS
 
 func main() {
-	// cli args
-	bFlag := flag.Bool("b", false, "Only start the backend")
-	flag.Parse()
-	if *bFlag {
-		fmt.Println("The -b flag was passed")
-		go peer.Peer()
+	execPath, err := os.Executable()
+	if err != nil {
+		fmt.Println("Error getting executable path:", err)
+		return
 	}
+	execDir := filepath.Dir(execPath)
 
+	// Create the folder inside the Resources directory of the app bundle
+	resourcesPath := filepath.Join(execDir, "..", "Resources", "Data")
+	err = os.MkdirAll(resourcesPath, 0o755)
+	if err != nil {
+		fmt.Println("Error creating folder:", err)
+	}
+	db.SEPT_DATA = resourcesPath
+	fmt.Printf(db.SEPT_DATA)
 	//
 	// startup logic
 	// try to init db with jwt
@@ -52,7 +58,7 @@ func main() {
 
 		auth_service,
 	)
-	err := wails.Run(&options.App{
+	err = wails.Run(&options.App{
 		Width:     700,
 		Height:    512,
 		MinWidth:  400,
