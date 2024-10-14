@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -12,7 +11,6 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
 
-	peer "github.com/piheta/sept/backend"
 	"github.com/piheta/sept/backend/controllers"
 	"github.com/piheta/sept/backend/db"
 	"github.com/piheta/sept/backend/repos"
@@ -22,17 +20,7 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
-var SEPT_DATA string
-
 func main() {
-	// cli args
-	bFlag := flag.Bool("b", false, "Only start the backend")
-	flag.Parse()
-	if *bFlag {
-		fmt.Println("The -b flag was passed")
-		go peer.Peer()
-	}
-
 	execPath, err := os.Executable()
 	if err != nil {
 		fmt.Println("Error getting executable path:", err)
@@ -40,13 +28,14 @@ func main() {
 	}
 	execDir := filepath.Dir(execPath)
 
-	// Create the folder inside the executable directory
-	folderPath := filepath.Join(execDir, "sept_data")
-	err = os.Mkdir(folderPath, 0o755)
+	// Create the folder inside the Resources directory of the app bundle
+	resourcesPath := filepath.Join(execDir, "..", "Resources", "Data")
+	err = os.MkdirAll(resourcesPath, 0o755)
 	if err != nil {
 		fmt.Println("Error creating folder:", err)
 	}
-	SEPT_DATA = folderPath
+	db.SEPT_DATA = resourcesPath
+	fmt.Printf(db.SEPT_DATA)
 	//
 	// startup logic
 	// try to init db with jwt

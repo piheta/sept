@@ -7,7 +7,6 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
 	"github.com/piheta/sept/backend/db"
-	"github.com/piheta/sept/backend/handlers"
 	"github.com/piheta/sept/backend/models"
 	"github.com/piheta/sept/backend/repos"
 	"github.com/piheta/sept/backend/services"
@@ -146,7 +145,7 @@ func (a *App) Search(searchString string) ([]string, error) {
 //
 
 func (a *App) SearchDht(username string) (models.User, error) {
-	userChan, err := handlers.UserSearchRequest(username)
+	userChan, err := services.UserSearchRequest(username)
 	if err != nil {
 		return models.User{}, fmt.Errorf("failed to search DHT: %v", err)
 	}

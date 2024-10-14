@@ -1,4 +1,4 @@
-package handlers
+package services
 
 import (
 	"encoding/base64"
@@ -9,8 +9,8 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
+	"github.com/piheta/sept/backend/db"
 	"github.com/piheta/sept/backend/models"
-	"github.com/piheta/sept/backend/services"
 	"github.com/pion/webrtc/v4"
 )
 
@@ -212,8 +212,6 @@ func UserSearchRequest(username string) (<-chan models.User, error) {
 
 // ! Ran when data from sig server is recieved and marked as UserSearch
 func userSearchResponse(msg models.SigMsg) {
-	as := services.NewAuthSerivce()
-
 	dataBytes, err := json.Marshal(msg.Data)
 	if err != nil {
 		log.Printf("Failed to marshal Data: %v", err)
@@ -227,12 +225,12 @@ func userSearchResponse(msg models.SigMsg) {
 	}
 
 	cert := dhtuser.LoginCert
-	if err = as.VerifyToken(cert); err != nil {
+	if err = VerifyToken(cert); err != nil {
 		log.Printf("Token of found user is not valid: %v", err)
 		return
 	}
 
-	user, err := as.ExtractUserFromJwt(cert)
+	user, err := ExtractUserFromJwt(cert)
 	if err != nil {
 		log.Printf("Failed to extract found user from jwt, ", err)
 		return
@@ -242,7 +240,7 @@ func userSearchResponse(msg models.SigMsg) {
 }
 
 func createAnnounceRequest() ([]byte, error) {
-	cert, err := os.ReadFile("./sept_data/user.jwt")
+	cert, err := os.ReadFile(db.SEPT_DATA + "/user.jwt")
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user cert: %v", err)
 	}
