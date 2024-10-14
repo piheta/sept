@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
@@ -146,12 +145,12 @@ func (a *App) Search(searchString string) ([]string, error) {
 // SIGNALLING
 //
 
-func (a *App) SearchDht(username string) models.User {
-	_, err := handlers.SearchAndOffer(username)
+func (a *App) SearchDht(username string) (models.User, error) {
+	userChan, err := handlers.UserSearchRequest(username)
 	if err != nil {
-		fmt.Println("failed to sesarchdht")
+		return models.User{}, fmt.Errorf("failed to search DHT: %v", err)
 	}
 
-	time.Sleep(1 * time.Second) //TODO use wails event instead
-	return handlers.FoundUsers[0]
+	user := <-userChan
+	return user, nil
 }

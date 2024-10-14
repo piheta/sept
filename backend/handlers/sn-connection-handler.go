@@ -19,6 +19,12 @@ var peerConnection *webrtc.PeerConnection
 var ws *websocket.Conn
 var FoundUsers []models.User
 
+var userResponseChannel chan models.User
+
+func init() {
+	userResponseChannel = make(chan models.User)
+}
+
 // p1p2, connects to the signaling server
 // p1 creates and sends offer to the chosen peer
 // p2 creates and sends answer to p1
@@ -149,7 +155,7 @@ func connectToSignalingServer(wg *sync.WaitGroup) {
 
 		switch sigMessage.Type {
 		case models.UserSearch:
-			// todo check jwt signature, add user to db
+			// Catch server response
 			fmt.Println(sigMessage.Data)
 			userSearchResponse(sigMessage)
 		case models.Connection:
@@ -183,7 +189,7 @@ func connectToSignalingServer(wg *sync.WaitGroup) {
 }
 
 // ! User search request sent to the sig server. The response is captured in the switch above.
-func SearchAndOffer(username string) (models.User, error) {
+func UserSearchRequest(username string) (<-chan models.User, error) {
 	req := models.SigMsg{
 		Type: models.UserSearch,
 		Data: models.UserSearchRequest{
@@ -193,19 +199,18 @@ func SearchAndOffer(username string) (models.User, error) {
 
 	jsonReq, err := json.Marshal(req)
 	if err != nil {
-		return models.User{}, fmt.Errorf("failed to search request: %v", err)
+		return nil, fmt.Errorf("failed to search request: %v", err)
 	}
 
 	err = ws.WriteMessage(websocket.TextMessage, jsonReq)
 	if err != nil {
-		log.Fatalf("Failed to send user data: %v", err)
+		return nil, fmt.Errorf("failed to send user data: %v", err)
 	}
 
-	// sendOffer()
-
-	return models.User{}, nil
+	return userResponseChannel, nil
 }
 
+// ! Ran when data from sig server is recieved and marked as UserSearch
 func userSearchResponse(msg models.SigMsg) {
 	as := services.NewAuthSerivce()
 
@@ -233,7 +238,7 @@ func userSearchResponse(msg models.SigMsg) {
 		return
 	}
 
-	FoundUsers = append(FoundUsers, user)
+	userResponseChannel <- user
 }
 
 func createAnnounceRequest() ([]byte, error) {
