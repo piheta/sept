@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	_ "embed"
 	"fmt"
 	"os"
 	"sync"
@@ -10,6 +11,9 @@ import (
 	"github.com/piheta/sept/backend/models"
 	"github.com/piheta/sept/backend/repos"
 )
+
+//go:embed schema.sql
+var schemaSQL []byte
 
 var (
 	DB      *sql.DB
@@ -64,14 +68,8 @@ func createTablesIfNotExist(user models.User) error {
 		}
 	}
 
-	// Read schema from file
-	schema, err := os.ReadFile("./backend/db/schema.sql")
-	if err != nil {
-		return err
-	}
-
 	// Execute schema to create tables
-	_, err = DB.Exec(string(schema))
+	_, err := DB.Exec(string(schemaSQL))
 	if err != nil {
 		return err
 	}
