@@ -219,7 +219,7 @@ func (as *AuthService) GetPublicKey() (string, error) {
 }
 
 func (as *AuthService) saveJwt(content string) error {
-	file, err := os.Create("./sept_data/user.jwt")
+	file, err := os.Create(SEPT_DATA + "/user.jwt")
 	if err != nil {
 		return fmt.Errorf("error creating file: %w", err)
 	}

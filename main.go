@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -21,6 +22,8 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
+var SEPT_DATA string
+
 func main() {
 	// cli args
 	bFlag := flag.Bool("b", false, "Only start the backend")
@@ -30,6 +33,20 @@ func main() {
 		go peer.Peer()
 	}
 
+	execPath, err := os.Executable()
+	if err != nil {
+		fmt.Println("Error getting executable path:", err)
+		return
+	}
+	execDir := filepath.Dir(execPath)
+
+	// Create the folder inside the executable directory
+	folderPath := filepath.Join(execDir, "sept_data")
+	err = os.Mkdir(folderPath, 0o755)
+	if err != nil {
+		fmt.Println("Error creating folder:", err)
+	}
+	SEPT_DATA = folderPath
 	//
 	// startup logic
 	// try to init db with jwt
@@ -52,7 +69,7 @@ func main() {
 
 		auth_service,
 	)
-	err := wails.Run(&options.App{
+	err = wails.Run(&options.App{
 		Width:     700,
 		Height:    512,
 		MinWidth:  400,
