@@ -19,11 +19,7 @@ var peerConnection *webrtc.PeerConnection
 var ws *websocket.Conn
 var FoundUsers []models.User
 
-var userResponseChannel chan models.User
-
-func init() {
-	userResponseChannel = make(chan models.User)
-}
+var userResponseChannel chan models.User = make(chan models.User)
 
 // p1p2, connects to the signaling server
 // p1 creates and sends offer to the chosen peer
