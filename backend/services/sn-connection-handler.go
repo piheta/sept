@@ -164,7 +164,7 @@ func connectToSignalingServer(wg *sync.WaitGroup) {
 
 			var connectionRequest models.ConnectionRequest
 			if err := json.Unmarshal(dataBytes, &connectionRequest); err != nil {
-				log.Printf("Failed to unmarshal AnnounceRequest: %v", err)
+				log.Printf("Failed to unmarshal ConnectionRequest: %v", err)
 				return
 			}
 
@@ -270,12 +270,18 @@ func SendOffer(destIp string) {
 		DestIP: destIp,
 		Data:   createOffer(),
 	}
-	crBytes, err := json.Marshal(cr)
+
+	sigMsg := models.SigMsg{
+		Type: models.Connection,
+		Data: cr,
+	}
+
+	sigMsgBytes, err := json.Marshal(sigMsg)
 	if err != nil {
 		log.Fatalf("Failed to marshal ConnectionRequest: %v", err)
 	}
 
-	err = ws.WriteMessage(websocket.TextMessage, crBytes)
+	err = ws.WriteMessage(websocket.TextMessage, sigMsgBytes)
 	if err != nil {
 		log.Fatalf("Failed to send chosen IP: %v", err)
 	}
@@ -287,12 +293,18 @@ func sendAnswer(destIP, answer string) {
 		DestIP: destIP,
 		Data:   answer,
 	}
-	crBytes, err := json.Marshal(cr)
+
+	sigMsg := models.SigMsg{
+		Type: models.Connection,
+		Data: cr,
+	}
+
+	sigMsgBytes, err := json.Marshal(sigMsg)
 	if err != nil {
 		log.Fatalf("Failed to marshal ConnectionRequest: %v", err)
 	}
 
-	err = ws.WriteMessage(websocket.TextMessage, crBytes)
+	err = ws.WriteMessage(websocket.TextMessage, sigMsgBytes)
 	if err != nil {
 		log.Fatalf("Failed to send answer: %v", err)
 	}

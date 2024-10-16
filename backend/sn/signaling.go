@@ -81,7 +81,7 @@ func onSearchMsg(msg models.SigMsg, senderAddr string) {
 	dhtUser := userDht[srchreq.Username]
 
 	sigMsg := models.SigMsg{
-		Type: 1,
+		Type: models.UserSearch,
 		Data: dhtUser,
 	}
 
