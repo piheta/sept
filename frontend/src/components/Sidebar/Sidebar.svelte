@@ -50,6 +50,7 @@
     }
 
     function fillSearchBoxAdd() {
+        foundUser = null
         sidebar_mode = 3
         searchQuery = "add: "
         inputRef.focus();
