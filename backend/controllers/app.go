@@ -148,3 +148,7 @@ func (a *App) SearchDht(username string) (models.User, error) {
 	user := <-userChan
 	return user, nil
 }
+
+func (a *App) SendOffer(destIp string) {
+	services.SendOffer(destIp)
+}

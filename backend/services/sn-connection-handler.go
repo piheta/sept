@@ -232,6 +232,8 @@ func userSearchResponse(msg models.SigMsg) {
 		return
 	}
 
+	user.Ip = dhtuser.IP
+
 	userResponseChannel <- user
 }
 
@@ -262,10 +264,10 @@ func createAnnounceRequest() ([]byte, error) {
 
 // ICE
 // Senders
-func sendOffer() {
+func SendOffer(destIp string) {
 	cr := models.ConnectionRequest{
 		Type:   "offer",
-		DestIP: chosenIP,
+		DestIP: destIp,
 		Data:   createOffer(),
 	}
 	crBytes, err := json.Marshal(cr)

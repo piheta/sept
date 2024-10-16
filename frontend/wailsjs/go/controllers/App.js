@@ -49,3 +49,7 @@ export function SearchDht(arg1) {
 export function SendMessage(arg1, arg2) {
   return window['go']['controllers']['App']['SendMessage'](arg1, arg2);
 }
+
+export function SendOffer(arg1) {
+  return window['go']['controllers']['App']['SendOffer'](arg1);
+}

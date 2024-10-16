@@ -2,7 +2,7 @@
     import SidebarUsers from "./Sidebar-Users.svelte";
     import SidebarServers from "./Sidebar-Servers.svelte";
     import SidebarSettings from "./Sidebar-Settings.svelte";
-    import { Search, SearchDht } from "../../../wailsjs/go/controllers/App";
+    import { Search, SearchDht, SendOffer } from "../../../wailsjs/go/controllers/App";
 
     export let small;
     let inputRef;
@@ -42,7 +42,7 @@
         if (event.key === 'Enter' && sidebar_mode === 3) {
             SearchDht(searchQuery.split(" ")[1]).then((user) => {
                 console.log(user)
-                foundUser = user.username;
+                foundUser = user;
             }).catch((err) => {
                 console.log(err)
             })
@@ -121,8 +121,8 @@
             {#if foundUser}
                 <div class="mt-1 h-[34px] items-center text-[0.9rem] p-[0.3rem] m-0 rounded-md focus:list-none focus:outline-none outline-none hover:bg-[rgba(0,0,0,0.125)] focus:bg-[rgba(0,0,0,0.125)] ml-2 flex"> 
                     <svg class="mr-2" xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M18 21a6 6 0 0 0-12 0"/><circle cx="12" cy="11" r="4"/><rect width="18" height="18" x="3" y="3" rx="2"/></g></svg>
-                    {foundUser}
-                    <svg class="ml-auto mr-1 hover:cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1.25em" viewBox="0 0 24 24" fill="currentColor"><path d="M11 11V7H13V11H17V13H13V17H11V13H7V11H11ZM12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20Z"></path></svg>
+                    {foundUser.username}
+                    <button on:click={() => {SendOffer(foundUser.ip)}} class="ml-auto hover:cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1.25em" viewBox="0 0 24 24" fill="currentColor"><path d="M11 11V7H13V11H17V13H13V17H11V13H7V11H11ZM12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20Z"></path></svg></button>
                 </div>
             {:else}
                 <p class="ml-4 mt-1 text-gray-600 text-sm">Enter to search</p>
