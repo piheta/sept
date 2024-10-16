@@ -23,9 +23,9 @@ first, deploy a [sept login server](https://github.com/piheta/sept-login-server)
 ## dev roadmap
 - [x] 👍 Local per user db
 - [x] 👍 P2P Message exchange
+- [x] 👍 User search
 - [ ] ⌛ Video
 - [ ] ⌛ Backend-Frontend connection
-- [ ] ⌛ User search
 - [ ] ⌛ DB encryption
 - [ ] ⌛ VXLAN implementation
 
