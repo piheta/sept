@@ -47,11 +47,6 @@ func (a *App) Exit() {
 ///
 
 func (a *App) GetAuthedUser() models.User {
-	err := a.auth_service.LogInWithExistingJwt()
-	if err != nil {
-		fmt.Println(err)
-	}
-
 	return services.AuthedUser
 }
 
