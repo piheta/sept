@@ -8,6 +8,14 @@ The structure is:
 * darwin - macOS specific files
 * windows - Windows specific files
 
+After building, the user's Keypair and Database are stored in this directory.
+These files are generated after the user registers and logs in.
+
+The Database stores users, chats and messages that the user is interacting with. 
+
+Currently the database is not encrypted.
+
+
 ## Mac
 
 The `darwin` directory holds files specific to Mac builds.
