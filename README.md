@@ -26,7 +26,7 @@ first, deploy a [sept login server](https://github.com/piheta/sept-login-server)
 - [x] 👍 P2P Message exchange
 - [x] 👍 User search
 - [ ] ⌛ Video
-- [ ] ⌛ Backend-Frontend connection
+- [ ] ⌛ File uploads
 - [ ] ⌛ DB encryption
 - [ ] ⌛ VXLAN implementation
 
