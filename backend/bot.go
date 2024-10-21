@@ -6,7 +6,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/piheta/sept/backend/sn"
+	"github.com/piheta/sept/backend/services/sn"
 )
 
 func main() {
