@@ -33,5 +33,8 @@ first, deploy a [sept login server](https://github.com/piheta/sept-login-server)
 ## license
 sept is released under the [GPL v3 License](LICENSE).
 
+### third-party dependencies
+This project uses pion/webrtc, which is licensed under the MIT License. See [pion/webrtc](https://github.com/pion/webrtc) for more information.
+
 ## c++ poc
 check out the legacy multicast [implementation of sept](https://github.com/piheta/sept/tree/legacy)
