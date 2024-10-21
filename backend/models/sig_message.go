@@ -22,7 +22,7 @@ type AnnounceRequest struct {
 type ConnectionRequest struct {
 	Type      string               `json:"type"`
 	DestIP    string               `json:"destip"`
-	SrcIP     *string              `json:"srcip"`
+	SrcIP     string               `json:"srcip"`
 	Data      string               `json:"data"`
 	Candidate *webrtc.ICECandidate `json:"candidate,omitempty"`
 }

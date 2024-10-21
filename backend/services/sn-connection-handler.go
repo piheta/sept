@@ -143,8 +143,6 @@ func connectToSignalingServer(wg *sync.WaitGroup) {
 			break
 		}
 
-		log.Printf("Raw message received: %s", string(message))
-
 		var sigMessage models.SigMsg
 		if err := json.Unmarshal(message, &sigMessage); err != nil {
 			log.Printf("Failed to unmarshal sigMessage: %v", err)
@@ -315,7 +313,7 @@ func sendICECandidate(candidate *webrtc.ICECandidate) {
 func onOffer(connectionRequest models.ConnectionRequest) {
 	fmt.Println("Received offer:", connectionRequest)
 	answer := createAnswer(connectionRequest.Data)
-	sendAnswer(*connectionRequest.SrcIP, answer)
+	sendAnswer(connectionRequest.SrcIP, answer)
 }
 
 func onAnswer(connectionRequest models.ConnectionRequest) {
@@ -341,7 +339,7 @@ func onCandidate(connectionRequest models.ConnectionRequest) {
 		handleError(err)
 		return
 	}
-	chosenIP = *connectionRequest.SrcIP // Replace "none" with the sender of the offer
+	chosenIP = connectionRequest.SrcIP // Replace "none" with the sender of the offer
 	if err := peerConnection.AddICECandidate(candidate); err != nil {
 		handleError(err)
 	}

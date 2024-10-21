@@ -137,7 +137,7 @@ func onConnectionMsg(msg models.SigMsg, senderAddr string) {
 		return
 	}
 	// Set the sender's address
-	conreq.SrcIP = &senderAddr
+	conreq.SrcIP = senderAddr
 
 	sigMsg := models.SigMsg{
 		Type: models.Connection,
