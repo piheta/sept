@@ -264,6 +264,7 @@ func SendOffer(destIp string) {
 		},
 	}
 
+	chosenIP = destIp
 	if err := ws.WriteJSON(sigMsg); err != nil {
 		handleError(err)
 	}
