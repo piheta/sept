@@ -5,7 +5,7 @@
 [![Status](https://badgen.net/badge/works/almost/red)](https://badgen.net/badge/works/almost/red) 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-## Decentralized, Asynchronous P2P Chat
+## Decentralized Communication Platform
 
 **Sept** is a video and chat application similar to Discord but operates without a central server. Clients connect directly to each other, resulting in faster connections than similar applications. Other limitations, such as file upload limits, do not exist.
 
@@ -44,4 +44,4 @@ This project uses dependencies that are licensed under the following licenses:
 - **MIT:** [pion/webrtc](https://github.com/pion/webrtc), [wails](https://github.com/wailsapp/wails)
 
 ## C++ POC
-check out the legacy multicast [implementation of sept](https://github.com/piheta/sept/tree/legacy)
+Check out the legacy multicast [implementation of sept](https://github.com/piheta/sept/tree/legacy).
