@@ -16,7 +16,8 @@ sept is inspired by various projects and technologies, such as [vxlan](https://w
 ## build
 first, deploy a [sept login server](https://github.com/piheta/sept-login-server)
  ```sh
-  git clone https://github.com/piheta/sept.git
+  git clone https://github.com/piheta/sept.git && cd sept
+  go install github.com/wailsapp/wails/v2/cmd/wails@latest
   wails dev
   ```
 
