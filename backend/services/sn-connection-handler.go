@@ -130,7 +130,7 @@ func connectToSignalingServer(wg *sync.WaitGroup) {
 		log.Fatalf("Failed to create announce request: %v", err)
 	}
 
-	err = ws.WriteMessage(websocket.TextMessage, announceMessage)
+	err = ws.WriteJSON(announceMessage)
 	if err != nil {
 		log.Fatalf("Failed to send user data: %v", err)
 	}
@@ -142,6 +142,8 @@ func connectToSignalingServer(wg *sync.WaitGroup) {
 			log.Printf("Error reading message: %v", err)
 			break
 		}
+
+		log.Printf("Raw message received: %s", string(message))
 
 		var sigMessage models.SigMsg
 		if err := json.Unmarshal(message, &sigMessage); err != nil {
@@ -193,12 +195,7 @@ func UserSearchRequest(username string) (<-chan models.User, error) {
 		},
 	}
 
-	jsonReq, err := json.Marshal(req)
-	if err != nil {
-		return nil, fmt.Errorf("failed to search request: %v", err)
-	}
-
-	err = ws.WriteMessage(websocket.TextMessage, jsonReq)
+	err := ws.WriteJSON(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to send user data: %v", err)
 	}
@@ -237,25 +234,20 @@ func userSearchResponse(msg models.SigMsg) {
 	userResponseChannel <- user
 }
 
-func createAnnounceRequest() ([]byte, error) {
+func createAnnounceRequest() (models.SigMsg, error) {
 	cert, err := os.ReadFile(db.SEPT_DATA + "/user.jwt")
 	if err != nil {
-		return nil, fmt.Errorf("failed to get user cert: %v", err)
+		return models.SigMsg{}, fmt.Errorf("failed to get user cert: %v", err)
 	}
 
-	req := models.SigMsg{
+	annreq := models.SigMsg{
 		Type: models.Announce,
 		Data: models.AnnounceRequest{
 			Cert: string(cert),
 		},
 	}
 
-	jsonReq, err := json.Marshal(req)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal user data: %v", err)
-	}
-
-	return jsonReq, nil
+	return annreq, nil
 }
 
 //
@@ -265,48 +257,33 @@ func createAnnounceRequest() ([]byte, error) {
 // ICE
 // Senders
 func SendOffer(destIp string) {
-	cr := models.ConnectionRequest{
-		Type:   "offer",
-		DestIP: destIp,
-		Data:   createOffer(),
-	}
-
 	sigMsg := models.SigMsg{
 		Type: models.Connection,
-		Data: cr,
+		Data: models.ConnectionRequest{
+			Type:   "offer",
+			DestIP: destIp,
+			Data:   createOffer(),
+		},
 	}
 
-	sigMsgBytes, err := json.Marshal(sigMsg)
-	if err != nil {
-		log.Fatalf("Failed to marshal ConnectionRequest: %v", err)
-	}
-
-	err = ws.WriteMessage(websocket.TextMessage, sigMsgBytes)
-	if err != nil {
-		log.Fatalf("Failed to send chosen IP: %v", err)
+	if err := ws.WriteJSON(sigMsg); err != nil {
+		handleError(err)
 	}
 }
 
+// Unified answer sending
 func sendAnswer(destIP, answer string) {
-	cr := models.ConnectionRequest{
-		Type:   "answer",
-		DestIP: destIP,
-		Data:   answer,
-	}
-
 	sigMsg := models.SigMsg{
 		Type: models.Connection,
-		Data: cr,
+		Data: models.ConnectionRequest{
+			Type:   "answer",
+			DestIP: destIP,
+			Data:   answer,
+		},
 	}
 
-	sigMsgBytes, err := json.Marshal(sigMsg)
-	if err != nil {
-		log.Fatalf("Failed to marshal ConnectionRequest: %v", err)
-	}
-
-	err = ws.WriteMessage(websocket.TextMessage, sigMsgBytes)
-	if err != nil {
-		log.Fatalf("Failed to send answer: %v", err)
+	if err := ws.WriteJSON(sigMsg); err != nil {
+		handleError(err)
 	}
 }
 
@@ -317,19 +294,17 @@ func sendICECandidate(candidate *webrtc.ICECandidate) {
 		return
 	}
 
-	cr := models.ConnectionRequest{
-		Type:      "candidate",
-		Candidate: candidate,
-		DestIP:    chosenIP,
-		Data:      string(candidateJSON),
-	}
-	crBytes, err := json.Marshal(cr)
-	if err != nil {
-		handleError(err)
-		return
+	sigMsg := models.SigMsg{
+		Type: models.Connection,
+		Data: models.ConnectionRequest{
+			Type:      "candidate",
+			Candidate: candidate,
+			DestIP:    chosenIP,
+			Data:      string(candidateJSON),
+		},
 	}
 
-	if err := ws.WriteMessage(websocket.TextMessage, crBytes); err != nil {
+	if err := ws.WriteJSON(sigMsg); err != nil {
 		handleError(err)
 	}
 }

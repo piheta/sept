@@ -85,12 +85,7 @@ func onSearchMsg(msg models.SigMsg, senderAddr string) {
 		Data: dhtUser,
 	}
 
-	dhtUserBytes, err := json.Marshal(sigMsg)
-	if err != nil {
-		log.Printf("Failed to marshall dhtUser: %v", err)
-		return
-	}
-	send(senderAddr, dhtUserBytes)
+	send(senderAddr, sigMsg)
 }
 
 func onAnnounceMsg(msg models.SigMsg, senderAddr string) {
@@ -141,31 +136,28 @@ func onConnectionMsg(msg models.SigMsg, senderAddr string) {
 		log.Printf("Failed to unmarshal ConnectionRequest: %v", err)
 		return
 	}
-
 	// Set the sender's address
 	conreq.SrcIP = &senderAddr
 
-	// Marshal the updated connection request
-	message, err := json.Marshal(conreq)
-	if err != nil {
-		log.Printf("Failed to marshal message: %v", err)
-		return
+	sigMsg := models.SigMsg{
+		Type: models.Connection,
+		Data: conreq,
 	}
 
-	if err := send(conreq.DestIP, message); err != nil {
+	if err := send(conreq.DestIP, sigMsg); err != nil {
 		log.Printf("Error sending message: %v", err)
 		return
 	}
 
 }
 
-func send(remoteAddr string, message []byte) error {
+func send(remoteAddr string, message models.SigMsg) error {
 	clientsLock.Lock()
 	defer clientsLock.Unlock()
 
 	for client, addr := range clients {
 		if addr == remoteAddr {
-			if err := client.WriteMessage(websocket.TextMessage, message); err != nil {
+			if err := client.WriteJSON(message); err != nil {
 				return err
 			}
 			return fmt.Errorf("client not found for address %s", remoteAddr)
