@@ -31,10 +31,11 @@ first, deploy a [sept login server](https://github.com/piheta/sept-login-server)
 - [ ] ⌛ VXLAN implementation
 
 ## license
-sept is released under the [GPL v3 License](LICENSE).
+**Sept** is released under the [GPL v3 License](LICENSE).
 
-### third-party dependencies
-This project uses pion/webrtc, which is licensed under the MIT License. See [pion/webrtc](https://github.com/pion/webrtc) for more information.
+### dependency licenses
+This project uses dependencies that are licensed under the following licenses:
+- **MIT:** [pion/webrtc](https://github.com/pion/webrtc), [wails](https://github.com/wailsapp/wails)
 
 ## c++ poc
 check out the legacy multicast [implementation of sept](https://github.com/piheta/sept/tree/legacy)
