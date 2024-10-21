@@ -1,27 +1,33 @@
-# sept/ʂɛpt/
-[![Go Report Card](https://goreportcard.com/badge/github.com/piheta/sept)](https://goreportcard.com/report/github.com/piheta/sept) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=piheta_sept&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=piheta_sept) [![tests](https://img.shields.io/github/actions/workflow/status/piheta/sept/go.yml?logo=github&label=tests)](https://img.shields.io/github/actions/workflow/status/piheta/sept/go.yml?logo=github&label=tests) [![Status](https://badgen.net/badge/works/almost/red)](https://badgen.net/badge/works/almost/red) [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-## decentralized, asynchronous p2p chat
+# Sept /ʂɛpt/
+[![Go Report Card](https://goreportcard.com/badge/github.com/piheta/sept)](https://goreportcard.com/report/github.com/piheta/sept) 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=piheta_sept&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=piheta_sept) 
+[![Tests](https://img.shields.io/github/actions/workflow/status/piheta/sept/go.yml?logo=github&label=tests)](https://img.shields.io/github/actions/workflow/status/piheta/sept/go.yml?logo=github&label=tests) 
+[![Status](https://badgen.net/badge/works/almost/red)](https://badgen.net/badge/works/almost/red) 
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-sept is a video/chat application similar to discord with no central server. The clients connect directly to eachother making the connection faster than similar applications. Other limitations such as file upload limit are also non existent. 
-sept is inspired by various projects and technologies, such as [vxlan](https://www.rfc-editor.org/rfc/rfc7348) and the old [skype p2p](https://arxiv.org/pdf/cs/0412017) infrastructure.
+## Decentralized, Asynchronous P2P Chat
 
-![sept ui](./docs/images/sept.gif)
+**Sept** is a video and chat application similar to Discord but operates without a central server. Clients connect directly to each other, resulting in faster connections than similar applications. Other limitations, such as file upload limits, do not exist.
 
-## features
-- **private & encrypted:** all messages are sent over an encrypted channel and stored on your device. Sept can't see anything
-- **no upload limits:** share terrabytes of files for free. No need to upload them
-- **fast:** faster than other chat and communication programs because of its p2p nature
-- **better video quality:** your streams are directly being sent to your peers, no server will throttle your performance
+Inspired by various projects and technologies, such as [VXLAN](https://www.rfc-editor.org/rfc/rfc7348) and the old [Skype P2P](https://arxiv.org/pdf/cs/0412017) infrastructure.
 
-## build
-first, deploy a [sept login server](https://github.com/piheta/sept-login-server)
- ```bash
-  git clone https://github.com/piheta/sept.git && cd sept
-  go install github.com/wailsapp/wails/v2/cmd/wails@latest
-  wails dev
-  ```
+![Sept UI](./docs/images/sept.gif)
 
-## dev roadmap
+## Features
+- **Private & Encrypted**: All messages are sent over an encrypted channel and stored locally on your device. Sept cannot see your messages.
+- **No Upload Limits**: Share terabytes of files for free—no need to upload them.
+- **Fast**: Faster than other chat and communication programs due to its P2P nature.
+- **Better Video Quality**: Streams are sent directly to your peers without server throttling.
+
+## Build
+First, deploy a [Sept Login Server](https://github.com/piheta/sept-login-server):
+```bash
+git clone https://github.com/piheta/sept.git && cd sept
+go install github.com/wailsapp/wails/v2/cmd/wails@latest
+wails dev
+```
+
+## Dev Roadmap
 - [x] 👍 Local per user db
 - [x] 👍 P2P Message exchange
 - [x] 👍 User search
@@ -30,12 +36,12 @@ first, deploy a [sept login server](https://github.com/piheta/sept-login-server)
 - [ ] ⌛ DB encryption
 - [ ] ⌛ VXLAN implementation
 
-## license
+## License
 **Sept** is released under the [GPL v3 License](LICENSE).
 
-### dependency licenses
+### Dependency Licenses
 This project uses dependencies that are licensed under the following licenses:
 - **MIT:** [pion/webrtc](https://github.com/pion/webrtc), [wails](https://github.com/wailsapp/wails)
 
-## c++ poc
+## C++ POC
 check out the legacy multicast [implementation of sept](https://github.com/piheta/sept/tree/legacy)
