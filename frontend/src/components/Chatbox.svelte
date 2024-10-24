@@ -1,6 +1,8 @@
 <script>
     import { onMount, afterUpdate } from 'svelte';
-    import { GetChatMessages, GetUser } from "../../wailsjs/go/controllers/App.js";
+    import { EventsOn } from "../../wailsjs/runtime/runtime.js";
+    import { GetMessagesByChatID } from "../../wailsjs/go/controllers/MessageController.js";
+    import { GetUser } from "../../wailsjs/go/controllers/UserController.js";
     import { message_store } from '../stores/messageStore.js';
     import { selection_store } from '../stores/selectionStore.js';
     import Message from './Message.svelte';
@@ -24,7 +26,7 @@
 
     async function getMessages() {
         let chatId = $selection_store.id;
-        GetChatMessages(chatId).then(async (messages) => {
+        GetMessagesByChatID(chatId).then(async (messages) => {
             const userIds = new Set(messages.map(message => message.user_id));
             await Promise.all(
                 Array.from(userIds).map(userId => getUserDetails(userId))
@@ -39,6 +41,7 @@
 
     onMount(() => {
         getMessages();
+        EventsOn("message:new", () =>{ getMessages(); console.log("message from wails event")});
     });
 
     afterUpdate(() => {

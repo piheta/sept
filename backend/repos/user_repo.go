@@ -58,3 +58,7 @@ func (ur *UserRepo) AddUser(user models.User) error {
 	_, err := ur.db.Exec(query, user.ID, user.Username, user.Ip, user.Avatar, user.PublicKey)
 	return err
 }
+
+func (ur *UserRepo) SetDB(db *sql.DB) {
+	ur.db = db
+}

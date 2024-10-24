@@ -2,6 +2,7 @@ package services
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -10,15 +11,46 @@ import (
 
 	"github.com/piheta/sept/backend/db"
 	"github.com/piheta/sept/backend/models"
+	"github.com/piheta/sept/backend/repos"
 )
 
 var AuthedUser = models.User{}
 
 type AuthService struct {
+	ctx context.Context
+
+	user_repo     *repos.UserRepo
+	chat_repo     *repos.ChatRepo
+	userchat_repo *repos.UserchatRepo
+	message_repo  *repos.MessageRepo
 }
 
-func NewAuthSerivce() *AuthService {
-	return &AuthService{}
+func NewAuthSerivce(userRepo *repos.UserRepo, chatRepo *repos.ChatRepo, userchatRepo *repos.UserchatRepo, messageRepo *repos.MessageRepo) *AuthService {
+	return &AuthService{
+		user_repo:     userRepo,
+		chat_repo:     chatRepo,
+		userchat_repo: userchatRepo,
+		message_repo:  messageRepo,
+	}
+}
+
+func (as *AuthService) SetContext(ctx context.Context) {
+	as.ctx = ctx
+}
+
+func (as *AuthService) reinitRepoDb() {
+	// Update the db in existing repos
+	as.user_repo.SetDB(db.DB)
+	as.chat_repo.SetDB(db.DB)
+	as.userchat_repo.SetDB(db.DB)
+	as.message_repo.SetDB(db.DB)
+}
+
+func (as *AuthService) nilRepoDb() {
+	as.user_repo.SetDB(nil)
+	as.chat_repo.SetDB(nil)
+	as.userchat_repo.SetDB(nil)
+	as.message_repo.SetDB(nil)
 }
 
 func (as *AuthService) Login(email, password string) (*models.User, error) {
@@ -81,9 +113,11 @@ func (as *AuthService) Login(email, password string) (*models.User, error) {
 		log.Fatalf("failed to get public key")
 	}
 	db.InitDb(user)
+	as.reinitRepoDb()
 
 	AuthedUser = user
-	go SnConnectionHandler()
+	snCon := NewSnConnection(as.ctx)
+	go snCon.SnConnectionHandler()
 
 	return &user, nil
 }
@@ -160,9 +194,11 @@ func (as *AuthService) LogInWithExistingJwt() error {
 	if err := db.InitDb(user); err != nil {
 		return fmt.Errorf("failed to init db with jwt %w ", err)
 	}
+	as.reinitRepoDb()
 
 	AuthedUser = user
-	go SnConnectionHandler()
+	snCon := NewSnConnection(as.ctx)
+	go snCon.SnConnectionHandler()
 
 	return nil
 }
@@ -172,6 +208,8 @@ func (as *AuthService) LogOut() error {
 	if err != nil {
 		return fmt.Errorf("failed to log out, can't delete jwt %w ", err)
 	}
+
+	as.nilRepoDb()
 
 	return nil
 }

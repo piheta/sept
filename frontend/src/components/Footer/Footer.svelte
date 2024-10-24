@@ -1,5 +1,5 @@
 <script>
-    import { SendMessage } from "../../../wailsjs/go/controllers/App.js";
+    import { SendMessage } from "../../../wailsjs/go/controllers/MessageController.js";
     import { message_store } from '../../stores/messageStore.js';
     import { selection_store } from '../../stores/selectionStore.js';
     import GifBox from "./GifBox.svelte";

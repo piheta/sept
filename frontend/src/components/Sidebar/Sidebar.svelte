@@ -2,7 +2,8 @@
     import SidebarUsers from "./Sidebar-Users.svelte";
     import SidebarServers from "./Sidebar-Servers.svelte";
     import SidebarSettings from "./Sidebar-Settings.svelte";
-    import { Search, SearchDht, SendOffer } from "../../../wailsjs/go/controllers/App";
+    import { Search } from "../../../wailsjs/go/controllers/AuthController";
+    import { SearchDht, SendOffer } from "../../../wailsjs/go/controllers/SignalingController";
 
     export let small;
     let inputRef;

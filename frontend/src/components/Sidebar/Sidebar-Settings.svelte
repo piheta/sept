@@ -1,7 +1,8 @@
 <script>
     import List from "./List.svelte";
     import { auth_store } from "../../stores/authStore";
-    import { Exit, LogOut, SearchDht } from "../../../wailsjs/go/controllers/App";
+    import { Exit, LogOut } from "../../../wailsjs/go/controllers/AuthController";
+    import { SearchDht } from "../../../wailsjs/go/controllers/SignalingController";
     import {replace} from 'svelte-spa-router'
 
     let selection = "";

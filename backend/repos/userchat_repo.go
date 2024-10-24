@@ -17,3 +17,7 @@ func (ucr *UserchatRepo) AddUserToChat(user_id string, chat_id string) error {
 	_, err := ucr.db.Exec(query, user_id, chat_id)
 	return err
 }
+
+func (ucr *UserchatRepo) SetDB(db *sql.DB) {
+	ucr.db = db
+}

@@ -12,6 +12,10 @@ type ChatRepo struct {
 	db *sql.DB
 }
 
+func NewChatRepo(db *sql.DB) *ChatRepo {
+	return &ChatRepo{db: db}
+}
+
 func (cr *ChatRepo) GetChats() ([]models.Chat, error) {
 	query := `
 		SELECT id, name, avatar
@@ -40,10 +44,6 @@ func (cr *ChatRepo) GetChats() ([]models.Chat, error) {
 	return chats, nil
 }
 
-func NewChatRepo(db *sql.DB) *ChatRepo {
-	return &ChatRepo{db: db}
-}
-
 func (cr *ChatRepo) AddChat(name string, avatar string) error {
 	chat_id := uuid.New()
 	query := `INSERT OR IGNORE INTO chats (id, name, avatar) VALUES (?, ?, ?)`
@@ -66,4 +66,8 @@ func (cr *ChatRepo) GetChatByName(chatName string) (models.Chat, error) {
 		return models.Chat{}, err
 	}
 	return chat, nil
+}
+
+func (cr *ChatRepo) SetDB(db *sql.DB) {
+	cr.db = db
 }

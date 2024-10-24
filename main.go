@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"fmt"
 	"os"
@@ -20,7 +21,7 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
-func main() {
+func initDataDir() {
 	execPath, err := os.Executable()
 	if err != nil {
 		fmt.Println("Error getting executable path:", err)
@@ -36,29 +37,33 @@ func main() {
 	}
 	db.SEPT_DATA = resourcesPath
 	fmt.Printf(db.SEPT_DATA)
+}
+
+func main() {
+	// find current dir and create a Data dir for db and keypair
+	initDataDir()
+
 	//
 	// startup logic
 	// try to init db with jwt
-	// if this fails, init repos with null
-	// on login, repos will be correctly initialized from inside of "app" controller
+	// if this fails, init repos with null db
+	// on login, repos will correctly init the db from inside of "app" controller
 	//
-	auth_service := services.NewAuthSerivce()
-	auth_service.LogInWithExistingJwt()
 
 	user_repo := repos.NewUserRepo(db.DB)
 	chat_repo := repos.NewChatRepo(db.DB)
 	userchat_repo := repos.NewUserchatRepo(db.DB)
 	message_repo := repos.NewMessageRepo(db.DB)
 
-	app := controllers.NewApp(
-		user_repo,
-		chat_repo,
-		userchat_repo,
-		message_repo,
+	auth_service := services.NewAuthSerivce(user_repo, chat_repo, userchat_repo, message_repo)
 
-		auth_service,
-	)
-	err = wails.Run(&options.App{
+	auth_controller := controllers.NewAuthController(auth_service)
+	user_controller := controllers.NewUserController(user_repo)
+	chat_controller := controllers.NewChatController(chat_repo)
+	message_controller := controllers.NewMessageController(message_repo)
+	signaling_controller := controllers.NewSignalingController()
+
+	err := wails.Run(&options.App{
 		Width:     700,
 		Height:    512,
 		MinWidth:  400,
@@ -84,9 +89,17 @@ func main() {
 			},
 		},
 		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 0},
-		OnStartup:        app.Startup,
+		OnStartup: func(ctx context.Context) {
+			auth_controller.SetContext(ctx)
+			auth_service.SetContext(ctx)
+			auth_service.LogInWithExistingJwt()
+		},
 		Bind: []interface{}{
-			app,
+			auth_controller,
+			user_controller,
+			message_controller,
+			chat_controller,
+			signaling_controller,
 		},
 	})
 

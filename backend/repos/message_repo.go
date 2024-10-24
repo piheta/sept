@@ -48,3 +48,7 @@ func (mr *MessageRepo) GetMessagesByChatID(chatID string) ([]models.Message, err
 	}
 	return messages, nil
 }
+
+func (mr *MessageRepo) SetDB(db *sql.DB) {
+	mr.db = db
+}
