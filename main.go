@@ -48,7 +48,7 @@ func main() {
 	// init repos with empty db
 	// on wails OnStartup try to init db with jwt in authService
 	// if this fails, user is not logged in and he will be redirected to login
-	// on login, repos will correctly init the db from inside of "app" controller
+	// on login, repos will correctly init the db from inside of authservice
 	//
 
 	user_repo := repos.NewUserRepo(nil)
