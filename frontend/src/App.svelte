@@ -28,7 +28,7 @@
 
     function checkAuth() {
         GetAuthedUser().then((user) => {
-            $auth_store = user
+            auth_store.set(user);
             isAuthenticated = !!user.id;
         }).catch(() => {
             isAuthenticated = false;
@@ -40,7 +40,7 @@
     });
 
     // Watch auth_store for changes
-    // $: isAuthenticated = !!$auth_store.id;
+    $: isAuthenticated = !!$auth_store.id;
 
     $: if (isAuthenticated) {
         replace("/");
