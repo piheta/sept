@@ -45,15 +45,16 @@ func main() {
 
 	//
 	// startup logic
-	// try to init db with jwt
-	// if this fails, init repos with null db
+	// init repos with empty db
+	// on wails OnStartup try to init db with jwt in authService
+	// if this fails, user is not logged in and he will be redirected to login
 	// on login, repos will correctly init the db from inside of "app" controller
 	//
 
-	user_repo := repos.NewUserRepo(db.DB)
-	chat_repo := repos.NewChatRepo(db.DB)
-	userchat_repo := repos.NewUserchatRepo(db.DB)
-	message_repo := repos.NewMessageRepo(db.DB)
+	user_repo := repos.NewUserRepo(nil)
+	chat_repo := repos.NewChatRepo(nil)
+	userchat_repo := repos.NewUserchatRepo(nil)
+	message_repo := repos.NewMessageRepo(nil)
 
 	auth_service := services.NewAuthSerivce(user_repo, chat_repo, userchat_repo, message_repo)
 
@@ -91,7 +92,6 @@ func main() {
 		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 0},
 		OnStartup: func(ctx context.Context) {
 			auth_controller.SetContext(ctx)
-			auth_service.SetContext(ctx)
 			auth_service.LogInWithExistingJwt()
 		},
 		Bind: []interface{}{

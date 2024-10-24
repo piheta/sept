@@ -24,6 +24,7 @@ func NewAuthController(authService *services.AuthService) *AuthController {
 
 func (a *AuthController) SetContext(ctx context.Context) {
 	a.ctx = ctx
+	a.auth_service.SetContext(ctx)
 }
 
 func (a *AuthController) Exit() {
