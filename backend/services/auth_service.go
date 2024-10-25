@@ -23,14 +23,18 @@ type AuthService struct {
 	chat_repo     *repos.ChatRepo
 	userchat_repo *repos.UserchatRepo
 	message_repo  *repos.MessageRepo
+
+	sn_con_handler *SnConnection
 }
 
-func NewAuthSerivce(userRepo *repos.UserRepo, chatRepo *repos.ChatRepo, userchatRepo *repos.UserchatRepo, messageRepo *repos.MessageRepo) *AuthService {
+func NewAuthSerivce(userRepo *repos.UserRepo, chatRepo *repos.ChatRepo, userchatRepo *repos.UserchatRepo, messageRepo *repos.MessageRepo, sn_con_handler *SnConnection) *AuthService {
 	return &AuthService{
 		user_repo:     userRepo,
 		chat_repo:     chatRepo,
 		userchat_repo: userchatRepo,
 		message_repo:  messageRepo,
+
+		sn_con_handler: sn_con_handler,
 	}
 }
 
@@ -116,8 +120,7 @@ func (as *AuthService) Login(email, password string) (*models.User, error) {
 	as.reinitRepoDb()
 
 	AuthedUser = user
-	snCon := NewSnConnection(as.ctx)
-	go snCon.SnConnectionHandler()
+	go as.sn_con_handler.SnConnectionHandler()
 
 	return &user, nil
 }
@@ -197,8 +200,7 @@ func (as *AuthService) LogInWithExistingJwt() error {
 	as.reinitRepoDb()
 
 	AuthedUser = user
-	snCon := NewSnConnection(as.ctx)
-	go snCon.SnConnectionHandler()
+	go as.sn_con_handler.SnConnectionHandler()
 
 	return nil
 }

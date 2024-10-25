@@ -40,7 +40,7 @@
     });
 
     // Watch auth_store for changes
-    $: isAuthenticated = !!$auth_store.id;
+    // $: isAuthenticated = !!$auth_store.id;
 
     $: if (isAuthenticated) {
         replace("/");

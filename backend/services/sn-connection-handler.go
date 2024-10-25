@@ -28,9 +28,12 @@ type SnConnection struct {
 	ctx context.Context
 }
 
-func NewSnConnection(ctx context.Context) *SnConnection {
-	handler := &SnConnection{ctx: ctx}
-	return handler
+func NewSnConnection() *SnConnection {
+	return &SnConnection{}
+}
+
+func (snh *SnConnection) SetContext(ctx context.Context) {
+	snh.ctx = ctx
 }
 
 // p1p2, connects to the signaling server
@@ -39,7 +42,7 @@ func NewSnConnection(ctx context.Context) *SnConnection {
 // p1 sends ICE candidates to p2
 // p2 replies with his ICE candidates
 // datachannel is made
-func (snh SnConnection) SnConnectionHandler() {
+func (snh *SnConnection) SnConnectionHandler() {
 	snh.initializePeerConnection()
 	snh.createDataChannel()
 
@@ -49,7 +52,7 @@ func (snh SnConnection) SnConnectionHandler() {
 	wg.Wait()
 }
 
-func (snh SnConnection) initializePeerConnection() {
+func (snh *SnConnection) initializePeerConnection() {
 	config := webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
 			{
@@ -67,7 +70,7 @@ func (snh SnConnection) initializePeerConnection() {
 		if candidate == nil {
 			return
 		}
-		sendICECandidate(candidate)
+		snh.sendICECandidate(candidate)
 	})
 
 	peerConnection.OnICEConnectionStateChange(func(state webrtc.ICEConnectionState) {
@@ -131,7 +134,7 @@ func (snh *SnConnection) createDataChannel() {
 	})
 }
 
-func (snh SnConnection) connectToSignalingServer(wg *sync.WaitGroup) {
+func (snh *SnConnection) connectToSignalingServer(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	var err error
@@ -142,7 +145,7 @@ func (snh SnConnection) connectToSignalingServer(wg *sync.WaitGroup) {
 	defer ws.Close()
 
 	//! Get and send cert to sig
-	announceMessage, err := createAnnounceRequest()
+	announceMessage, err := snh.createAnnounceRequest()
 	if err != nil {
 		log.Fatalf("Failed to create announce request: %v", err)
 	}
@@ -170,7 +173,7 @@ func (snh SnConnection) connectToSignalingServer(wg *sync.WaitGroup) {
 		case models.UserSearch:
 			// Catch server response
 			fmt.Println(sigMessage.Data)
-			userSearchResponse(sigMessage)
+			snh.userSearchResponse(sigMessage)
 		case models.Connection:
 
 			dataBytes, err := json.Marshal(sigMessage.Data)
@@ -188,11 +191,11 @@ func (snh SnConnection) connectToSignalingServer(wg *sync.WaitGroup) {
 			// todo, send these as sigmsg
 			switch connectionRequest.Type {
 			case "offer":
-				onSDPOffer(connectionRequest)
+				snh.onSDPOffer(connectionRequest)
 			case "answer":
-				onSDPAnswer(connectionRequest)
+				snh.onSDPAnswer(connectionRequest)
 			case "candidate":
-				onICECandidate(connectionRequest)
+				snh.onICECandidate(connectionRequest)
 			}
 
 		default:
@@ -202,7 +205,7 @@ func (snh SnConnection) connectToSignalingServer(wg *sync.WaitGroup) {
 }
 
 // ! User search request sent to the sig server. The response is captured in the switch above.
-func UserSearchRequest(username string) (<-chan models.User, error) {
+func (snh *SnConnection) UserSearchRequest(username string) (<-chan models.User, error) {
 	req := models.SigMsg{
 		Type: models.UserSearch,
 		Data: models.UserSearchRequest{
@@ -219,7 +222,7 @@ func UserSearchRequest(username string) (<-chan models.User, error) {
 }
 
 // ! Ran when data from sig server is recieved and marked as UserSearch
-func userSearchResponse(msg models.SigMsg) {
+func (snh *SnConnection) userSearchResponse(msg models.SigMsg) {
 	dataBytes, err := json.Marshal(msg.Data)
 	if err != nil {
 		log.Printf("Failed to marshal Data: %v", err)
@@ -249,7 +252,7 @@ func userSearchResponse(msg models.SigMsg) {
 	userResponseChannel <- user
 }
 
-func createAnnounceRequest() (models.SigMsg, error) {
+func (snh *SnConnection) createAnnounceRequest() (models.SigMsg, error) {
 	cert, err := os.ReadFile(db.SEPT_DATA + "/user.jwt")
 	if err != nil {
 		return models.SigMsg{}, fmt.Errorf("failed to get user cert: %v", err)
@@ -267,13 +270,13 @@ func createAnnounceRequest() (models.SigMsg, error) {
 
 // ICE
 // Senders
-func SendSDPOffer(destIp string) {
+func (snh *SnConnection) SendSDPOffer(destIp string) {
 	sigMsg := models.SigMsg{
 		Type: models.Connection,
 		Data: models.ConnectionRequest{
 			Type:   "offer",
 			DestIP: destIp,
-			Data:   createSDPOffer(),
+			Data:   snh.createSDPOffer(),
 		},
 	}
 
@@ -283,7 +286,7 @@ func SendSDPOffer(destIp string) {
 	}
 }
 
-func sendSDPAnswer(destIP, answer string) {
+func (snh *SnConnection) sendSDPAnswer(destIP, answer string) {
 	sigMsg := models.SigMsg{
 		Type: models.Connection,
 		Data: models.ConnectionRequest{
@@ -298,7 +301,7 @@ func sendSDPAnswer(destIP, answer string) {
 	}
 }
 
-func sendICECandidate(candidate *webrtc.ICECandidate) {
+func (snh *SnConnection) sendICECandidate(candidate *webrtc.ICECandidate) {
 	candidateJSON, err := json.Marshal(candidate.ToJSON())
 	if err != nil {
 		fmt.Println("sn error, ", err)
@@ -320,13 +323,14 @@ func sendICECandidate(candidate *webrtc.ICECandidate) {
 	}
 }
 
-func onSDPOffer(connectionRequest models.ConnectionRequest) {
+func (snh *SnConnection) onSDPOffer(connectionRequest models.ConnectionRequest) {
+	runtime.EventsEmit(snh.ctx, "offer:new", connectionRequest.SrcIP)
 	fmt.Println("Received offer:", connectionRequest)
-	answer := createSDPAnswer(connectionRequest.Data)
-	sendSDPAnswer(connectionRequest.SrcIP, answer)
+	answer := snh.createSDPAnswer(connectionRequest.Data)
+	snh.sendSDPAnswer(connectionRequest.SrcIP, answer)
 }
 
-func onSDPAnswer(connectionRequest models.ConnectionRequest) {
+func (snh *SnConnection) onSDPAnswer(connectionRequest models.ConnectionRequest) {
 	fmt.Println("Received answer:", connectionRequest.Data)
 	answerBytes, err := base64.StdEncoding.DecodeString(connectionRequest.Data)
 	if err != nil {
@@ -342,7 +346,7 @@ func onSDPAnswer(connectionRequest models.ConnectionRequest) {
 	}
 }
 
-func onICECandidate(connectionRequest models.ConnectionRequest) {
+func (snh *SnConnection) onICECandidate(connectionRequest models.ConnectionRequest) {
 	fmt.Println("Received ICE candidate")
 	candidate := webrtc.ICECandidateInit{}
 	if err := json.Unmarshal([]byte(connectionRequest.Data), &candidate); err != nil {
@@ -357,7 +361,7 @@ func onICECandidate(connectionRequest models.ConnectionRequest) {
 
 // Helpers
 
-func createSDPOffer() string {
+func (snh *SnConnection) createSDPOffer() string {
 	offer, err := peerConnection.CreateOffer(nil)
 	if err != nil {
 		fmt.Println("sn error, ", err)
@@ -369,7 +373,7 @@ func createSDPOffer() string {
 	return base64.StdEncoding.EncodeToString([]byte(offer.SDP))
 }
 
-func createSDPAnswer(offerBase64 string) string {
+func (snh *SnConnection) createSDPAnswer(offerBase64 string) string {
 	offerBytes, err := base64.StdEncoding.DecodeString(offerBase64)
 	if err != nil {
 		fmt.Println("sn error, ", err)

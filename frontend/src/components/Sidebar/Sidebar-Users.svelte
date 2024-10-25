@@ -1,8 +1,10 @@
 <script>
     import { GetChats } from "../../../wailsjs/go/controllers/ChatController.js";
+    import { EventsOn } from "../../../wailsjs/runtime/runtime.js";
     import List from "./List.svelte";
     import { selection_store } from '../../stores/selectionStore.js';
     import SmallList from "./SmallList.svelte";
+    import { onMount } from "svelte";
 
     export let small;
     export let fillSearchBoxAdd;
@@ -25,7 +27,11 @@
             showChats = !showChats;
     }
 
-    getChats();
+    onMount(() => {
+        getChats();
+        EventsOn("offer:new", (data) => { console.log("Received event data:", data);});
+    })
+    
 </script>
 
 {#if small}

@@ -5,3 +5,7 @@ import {models} from '../models';
 export function SearchDht(arg1:string):Promise<models.User>;
 
 export function SendOffer(arg1:string):Promise<void>;
+
+export function SendUserAddRequest(arg1:string):Promise<void>;
+
+export function SendUserAddResponse(arg1:string):Promise<void>;

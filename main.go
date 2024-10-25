@@ -48,7 +48,7 @@ func main() {
 	// init repos with empty db
 	// on wails OnStartup try to init db with jwt in authService
 	// if this fails, user is not logged in and he will be redirected to login
-	// on login, repos will correctly init the db from inside of authservice
+	// on login, authservice will update the db pointer and repos will work correctly
 	//
 
 	user_repo := repos.NewUserRepo(nil)
@@ -56,13 +56,14 @@ func main() {
 	userchat_repo := repos.NewUserchatRepo(nil)
 	message_repo := repos.NewMessageRepo(nil)
 
-	auth_service := services.NewAuthSerivce(user_repo, chat_repo, userchat_repo, message_repo)
+	sn_con_handler := services.NewSnConnection()
+	auth_service := services.NewAuthSerivce(user_repo, chat_repo, userchat_repo, message_repo, sn_con_handler)
 
 	auth_controller := controllers.NewAuthController(auth_service)
 	user_controller := controllers.NewUserController(user_repo)
 	chat_controller := controllers.NewChatController(chat_repo)
 	message_controller := controllers.NewMessageController(message_repo)
-	signaling_controller := controllers.NewSignalingController()
+	signaling_controller := controllers.NewSignalingController(sn_con_handler)
 
 	err := wails.Run(&options.App{
 		Width:     700,
@@ -92,6 +93,7 @@ func main() {
 		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 0},
 		OnStartup: func(ctx context.Context) {
 			auth_controller.SetContext(ctx)
+			sn_con_handler.SetContext(ctx)
 			auth_service.LogInWithExistingJwt()
 		},
 		Bind: []interface{}{

@@ -9,3 +9,11 @@ export function SearchDht(arg1) {
 export function SendOffer(arg1) {
   return window['go']['controllers']['SignalingController']['SendOffer'](arg1);
 }
+
+export function SendUserAddRequest(arg1) {
+  return window['go']['controllers']['SignalingController']['SendUserAddRequest'](arg1);
+}
+
+export function SendUserAddResponse(arg1) {
+  return window['go']['controllers']['SignalingController']['SendUserAddResponse'](arg1);
+}

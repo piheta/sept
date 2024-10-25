@@ -35,3 +35,9 @@ type DhtUser struct {
 	LoginCert string `json:"cert"`
 	IP        string `json:"ip"`
 }
+
+type UserAddRequest struct {
+}
+
+type UserAddResponse struct {
+}
