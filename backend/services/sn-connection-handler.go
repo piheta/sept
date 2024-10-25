@@ -26,7 +26,9 @@ type SnConnection struct {
 }
 
 func NewSnConnection() *SnConnection {
-	return &SnConnection{}
+	return &SnConnection{
+		userChan: make(chan models.User),
+	}
 }
 
 func (s *SnConnection) SetContext(ctx context.Context) {
@@ -138,7 +140,9 @@ func (s *SnConnection) connectToSignalingServer(wg *sync.WaitGroup) {
 	s.ws, _, err = websocket.DefaultDialer.Dial("ws://127.0.0.1:8081/ws", nil)
 	if err != nil {
 		log.Fatalf("Failed to connect to WebSocket server: %v", err)
+
 	}
+	defer close(s.userChan)
 	defer s.ws.Close()
 
 	//! Get and send cert to sig
