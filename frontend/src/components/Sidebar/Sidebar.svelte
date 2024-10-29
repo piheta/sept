@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import SidebarUsers from "./Sidebar-Users.svelte";
     import SidebarServers from "./Sidebar-Servers.svelte";
     import SidebarSettings from "./Sidebar-Settings.svelte";

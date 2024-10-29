@@ -1,6 +1,6 @@
-<script>
-    import { GetChats } from "../../../wailsjs/go/controllers/ChatController.js";
-    import { EventsOn } from "../../../wailsjs/runtime/runtime.js";
+<script lang="ts">
+    import { GetChats } from "../../../wailsjs/go/controllers/ChatController";
+    import { EventsOn } from "../../../wailsjs/runtime/runtime";
     import List from "./List.svelte";
     import { selection_store } from '../../stores/selectionStore.js';
     import SmallList from "./SmallList.svelte";

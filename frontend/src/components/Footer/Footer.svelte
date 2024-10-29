@@ -1,11 +1,11 @@
-<script>
-    import { SendMessage } from "../../../wailsjs/go/controllers/MessageController.js";
-    import { message_store } from '../../stores/messageStore.js';
-    import { selection_store } from '../../stores/selectionStore.js';
+<script lang="ts">
+    import { SendMessage } from "../../../wailsjs/go/controllers/MessageController";
+    import { message_store } from '../../stores/messageStore';
+    import { selection_store } from '../../stores/selectionStore';
     import GifBox from "./GifBox.svelte";
     import EmoteBox from "./EmoteBox.svelte";
 
-    export let recipient;
+    // export let recipient;
     export let height;
     let input_txt = "";
     const lineHeight = 20; // Height to add for each new line after the first
@@ -22,7 +22,7 @@
     function sendMessage(message, chat_id) {
         if (message.length < 1) return;
 
-        SendMessage(message, chat_id).then((allMessagesInChat) => {
+        SendMessage(message, chat_id).then((allMessagesInChat: models.Message[]) => {
             message_store.set(allMessagesInChat);
             input_txt = "";
             adjustHeight();

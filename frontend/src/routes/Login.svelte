@@ -83,6 +83,8 @@
             <div class="flex flex-col w-56">
                 <label for="username">
                     {loginForm ? 'Login' : 'Register'} 
+                    <!-- svelte-ignore a11y-click-events-have-key-events -->
+                    <!-- svelte-ignore a11y-no-static-element-interactions -->
                     <span on:click={toggleLoginForm} class="text-gray-400 pl-2 hover:underline cursor-pointer">
                       {loginForm ? 'Register' : 'Login'}
                     </span>
@@ -109,7 +111,6 @@
                             type="text"
                             class="w-full bg-gray-900 text-white placeholder-gray-500 rounded-md pl-8 focus:outline-none"
                             placeholder="Username"
-                            autofocus
                         />
                     </div>
                 {/if}

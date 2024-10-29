@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
     import { selection_store } from '../stores/selectionStore.js';
     
-    export let recipient;
+    // export let recipient;
 </script>
 
 <div class="flex items-center h-14 w-full">
