@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     export let content;
     export let created_at;
     export let last_message_create_at

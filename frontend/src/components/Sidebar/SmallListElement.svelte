@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { selection_store } from "../../stores/selectionStore.js"
 
     export let item;

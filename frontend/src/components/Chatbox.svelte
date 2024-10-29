@@ -1,23 +1,24 @@
-<script>
+<script lang="ts">
     import { onMount, afterUpdate } from 'svelte';
-    import { EventsOn } from "../../wailsjs/runtime/runtime.js";
-    import { GetMessagesByChatID } from "../../wailsjs/go/controllers/MessageController.js";
-    import { GetUser } from "../../wailsjs/go/controllers/UserController.js";
+    import { EventsOn } from "../../wailsjs/runtime/runtime";
+    import { GetMessagesByChatID } from "../../wailsjs/go/controllers/MessageController";
+    import { GetUser } from "../../wailsjs/go/controllers/UserController";
+    import { models } from "../../wailsjs/go/models";
     import { message_store } from '../stores/messageStore.js';
     import { selection_store } from '../stores/selectionStore.js';
     import Message from './Message.svelte';
     import Header from './Header.svelte';
 
     let chatbox;
-    let participants = new Map(); // Caching user details
+    let participants: Map<string, models.User> = new Map(); // Caching user details
     
-    function getUserDetails(id) {
+    function getUserDetails(id: string) {
         if (participants.has(id)) { // Check if user details are already in cache
             return Promise.resolve(participants.get(id)); // Return cached user wrapped in a resolved promise
         }
 
-        return GetUser(id).then((user) => {
-            participants.set(id, { username: user.username, avatar: user.avatar, public_key: user.public_key }); // Store user details in cache
+        return GetUser(id).then((user: models.User) => {
+            participants.set(id, user); // Store user details in cache
             return user;
         }).catch((err) => {
             console.error("Error getting user: ", err);
@@ -25,8 +26,8 @@
     }
 
     async function getMessages() {
-        let chatId = $selection_store.id;
-        GetMessagesByChatID(chatId).then(async (messages) => {
+        let chatId: string = $selection_store.id;
+        GetMessagesByChatID(chatId).then(async (messages: models.Message[]) => {
             const userIds = new Set(messages.map(message => message.user_id));
             await Promise.all(
                 Array.from(userIds).map(userId => getUserDetails(userId))

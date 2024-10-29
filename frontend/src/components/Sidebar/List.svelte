@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import ListElement from "./ListElement.svelte";
     import DragDropList, { VerticalDropZone, reorder } from "svelte-dnd-list";
     import { selection_store } from '../../stores/selectionStore.js';

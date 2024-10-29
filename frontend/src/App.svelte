@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import Router from 'svelte-spa-router';
     import { wrap } from 'svelte-spa-router/wrap';
     import { GetAuthedUser } from "../wailsjs/go/controllers/AuthController";

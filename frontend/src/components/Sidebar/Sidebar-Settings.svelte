@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import List from "./List.svelte";
     import { auth_store } from "../../stores/authStore";
     import { Exit, LogOut } from "../../../wailsjs/go/controllers/AuthController";

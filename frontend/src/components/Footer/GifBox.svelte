@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { onMount } from 'svelte';
 
     export let mb;
@@ -82,6 +82,8 @@
     <div class="overflow-y-auto w-full relative h-[calc(100%-2.5rem)] flex gap-2 no-scrollbar">
         <div class="w-1/2">
             {#each topGifsLeft as gif}
+                <!-- svelte-ignore a11y-click-events-have-key-events -->
+                <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
                 <img
                     on:click={() => sendGif(gif.media_formats?.gif?.url)}
                     class="mb-2 w-full rounded-md shadow-lg hover:cursor-pointer hover:opacity-65"
@@ -93,6 +95,8 @@
 
         <div class="w-1/2">
             {#each topGifsRight as gif}
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
             <img
                 on:click={() => sendGif(gif.media_formats?.gif?.url)}
                 class="mb-2 w-full rounded-md shadow-lg hover:cursor-pointer hover:opacity-65"
