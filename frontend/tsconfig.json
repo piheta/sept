@@ -14,7 +14,7 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "checkJs": true,
-    "allowJs": true, // Enables TypeScript to check JavaScript files
+    "allowJs": true,
   },
   "include": [
     "src/**/*.d.ts",
