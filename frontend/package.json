@@ -11,11 +11,11 @@
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx,css,scss,md,svelte}\""
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^3.0.2",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
     "@tsconfig/svelte": "^5.0.4",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.39",
-    "svelte": "^4.2.19",
+    "svelte": "^5.0.0",
     "svelte-preprocess": "^6.0.3",
     "tailwindcss": "^3.4.6",
     "typescript": "^5.6.3",

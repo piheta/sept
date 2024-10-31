@@ -1,10 +1,19 @@
 <script lang="ts">
     import { selection_store } from "../../stores/selectionStore.js"
 
-    export let item;
-    export let selected = false;
-    export let isLast = false;
-    export let img = true;
+    interface Props {
+        item: any;
+        selected?: boolean;
+        isLast?: boolean;
+        img?: boolean;
+    }
+
+    let {
+        item,
+        selected = false,
+        isLast = false,
+        img = true
+    }: Props = $props();
 
     function handleKeyDown(event) {
         if (event.key === "Enter" || event.key === " ") {
@@ -31,8 +40,8 @@
     style={selected ? "background-color: rgba(17, 24, 39, 0.5);" : ""}
     class:!mb-3={isLast}
     tabindex="0"
-    on:click={clickItem}
-    on:keydown={handleKeyDown}
+    onclick={clickItem}
+    onkeydown={handleKeyDown}
 >
     <div class="flex h-6 items-center">
         {#if img}<img

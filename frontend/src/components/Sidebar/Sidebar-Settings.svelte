@@ -5,7 +5,7 @@
     import { SearchDht } from "../../../wailsjs/go/controllers/SignalingController";
     import {replace} from 'svelte-spa-router'
 
-    let selection = "";
+    let selection = $state("");
 
     function setSelection(obj) {
         selection = obj;
@@ -53,6 +53,6 @@
     draggable={0}
     img={false}
 />
-<button on:click={logOut}>Log Out</button><br/>
-<button on:click={() => {Exit()}}>Exit</button><br/>
-<button on:click={() => searchDht("Picheta")}>Search DHT</button>
+<button onclick={logOut}>Log Out</button><br/>
+<button onclick={() => {Exit()}}>Exit</button><br/>
+<button onclick={() => searchDht("Picheta")}>Search DHT</button>

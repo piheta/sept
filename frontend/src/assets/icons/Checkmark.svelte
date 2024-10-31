@@ -1,5 +1,5 @@
 <script lang="ts">
-    export let hide;
+    let { hide } = $props();
     </script>
 
 {#if !hide}

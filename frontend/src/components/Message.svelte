@@ -1,12 +1,14 @@
 <script lang="ts">
-    export let content;
-    export let created_at;
-    export let last_message_create_at
-    export let user_id
-    export let last_sender_user_id
-    export let index;
-    export let username;
-    export let avatar;
+    let {
+        content,
+        created_at,
+        last_message_create_at,
+        user_id,
+        last_sender_user_id,
+        index,
+        username,
+        avatar
+    } = $props();
 
     let isDifferentSender = last_sender_user_id !== user_id
     let isOlderThanOneMinute = (index > 0 && (new Date(created_at).getTime() - new Date(last_message_create_at).getTime()) > 1 * 60 * 1000)

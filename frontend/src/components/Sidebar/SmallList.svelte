@@ -3,8 +3,7 @@
     import DragDropList, { VerticalDropZone, reorder } from "svelte-dnd-list";
     import { selection_store } from '../../stores/selectionStore.js';
 
-    export let draggable;
-    export let items = [];
+    let { draggable, items = $bindable([]) } = $props();
 
     function onDrop({ detail: { from, to } }) {
         if (!to || from === to) {
@@ -25,12 +24,14 @@
             itemCount={items.length}
             allowDrag={draggable}
             on:drop={onDrop}
-            let:index
+            
         >
-            <SmallListElement
-                item={items[index]}
-                selected={items[index].id === $selection_store.id}
-                isLast={items[index].id === items[items.length - 1].id}
-            />
+            {#snippet children({ index })}
+                <SmallListElement
+                    item={items[index]}
+                    selected={items[index].id === $selection_store.id}
+                    isLast={items[index].id === items[items.length - 1].id}
+                />
+                        {/snippet}
         </DragDropList>
 </ul>

@@ -1,15 +1,17 @@
 <script lang="ts">
+    import { preventDefault } from 'svelte/legacy';
+
     import { slide } from 'svelte/transition';
     import Checkmark from '../assets/icons/Checkmark.svelte';
     import { auth_store } from "../stores/authStore.js"
     import { Register, Login } from '../../wailsjs/go/controllers/AuthController';
     import { replace } from 'svelte-spa-router';
 
-    let username = '';
-    let email = '';
-    let password = '';
-    let showPassword = false;
-    let loginForm = true;
+    let username = $state('');
+    let email = $state('');
+    let password = $state('');
+    let showPassword = $state(false);
+    let loginForm = $state(true);
 
     function toggleLoginForm() {
         loginForm = !loginForm;
@@ -77,15 +79,15 @@
         </pre>
 
     </div>    
-    <form on:submit|preventDefault={handleSubmit}>
+    <form onsubmit={preventDefault(handleSubmit)}>
         <fieldset>
             <!-- <legend class="text-center text-white mb-4 text-lg">Register</legend> -->
             <div class="flex flex-col w-56">
                 <label for="username">
                     {loginForm ? 'Login' : 'Register'} 
-                    <!-- svelte-ignore a11y-click-events-have-key-events -->
-                    <!-- svelte-ignore a11y-no-static-element-interactions -->
-                    <span on:click={toggleLoginForm} class="text-gray-400 pl-2 hover:underline cursor-pointer">
+                    <!-- svelte-ignore a11y_click_events_have_key_events -->
+                    <!-- svelte-ignore a11y_no_static_element_interactions -->
+                    <span onclick={toggleLoginForm} class="text-gray-400 pl-2 hover:underline cursor-pointer">
                       {loginForm ? 'Register' : 'Login'}
                     </span>
                   </label>
@@ -134,7 +136,7 @@
                             placeholder="********"
                         />
                     {/if}
-                    <button type="button" on:click={togglePassword} class="absolute right-2 top-2 text-gray-500 reveal-password">
+                    <button type="button" onclick={togglePassword} class="absolute right-2 top-2 text-gray-500 reveal-password">
                         {#if showPassword && password.length > 0}
                             <!-- Eye icon to indicate password is visible -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M2.062 12.348a1 1 0 0 1 0-.696a10.75 10.75 0 0 1 19.876 0a1 1 0 0 1 0 .696a10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></g></svg>

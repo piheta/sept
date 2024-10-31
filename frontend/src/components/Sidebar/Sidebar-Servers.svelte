@@ -2,7 +2,7 @@
     import List from "./List.svelte";
 
     let servers = [];
-    let selection = { type: 0, value: "" };
+    let selection = $state({ type: 0, value: "" });
 
     function setSelection(obj) {
         selection = obj;

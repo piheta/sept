@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     // @ts-nocheck
     import Sidebar from "/src/components/Sidebar/Sidebar.svelte";
     import Footer from "/src/components/Footer/Footer.svelte";
@@ -6,15 +8,15 @@
     import Header from "/src/components/Header.svelte";
     import Chatbox from "/src/components/Chatbox.svelte";
     
-    let width = 180;
-    let resizeWidth = width;
+    let width = $state(180);
+    let resizeWidth = $state(width);
     const snapWidth = 70; 
     const snapThreshold = 110;
     const minWidth = 180;
     const maxWidth = () => window.innerWidth / 2;
-    let windowWidth = window.innerWidth;
+    let windowWidth = $state(window.innerWidth);
 
-    let autoSnapped = false
+    let autoSnapped = $state(false)
 
     // Update window width on resize
     window.addEventListener('resize', () => {
@@ -22,13 +24,15 @@
     });
 
     // Reactive statement to snap sidebar if window width <= 450px
-    $: if (windowWidth <= 450) {
-        resizeWidth = snapWidth;
-        autoSnapped = true
-    } else if (windowWidth > 450 && autoSnapped) {
-        resizeWidth = width
-        autoSnapped = false
-    }
+    run(() => {
+        if (windowWidth <= 450) {
+            resizeWidth = snapWidth;
+            autoSnapped = true
+        } else if (windowWidth > 450 && autoSnapped) {
+            resizeWidth = width
+            autoSnapped = false
+        }
+    });
     
     function handleDrag(delta) {
         const newWidth = width + delta;
@@ -68,8 +72,8 @@
             class="w-2 min-w-2"
             style="cursor: {windowWidth < 450 ? 'unset' : 'col-resize'};"
             use:onDrag={{ orientation: "vertical" }}
-            on:drag={({ detail: delta }) => handleDrag(delta)}
-            on:dragEnd={() => {
+            ondrag={({ detail: delta }) => handleDrag(delta)}
+            ondragEnd={() => {
                 width = resizeWidth;
             }}
         ></div>

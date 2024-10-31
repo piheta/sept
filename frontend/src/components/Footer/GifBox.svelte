@@ -1,16 +1,18 @@
 <script lang="ts">
     import { onMount } from 'svelte';
 
-    export let mb;
-    export let chat_id;
-    export let sendMessage;
-    export let toggleShow;
+    let {
+        mb,
+        chat_id,
+        sendMessage,
+        toggleShow
+    } = $props();
 
     const tenor = "AIzaSyDdux0EuzTX4pBG4H-il_X4xbe3p2BPOgg"; // Tenor said it can be used client side ¯\_(ツ)_/¯
-    let searchTerm = "";
+    let searchTerm = $state("");
 
-    let topGifsLeft = [];
-    let topGifsRight = [];
+    let topGifsLeft = $state([]);
+    let topGifsRight = $state([]);
 
     async function searchGif(searchTerm) {
         const clientkey = "Sept";
@@ -75,17 +77,17 @@
             autocapitalize="off"
             autocomplete="off"
             bind:value={searchTerm}
-            on:input={handleInput}
+            oninput={handleInput}
         />
     </div>
 
     <div class="overflow-y-auto w-full relative h-[calc(100%-2.5rem)] flex gap-2 no-scrollbar">
         <div class="w-1/2">
             {#each topGifsLeft as gif}
-                <!-- svelte-ignore a11y-click-events-have-key-events -->
-                <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
                 <img
-                    on:click={() => sendGif(gif.media_formats?.gif?.url)}
+                    onclick={() => sendGif(gif.media_formats?.gif?.url)}
                     class="mb-2 w-full rounded-md shadow-lg hover:cursor-pointer hover:opacity-65"
                     src={gif.media_formats?.nanogif?.url}
                     alt="Preview GIF"
@@ -95,10 +97,10 @@
 
         <div class="w-1/2">
             {#each topGifsRight as gif}
-            <!-- svelte-ignore a11y-click-events-have-key-events -->
-            <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+            <!-- svelte-ignore a11y_click_events_have_key_events -->
+            <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
             <img
-                on:click={() => sendGif(gif.media_formats?.gif?.url)}
+                onclick={() => sendGif(gif.media_formats?.gif?.url)}
                 class="mb-2 w-full rounded-md shadow-lg hover:cursor-pointer hover:opacity-65"
                 src={gif.media_formats?.nanogif?.url}
                 alt="Preview GIF"

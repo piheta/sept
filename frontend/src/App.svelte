@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     import Router from 'svelte-spa-router';
     import { wrap } from 'svelte-spa-router/wrap';
     import { GetAuthedUser } from "../wailsjs/go/controllers/AuthController";
@@ -9,7 +11,7 @@
     import Auth from "./routes/Login.svelte";
     import Dashboard from "./routes/Dashboard.svelte";
 
-    let isAuthenticated = false;
+    let isAuthenticated = $state(false);
 
     const routes = {
         '/': wrap({
@@ -42,11 +44,13 @@
     // Watch auth_store for changes
     // $: isAuthenticated = !!$auth_store.id;
 
-    $: if (isAuthenticated) {
-        replace("/");
-    } else {
-        replace("/login");
-    }
+    run(() => {
+        if (isAuthenticated) {
+            replace("/");
+        } else {
+            replace("/login");
+        }
+    });
 
 </script>
 

@@ -1,5 +1,7 @@
 <script lang="ts">
-    import { onMount, afterUpdate } from 'svelte';
+    import { run } from 'svelte/legacy';
+
+    import { onMount, } from 'svelte';
     import { EventsOn } from "../../wailsjs/runtime/runtime";
     import { GetMessagesByChatID } from "../../wailsjs/go/controllers/MessageController";
     import { GetUser } from "../../wailsjs/go/controllers/UserController";
@@ -9,7 +11,7 @@
     import Message from './Message.svelte';
     import Header from './Header.svelte';
 
-    let chatbox;
+    let chatbox = $state();
     let participants: Map<string, models.User> = new Map(); // Caching user details
     
     function getUserDetails(id: string) {
@@ -45,7 +47,7 @@
         EventsOn("message:new", () =>{ getMessages(); console.log("message from wails event")});
     });
 
-    afterUpdate(() => {
+    $effect(() => {
         if (!chatbox) {
             return;
         }
@@ -53,9 +55,11 @@
         // if new message is received, and already at bottom snap to new bottom.
         // if new message is received, and scrolled up, don't snap to bottom.
         chatbox.scrollTop = chatbox.scrollHeight;
-    });
+    })
 
-    $: $selection_store, getMessages(); // Trigger getMessages whenever selection_store changes
+    run(() => {
+        $selection_store, getMessages();
+    }); // Trigger getMessages whenever selection_store changes
 </script>
 
 <div style="background-color: rgba(17, 24, 39, 0.5);" class="flex h-full flex-col rounded-md">
