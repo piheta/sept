@@ -244,7 +244,7 @@ func (s *SnConnection) userSearchResponse(msg models.SigMsg) {
 
 	user, err := ExtractUserFromJwt(cert)
 	if err != nil {
-		log.Printf("Failed to extract found user from jwt, ", err)
+		log.Printf("Failed to extract found user from jwt, %v", err)
 		return
 	}
 

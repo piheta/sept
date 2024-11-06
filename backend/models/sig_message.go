@@ -37,7 +37,13 @@ type DhtUser struct {
 }
 
 type UserAddRequest struct {
+	User      DhtUser `json:"user"`
+	IP        string  `json:"ip"`
+	Signature string  `json:"signature"`
 }
 
 type UserAddResponse struct {
+	User      DhtUser `json:"user"`
+	IP        string  `json:"ip"`
+	Signature string  `json:"signature"`
 }

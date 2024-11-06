@@ -47,9 +47,9 @@
             Friends
         </p>
 
-        <button on:click={fillSearchBoxAdd} class="ml-auto w-5 transition-opacity duration-150 ease-in-out opacity-0 group-hover:opacity-100">
+        <span on:click={fillSearchBoxAdd} class="ml-auto w-5 transition-opacity duration-150 ease-in-out opacity-0 group-hover:opacity-100">
             <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M11 11V5H13V11H19V13H13V19H11V13H5V11H11Z"></path></svg>
-        </button>
+        </span>
         <span class="mr-1 w-5 transition-opacity duration-150 ease-in-out opacity-0 group-hover:opacity-100">
             <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" viewBox="0 0 24 24"><g fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></g></svg>
         </span>
