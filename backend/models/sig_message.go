@@ -8,6 +8,7 @@ const (
 	Announce   SigMessageType = 0
 	UserSearch SigMessageType = 1
 	Connection SigMessageType = 2
+	UserAdd    SigMessageType = 3
 )
 
 type SigMsg struct {

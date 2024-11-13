@@ -173,8 +173,9 @@ func (s *SnConnection) connectToSignalingServer(wg *sync.WaitGroup) {
 		switch sigMessage.Type {
 		case models.UserSearch:
 			// Catch server response
-			fmt.Println(sigMessage.Data)
 			s.userSearchResponse(sigMessage)
+		case models.UserAdd:
+			s.userAddResponse(sigMessage)
 		case models.Connection:
 
 			dataBytes, err := json.Marshal(sigMessage.Data)
@@ -251,6 +252,19 @@ func (s *SnConnection) userSearchResponse(msg models.SigMsg) {
 	user.Ip = dhtuser.IP
 
 	s.userChan <- user
+}
+
+func (s *SnConnection) userAddResponse(msg models.SigMsg) {
+	dataBytes, err := json.Marshal(msg.Data)
+	if err != nil {
+		log.Printf("failed to marshall useraddresp data, %v", err)
+	}
+
+	var useraddresp models.UserAddResponse
+	if err := json.Unmarshal(dataBytes, &useraddresp); err != nil {
+		log.Printf("Failed to unmarshal user add response: %v", err)
+	}
+
 }
 
 func (s *SnConnection) createAnnounceRequest() (models.SigMsg, error) {
