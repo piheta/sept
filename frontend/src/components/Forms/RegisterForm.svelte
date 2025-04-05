@@ -1,5 +1,5 @@
 <script lang="ts">
-  let username = "";
+  export let username = "";
 </script>
 
 <div class="flex relative mb-2 h-8">

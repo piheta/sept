@@ -102,10 +102,10 @@
           </span>
         </label>
 
-        <LoginForm {email} />
+        <LoginForm bind:email />
 
         {#if !loginForm}
-          <RegisterForm />
+          <RegisterForm bind:username />
         {/if}
 
         <div class="flex relative mb-2 h-8">
