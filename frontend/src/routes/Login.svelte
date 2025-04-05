@@ -4,6 +4,7 @@
   import { auth_store } from "../stores/authStore.js";
   import { Register, Login } from "../../wailsjs/go/controllers/AuthController";
   import { replace } from "svelte-spa-router";
+  import { RegisterForm, LoginForm } from "../components/Forms/";
 
   let username = "";
   let email = "";
@@ -19,7 +20,7 @@
     showPassword = !showPassword;
   }
 
-  async function handleSubmit(event) {
+  async function handleSubmit(event: SubmitEvent) {
     event.preventDefault(); // Prevent default form submission behavior
 
     console.log("Submitting form with:", { username, email, password });
@@ -71,75 +72,40 @@
     <fieldset>
       <!-- <legend class="text-center text-white mb-4 text-lg">Register</legend> -->
       <div class="flex flex-col w-56">
-        <label for="username">
-          {loginForm ? "Login" : "Register"}
+        <label for="username" class="flex space-x-4">
+          <!-- Login option -->
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <!-- svelte-ignore a11y-no-static-element-interactions -->
           <span
-            on:click={toggleLoginForm}
-            class="text-gray-400 pl-2 hover:underline cursor-pointer"
+            class="transition-colors duration-200 ease-in-out"
+            class:text-white={loginForm}
+            class:text-gray-400={!loginForm}
+            class:hover:underline={!loginForm}
+            class:cursor-pointer={!loginForm}
+            on:click={!loginForm ? toggleLoginForm : undefined}
           >
-            {loginForm ? "Register" : "Login"}
+            Login
+          </span>
+
+          <!-- Register option -->
+          <!-- svelte-ignore a11y-click-events-have-key-events -->
+          <!-- svelte-ignore a11y-no-static-element-interactions -->
+          <span
+            class="transition-colors duration-200 ease-in-out"
+            class:text-white={!loginForm}
+            class:text-gray-400={loginForm}
+            class:hover:underline={loginForm}
+            class:cursor-pointer={loginForm}
+            on:click={loginForm ? toggleLoginForm : undefined}
+          >
+            Register
           </span>
         </label>
 
-        <div class="flex relative mb-2 mt-2 h-8">
-          <svg
-            class="absolute left-2 top-2 text-gray-500"
-            xmlns="http://www.w3.org/2000/svg"
-            width="1em"
-            height="1em"
-            viewBox="0 0 24 24"
-            ><g
-              fill="none"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              ><rect width="20" height="16" x="2" y="4" rx="2" /><path
-                d="m22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"
-              /></g
-            ></svg
-          >
-          <input
-            id="user-email"
-            bind:value={email}
-            type="email"
-            class="w-full bg-gray-900 text-white placeholder-gray-500 rounded-md pl-8 focus:outline-none"
-            placeholder="Email"
-          />
-        </div>
+        <LoginForm {email} />
 
-        <!-- <label for="user-email">Email:</label> -->
         {#if !loginForm}
-          <div class="flex relative mb-2 h-8">
-            <svg
-              class="absolute left-2 top-2 text-gray-500"
-              xmlns="http://www.w3.org/2000/svg"
-              width="1.1em"
-              height="1.1em"
-              viewBox="0 0 24 24"
-              ><g
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                ><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle
-                  cx="12"
-                  cy="7"
-                  r="4"
-                /></g
-              ></svg
-            >
-            <input
-              id="username"
-              bind:value={username}
-              type="text"
-              class="w-full bg-gray-900 text-white placeholder-gray-500 rounded-md pl-8 focus:outline-none"
-              placeholder="Username"
-            />
-          </div>
+          <RegisterForm />
         {/if}
 
         <div class="flex relative mb-2 h-8">
