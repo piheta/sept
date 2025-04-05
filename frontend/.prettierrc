@@ -1,0 +1,8 @@
+
+{
+  "plugins": ["prettier-plugin-svelte"],
+  "svelteSortOrder": "options-scripts-markup-styles",
+  "svelteStrictMode": false,
+  "svelteIndentScriptAndStyle": true,
+  "svelteAllowShorthand": true
+}
