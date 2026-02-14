@@ -7,7 +7,7 @@
   "frontend:dev:watcher": "bun run dev",
   "frontend:dev:serverUrl": "auto",
   "author": {
-    "name": "Mateusz Picheta",
+    "name": "Mateusz Sebastian Picheta",
     "email": "m@picheta.dev"
   }
 }
